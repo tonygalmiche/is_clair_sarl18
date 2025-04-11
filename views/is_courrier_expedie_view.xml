@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--is.courrier.expedie -->
+    <record id="is_courrier_expedie_form_view" model="ir.ui.view">
+        <field name="name">is_courrier_expedie_from_view</field>
+        <field name="model">is.courrier.expedie</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="date"/>
+                        <field name="sens"/>
+                        <field name="partner_id"/>
+                        <field name="affaire_id"/>
+                        <field name="invoice_id"/>
+                        <field name="payment_id"/>
+                        <field name="traite_id"/>
+                        <field name="objet"/>
+                        <field name="montant"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_courrier_expedie_tree_view">
+        <field name="name">is_courrier_expedie_tree_view</field>
+        <field name="model">is.courrier.expedie</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="date"/>
+                <field name="sens"/>
+                <field name="partner_id" widget="many2one_clickable" optional="show"/>
+                <field name="affaire_id" widget="many2one_clickable" optional="show"/>
+                <field name="invoice_id" widget="many2one_clickable" optional="show"/>
+                <field name="payment_id" widget="many2one_clickable" optional="show"/>
+                <field name="traite_id"  widget="many2one_clickable" optional="show"/>
+                <field name="objet"/>
+                <field name="montant" sum="Total"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_courrier_expedie_search_view" model="ir.ui.view">
+        <field name="name">is_courrier_expedie_search_view</field>
+        <field name="model">is.courrier.expedie</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="date"/>
+                <field name="sens"/>
+                <field name="partner_id"/>
+                <field name="affaire_id"/>
+                <field name="invoice_id"/>
+                <field name="payment_id"/>
+                <field name="traite_id"/>
+                <field name="objet"/>
+            </search>
+        </field>
+    </record>
+    <record id="is_courrier_expedie_action" model="ir.actions.act_window">
+        <field name="name">Courrier</field>
+        <field name="res_model">is.courrier.expedie</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

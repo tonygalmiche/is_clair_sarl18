@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="is_chantier_chef_chantier_rule" model="ir.rule">
+        <field name="name">Accès modification au groupe 'Chef de chantiers' à l'état 'A planifier' uniquement</field>
+        <field name="model_id" ref="model_is_chantier"/>
+        <field name="domain_force">[('state','=','a_planifier')]</field>
+        <field name="groups" eval="[(4, ref('is_clair_sarl18.is_chef_chantier_group'))]"/>
+        <field eval="0" name="perm_unlink"/>
+        <field eval="1" name="perm_write"/>
+        <field eval="0" name="perm_read"/>
+        <field eval="0" name="perm_create"/>
+    </record>
+    <record id="is_responsable_planning_rule" model="ir.rule">
+        <field name="name">Accès complet au groupe 'Responsable planning'</field>
+        <field name="model_id" ref="model_is_chantier"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[(4, ref('is_clair_sarl18.is_responsable_planning_chantiers_group'))]"/>
+        <field eval="1" name="perm_unlink"/>
+        <field eval="1" name="perm_write"/>
+        <field eval="1" name="perm_read"/>
+        <field eval="1" name="perm_create"/>
+    </record>
+</odoo>

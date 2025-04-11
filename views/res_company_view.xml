@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="is_view_company_form" model="ir.ui.view">
+            <field name="name">is_view_company_form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//sheet[1]" position="inside">
+                    <style>
+                        .o_form_view .o_form_sheet_bg > .o_form_sheet{
+                            max-width: 1800px;
+                        }
+                        .o_form_label{
+                            white-space: nowrap;
+                        }
+                    </style>
+                </xpath>            
+                <page name="general_info" position="after">
+                    <page string="Clair SARL">
+                        <group>
+                            <field name="is_penalite_retard"/>
+                            <field name="is_indemnite_forfaitaire"/>
+                            <field name="is_clause_de_reserve"/>
+                            <field name="is_attribution_de_competence"/>
+                        </group>
+                     </page>
+                </page>
+            </field>
+        </record>
+    </data>
+</odoo>

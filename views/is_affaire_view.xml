@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--is.nature.travaux -->
+    <record id="is_nature_travaux_form_view" model="ir.ui.view">
+        <field name="name">is_nature_travaux_from_view</field>
+        <field name="model">is.nature.travaux</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="color" required="True" widget="color_picker"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_nature_travaux_tree_view">
+        <field name="name">is_nature_travaux_tree_view</field>
+        <field name="model">is.nature.travaux</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="color" required="True" widget="color_picker"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_nature_travaux_search_view" model="ir.ui.view">
+        <field name="name">is_nature_travaux_search_view</field>
+        <field name="model">is.nature.travaux</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+    <record id="is_nature_travaux_action" model="ir.actions.act_window">
+        <field name="name">Nature des travaux</field>
+        <field name="res_model">is.nature.travaux</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <!--is.type.travaux -->
+    <record id="is_type_travaux_form_view" model="ir.ui.view">
+        <field name="name">is_type_travaux_from_view</field>
+        <field name="model">is.type.travaux</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="color" required="True" widget="color_picker"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_type_travaux_tree_view">
+        <field name="name">is_type_travaux_tree_view</field>
+        <field name="model">is.type.travaux</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="color" required="True" widget="color_picker"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_type_travaux_search_view" model="ir.ui.view">
+        <field name="name">is_type_travaux_search_view</field>
+        <field name="model">is.type.travaux</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+    <record id="is_type_travaux_action" model="ir.actions.act_window">
+        <field name="name">Type des travaux</field>
+        <field name="res_model">is.type.travaux</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <!--is.specificite -->
+    <record id="is_specificite_form_view" model="ir.ui.view">
+        <field name="name">is_specificite_from_view</field>
+        <field name="model">is.specificite</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="color" required="True" widget="color_picker"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_specificite_tree_view">
+        <field name="name">is_specificite_tree_view</field>
+        <field name="model">is.specificite</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="color" required="True" widget="color_picker"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_specificite_search_view" model="ir.ui.view">
+        <field name="name">is_specificite_search_view</field>
+        <field name="model">is.specificite</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+    <record id="is_specificite_action" model="ir.actions.act_window">
+        <field name="name">Spécificités</field>
+        <field name="res_model">is.specificite</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <!--is.affaire.analyse -->
+    <record id="is_affaire_analyse_form_view" model="ir.ui.view">
+        <field name="name">is_affaire_analyse_from_view</field>
+        <field name="model">is.affaire.analyse</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="affaire_id"/>
+                            <field name="intitule"/>
+                            <field name="fournisseur_id"/>
+                            <field name="famille_id"/>
+                            <field name="montant_cde"/>
+                            <field name="montant_fac"/>
+                            <field name="ecart"/>
+                            <field name="ecart_pourcent"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_affaire_analyse_tree_view">
+        <field name="name">is_affaire_analyse_tree_view</field>
+        <field name="model">is.affaire.analyse</field>
+        <field name="arch" type="xml">
+            <list default_order="montant_cde desc">
+                <field name="intitule"/>
+                <field name="fournisseur_id" optional="hide"/>
+                <field name="famille_id"     optional="hide"/>
+                <field name="budget"      sum="Total"/>
+                <field name="montant_cde" sum="Total"/>
+                <button name="liste_achat_famille_commande_action"     type="object" icon="fa-list" title="Lignes des commandes" invisible="famille_id == False"/>
+                <button name="liste_achat_fournisseur_commande_action" type="object" icon="fa-list" title="Lignes des commandes" invisible="fournisseur_id == False"/>
+                <field name="montant_fac" sum="Total"/>
+                <button name="liste_achat_famille_facture_action"      type="object" icon="fa-list" title="Lignes des factures"  invisible="famille_id == False"/>
+                <button name="liste_achat_fournisseur_facture_action"  type="object" icon="fa-list" title="Lignes des factures"  invisible="fournisseur_id == False"/>
+                <field name="ecart"       sum="Total"/>
+                <field name="ecart_pourcent"/>
+                <field name="ecart_budget_cde" sum="Total"/>
+                <field name="ecart_budget_fac" sum="Total"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_affaire_analyse_search_view" model="ir.ui.view">
+        <field name="name">is_affaire_analyse_search_view</field>
+        <field name="model">is.affaire.analyse</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="intitule" />
+                <field name="fournisseur_id" />
+                <field name="famille_id"/>
+            </search>
+        </field>
+    </record>
+    <record id="is_affaire_analyse_action_pivot" model="ir.ui.view">
+         <field name="name">is_affaire_analyse_action_pivot</field>
+        <field name="model">is.affaire.analyse</field>
+         <field name="arch" type="xml">
+             <pivot string="pivot" sample="1">
+                 <field name="intitule" type="row"/>
+                 <field name="montant_cde" type="measure"/>
+                 <field name="montant_fac" type="measure"/>
+                 <field name="ecart" type="measure"/>
+             </pivot>
+         </field>
+    </record>
+    <record id="is_affaire_analyse_action_graph" model="ir.ui.view">
+         <field name="name">is_affaire_analyse_action_graph</field>
+        <field name="model">is.affaire.analyse</field>
+         <field name="arch" type="xml">
+             <graph string="graph" type="bar" order="desc" sample="1">
+                 <field name="intitule"/>
+                 <field name="montant_cde" type="measure"/>
+                 <field name="montant_fac" type="measure"/>
+             </graph>
+         </field>
+    </record>
+    <record id="is_affaire_analyse_action" model="ir.actions.act_window">
+        <field name="name">Analyse par fournisseur</field>
+        <field name="res_model">is.affaire.analyse</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+    </record>
+
+
+    <!--is.affaire -->
+    <record id="actualiser_marge_affaire_cron" model="ir.cron">
+        <field name="name">Actualiser marge affaire</field>
+        <field name="model_id" ref="is_clair_sarl18.model_is_affaire"/>
+        <field name="state">code</field>
+        <field name="code">model.actualiser_marge_affaire_cron()</field>
+        <field name="interval_type">days</field>
+        <!-- <field name="numbercall">-1</field> -->
+    </record>
+    <record id="actualiser_marge_affaire_action_server" model="ir.actions.server">
+        <field name="name">Actualiser marge affaire</field>
+        <field name="model_id" ref="is_clair_sarl18.model_is_affaire"/>
+        <field name="binding_model_id" ref="is_clair_sarl18.model_is_affaire"/>
+        <field name="state">code</field>
+        <field name="code">records.actualiser_marge()</field>
+    </record>
+
+    <record id="creer_chantier_affaire_action_server" model="ir.actions.server">
+        <field name="name">Créer les chantiers de l'affaire</field>
+        <field name="model_id" ref="is_clair_sarl18.model_is_affaire"/>
+        <field name="binding_model_id" ref="is_clair_sarl18.model_is_affaire"/>
+        <field name="state">code</field>
+        <field name="code">records.creer_chantier_affaire_action()</field>
+    </record>
+
+
+
+    <record id="is_affaire_form_view" model="ir.ui.view">
+        <field name="name">is_affaire_from_view</field>
+        <field name="model">is.affaire</field>
+        <field name="arch" type="xml">
+            <form>
+                <style>
+                    .o_form_label{
+                        white-space: nowrap;
+                    }
+                </style>
+                <header>
+                    <button
+                        name="actualiser_marge"
+                        type="object"
+                        string="Actualiser les données"
+                    />
+                    <button
+                        name="analyse_par_fournisseur_action"
+                        type="object"
+                        string="Analyse par fournisseur"
+                    />
+                    <button
+                        name="analyse_par_famille_action"
+                        type="object"
+                        string="Analyse par famille"
+                    />
+                    <field name="state" widget="statusbar" options="{'clickable': '1'}"/>
+                </header>
+                <sheet>
+                     <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="liste_commandes_action" type="object" icon="fa-bars">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="montant_offre"/>
+                                </span>
+                                <span class="o_stat_text">Offres</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" name="liste_achat_facture_action" type="object" icon="fa-bars">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="achat_facture"/>
+                                </span>
+                                <span class="o_stat_text">Achats facturés</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" name="liste_vente_facture_action" type="object" icon="fa-bars">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="vente_facture"/>
+                                </span>
+                                <span class="o_stat_text">Ventes facturées</span>
+                            </div>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="type_affaire"/>
+                            <field name="name"/>
+                            <field name="nom"/>
+                            <field name="client_id"   widget="res_partner_many2one" context="{'res_partner_search_mode': 'customer'}" options="{&quot;always_reload&quot;: True}"/>
+                            <field name="maitre_oeuvre_id"/>
+                            <span class="o_form_label o_td_label" name="address_name"><b>Adresse du chantier</b></span>
+                            <div class="o_address_format">
+                                <field name="street"  placeholder="Rue"         class="o_address_street"/>
+                                <field name="street2" placeholder="Rue 2"       class="o_address_street"/>
+                                <field name="zip"     placeholder="Code postal" class="o_address_street"/>
+                                <field name="city"    placeholder="Ville"       class="o_address_street"/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="date_creation"/>
+                            <field name="contact_chantier_id"/>
+                            <field name="nature_travaux_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                            <field name="type_travaux_ids"   widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                            <field name="specificite_ids"    widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                            <field name="commentaire"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Facturation">
+                            <field name="remise_ids" nolabel="1">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="remise"/>
+                                    <field name="apres_ttc"/>
+                                    <field name="caution"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Budget">
+                            <field name="budget_famille_ids" nolabel="1">
+                                <list 
+                                    editable="bottom"
+                                    decoration-danger="gain&lt;0"
+                                >
+                                    <field name="famille_id"/>
+                                    <field name="budget"  sum="Total"/>
+                                    <field name="facture" sum="Total"/>
+                                    <field name="reste"   sum="Total"/>
+                                    <field name="solder" widget="boolean_toggle"/> 
+                                    <field name="gain"   sum="Total"/>
+                                </list>
+                            </field>
+                            <button
+                                name="ajout_famille_action"
+                                type="object"
+                                string="Ajout de toutes les familles"
+                                invisible="budget_famille_ids != []"
+                            />
+                        </page>
+                        <page string="Salaires">
+                            <field name="salaire_ids" nolabel="1">
+                                <list editable="bottom">
+                                    <field name="date"/>
+                                    <field name="montant" sum="Total"/>
+                                </list>
+                            </field>
+                            <group>
+                                <field name="montant_salaire"/>
+                            </group>
+                        </page>
+                        <page string="Suivi de la marge">
+                            <group>
+                                <group string="Marge brute">
+                                    <field name="montant_offre"/>
+                                    <field name="vente_facture"/>
+                                    <field name="achat_facture"/>
+                                    <field name="montant_salaire"/>
+                                    <field name="marge_brute"/>
+                                </group>
+                                <group string="Marge actualisée">
+                                    <field name="montant_offre"/>
+                                    <field name="montant_budget_achat"/>
+                                    <field name="gain_perte_budget"/>
+                                    <field name="marge_previsionnelle"/>
+                                </group>    
+                            </group>
+                         </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_affaire_tree_view">
+        <field name="name">is_affaire_tree_view</field>
+        <field name="model">is.affaire</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="type_affaire"        optional="show"/>
+                <field name="display_name"        optional="hide" class="white_space_normal" string="Nom complet" />
+                <field name="name"                optional="show"/>
+                <field name="nom"                 optional="show" class="white_space_normal"/>
+                <field name="date_creation"       optional="show"/>
+                <field name="contact_chantier_id" optional="hide"/>
+                <field name="client_id"           optional="show"/>
+                <field name="maitre_oeuvre_id"    optional="hide"/>
+                <field name="adresse_chantier"    optional="show"/>
+                <field name="nature_travaux_ids"  optional="hide" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                <field name="type_travaux_ids"    optional="hide" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                <field name="specificite_ids"     optional="hide" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                <field name="commentaire"         optional="hide"/>
+                <field name="state"               optional="show"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_affaire_pivot" model="ir.ui.view">
+        <field name="name">is_affaire_pivot</field>
+       <field name="model">is.affaire</field>
+        <field name="arch" type="xml">
+            <pivot string="pivot" sample="1">
+                <field name="client_id" type="row"/>
+                <field name="montant_offre" type="measure"/>
+                <field name="vente_facture" type="measure"/>
+                <field name="achat_facture" type="measure"/>
+                <field name="montant_salaire" type="measure"/>
+                <field name="marge_brute" type="measure"/>
+            </pivot>
+        </field>
+   </record>
+   <record id="is_affaire_graph" model="ir.ui.view">
+        <field name="name">is_affaire_graph</field>
+       <field name="model">is.affaire</field>
+        <field name="arch" type="xml">
+            <graph string="graph" type="bar" order="desc" sample="1">
+                <field name="client_id"/>
+                <field name="montant_offre" type="measure"/>
+            </graph>
+        </field>
+   </record>
+    <record id="is_affaire_search_view" model="ir.ui.view">
+        <field name="name">is_affaire_search_view</field>
+        <field name="model">is.affaire</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="nom"/>
+                <field name="client_id"/>
+                <field name="maitre_oeuvre_id"/>
+                <field name="adresse_chantier"/>
+                <field name="nature_travaux_ids"/>
+                <field name="type_travaux_ids"/>
+                <field name="specificite_ids"/>
+                <field name="commentaire"/>
+                <field name="contact_chantier_id"/>
+                <field name="type_affaire"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+    <record id="is_affaire_action" model="ir.actions.act_window">
+        <field name="name">Toutes les affaires</field>
+        <field name="res_model">is.affaire</field>
+        <field name="view_mode">list,form,activity,pivot,graph</field>
+        <field name="view_id" ref="is_clair_sarl18.is_affaire_tree_view"/>
+        <field name="limit">1000</field>
+    </record>
+    <record model="ir.ui.view" id="is_affaire_suivi_marge_tree_view">
+        <field name="name">is_affaire_suivi_marge_tree_view</field>
+        <field name="model">is.affaire</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="display_name"        optional="hide" class="white_space_normal" string="Nom complet" />
+                <field name="name"                optional="show"/>
+                <field name="nom"                 optional="show" class="white_space_normal"/>
+                <field name="date_creation"       optional="hide"/>
+                <field name="contact_chantier_id" optional="hide"/>
+                <field name="client_id"           optional="show"/>
+                <field name="maitre_oeuvre_id"    optional="hide"/>
+                <field name="adresse_chantier"    optional="hide"/>
+                <field name="nature_travaux_ids"  optional="hide" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                <field name="type_travaux_ids"    optional="hide" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                <field name="specificite_ids"     optional="hide" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                <field name="commentaire"         optional="hide"/>
+                <field name="montant_offre"       optional="show" sum="Total"/>
+                <field name="vente_facture"       optional="show" sum="Total"/>
+                <field name="achat_facture"       optional="show" sum="Total"/>
+                <field name="montant_salaire"     optional="show" sum="Total"/>
+                <field name="marge_brute"           optional="show" sum="Total"/>
+                <field name="montant_budget_achat"  optional="show" sum="Total"/>
+                <field name="gain_perte_budget"     optional="show" sum="Total"/>
+                <field name="marge_previsionnelle"  optional="show" sum="Total"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_affaire_suivi_marge_action" model="ir.actions.act_window">
+        <field name="name">Affaires Chantier Suivi marge</field>
+        <field name="res_model">is.affaire</field>
+        <field name="view_mode">list,form,activity,pivot,graph</field>
+        <field name="view_id" ref="is_clair_sarl18.is_affaire_suivi_marge_tree_view"/>
+        <field name="limit">1000</field>
+        <field name="domain">[('state','=','commande'),('type_affaire','=','chantier')]</field>
+    </record>
+    <record id="is_affaire_entretien_action" model="ir.actions.act_window">
+        <field name="name">Affaires Contrat d'entretien</field>
+        <field name="res_model">is.affaire</field>
+        <field name="view_mode">list,form,activity,pivot,graph</field>
+        <field name="view_id" ref="is_clair_sarl18.is_affaire_suivi_marge_tree_view"/>
+        <field name="domain">[('state','=','commande'),('type_affaire','=','entretien')]</field>
+        <field name="limit">1000</field>
+    </record>
+    <record id="is_affaire_sav_action" model="ir.actions.act_window">
+        <field name="name">Affaires Réparation</field>
+        <field name="res_model">is.affaire</field>
+        <field name="view_mode">list,form,activity,pivot,graph</field>
+        <field name="view_id" ref="is_clair_sarl18.is_affaire_suivi_marge_tree_view"/>
+        <field name="domain">[('state','=','commande'),('type_affaire','=','sav')]</field>
+        <field name="limit">1000</field>
+    </record>
+    <record id="is_affaire_interne_action" model="ir.actions.act_window">
+        <field name="name">Affaires internes</field>
+        <field name="res_model">is.affaire</field>
+        <field name="view_mode">list,form,activity,pivot,graph</field>
+        <field name="view_id" ref="is_clair_sarl18.is_affaire_suivi_marge_tree_view"/>
+        <field name="domain">[('state','=','commande'),('type_affaire','=','interne')]</field>
+        <field name="limit">1000</field>
+    </record>
+
+
+    <!--is.import.salaire -->
+    <record id="is_import_salaire_form_view" model="ir.ui.view">
+        <field name="name">is_import_salaire_from_view</field>
+        <field name="model">is.import.salaire</field>
+        <field name="arch" type="xml">
+            <form>
+                <style>
+                    .o_form_label{
+                        white-space: nowrap;
+                    }
+                </style>
+                <header>
+                    <button
+                        name="importation_salaire_action"
+                        type="object"
+                        string="Importation des salaires dans les affaires"
+                    />
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="total" invisible="total == 0"/>
+                        <field name="importation"/>
+                    </group>
+                    <group string="Résultat importation" invisible="resultat == False" >
+                        <div style="background:gainsboro;font-weight:normal;padding-left:5pt;font-family:courier, courier new, serif;">
+                            <field name="resultat" nolabel="1"/>
+                        </div>
+                    </group>
+                    <field name="salaire_ids" nolabel="1">
+                        <list limit="500" readonly="1">
+                            <button name="view_affaire_action" type="object" icon="fa-search-plus" title="Voir affaire"/>
+                            <field name="affaire_id"/>
+                            <field name="date"/>
+                            <field name="montant" sum="Total"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_import_salaire_tree_view">
+        <field name="name">is_import_salaire_tree_view</field>
+        <field name="model">is.import.salaire</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="total" sum="Total" />
+            </list>
+        </field>
+    </record>
+    <record id="is_import_salaire_search_view" model="ir.ui.view">
+        <field name="name">is_import_salaire_search_view</field>
+        <field name="model">is.import.salaire</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+    <record id="is_import_salaire_action" model="ir.actions.act_window">
+        <field name="name">Importation des salaires dans les affaires</field>
+        <field name="res_model">is.import.salaire</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

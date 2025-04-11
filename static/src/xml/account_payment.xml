@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+<!-- 
+    TODO : L'héritge fonctionne bien, mais le champ is_num_cheque n'est pas visible => Il faut probalement modifier une fonction javascrip, mais je n'ai pas retrovué laquelle
+    <t t-name="PaymentPopOver" t-inherit="account.PaymentPopOver" t-inherit-mode="extension" owl="1">
+        <xpath expr="//tr[2]" position="after">
+                 <tr>
+                    <td><strong>N° du chèque: </strong></td>
+                    <td>
+                        <div style="width: 200px; word-wrap: break-word">
+                            <t t-esc="ref"/><br />
+                            <t t-esc="is_num_cheque"/>
+                        </div>
+                    </td>
+                </tr>
+        </xpath>
+    </t>
+ -->
+
+
+</templates>
+

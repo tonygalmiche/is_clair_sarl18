@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="retenue_de_garantie_external_layout">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+        <t t-set="company" t-value="res_company"/>
+        <t t-call="is_clair_sarl18.is_external_layout_boxed"><t t-out="0"/></t>
+    </template>
+
+    <template id="retenue_de_garantie_report_document">
+        <t t-call="is_clair_sarl18.retenue_de_garantie_external_layout">
+
+
+            <t t-set="address">
+                <div t-if="o.partner_id.name"    t-field="o.partner_id.name"/>
+                <div t-if="o.partner_id.street"  t-field="o.partner_id.street"/>
+                <div t-if="o.partner_id.street2" t-field="o.partner_id.street2"/>
+                <div t-if="o.partner_id.zip">
+                    <span t-field="o.partner_id.zip"/> <span t-field="o.partner_id.city"/>
+                </div>
+                <div t-if="o.partner_id.country_id and o.partner_id.country_id.code!='FR'" t-field="o.partner_id.country_id.name"/>
+                <div t-if="o.partner_id.vat" class="mt16">
+                    <t t-if="o.company_id.account_fiscal_country_id.vat_label" t-esc="o.company_id.account_fiscal_country_id.vat_label" id="inv_tax_id_label"/>
+                    <t t-else="">Tax ID</t>: <span t-field="o.partner_id.vat"/>
+                </div>
+            </t>
+ 
+
+            <div class="page clair_report">
+                <br />
+                <h2><span>Affaire n°</span><span t-field="o.is_affaire_id.name"/><span> : </span><span t-field="o.is_affaire_id.nom"/></h2>
+                <h2 t-if="o.client_order_ref"><span>Votre commande : </span><span t-field="o.client_order_ref"/></h2>
+                <h2 class="situation">Levée de retenue de garantie</h2>
+
+                <h2>MARCHÉ : </h2>
+                <t t-if="o.is_section_ids">
+                    <table class="table table-sm o_main_table">
+                        <thead>
+                            <tr>
+                                <th name="th_description" class="text-center"><span>Désignation</span></th>
+                                <th name="th_subtotal"    class="text-center"><span >Total HT</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="total" t-value="0"/>
+                            <t t-foreach="o.is_section_ids" t-as="l">
+                                <t t-if="l.option!=True">
+                                    <t t-set="total" t-value="total + l.montant"/>
+                                    <tr>
+                                        <td style="width:80%" class="text-left"><span t-field="l.section"/></td>
+                                        <td class="text-right"><span t-if="l.montant" t-field="l.montant"/></td>
+                                    </tr>
+                                </t>
+                            </t>
+                            <tr>
+                                <td class="text-right"><b>TRAVAUX EXÉCUTÉS AU <span t-field="o.is_date_pv"/> : </b></td>
+                                <td class="text-right">
+                                    <b><span t-esc="total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-right"><b>LEVÉE DE LA RETENUE DE GARANTIE <span t-field="o.is_taux_retenue_de_garantie"/>% : </b></td>
+                                <td class="text-right">
+                                    <b><span t-field="o.is_retenue_de_garantie"/></b>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </t>
+                <h2 t-if="o.is_date_pv"><span>PV reçu le : <span t-field="o.is_date_pv"/></span></h2>
+                <div style="page-break-after:always;" />
+            </div>
+        </t>
+    </template>
+    
+    <template id="retenue_de_garantie_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="is_clair_sarl18.retenue_de_garantie_report_document"/>
+            </t>
+        </t>
+    </template>
+</odoo>

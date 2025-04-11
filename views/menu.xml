@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Ventes / Commandes -->
+    <!-- <menuitem 
+        id="is_commande_soldee_menu" 
+        sequence="2" 
+        name="Commandes soldées"
+        action="is_commande_soldee_action" 
+        parent="sale.sale_order_menu" 
+    /> -->
+    <menuitem 
+        id="is_affaire_menu" 
+        sequence="900" 
+        name="Affaires"
+        action="is_affaire_action" 
+        parent="sale.sale_order_menu" 
+    />
+
+
+    <!-- Ventes / Affaire-->
+    <menuitem 
+        id="is_affaire_top_menu" 
+        sequence="3" 
+        name="Affaires"
+        parent="sale.sale_menu_root" 
+    />
+    <menuitem 
+        id="is_affaire_affaire_menu" 
+        sequence="10" 
+        name="Toutes les affaires"
+        action="is_affaire_action" 
+        parent="is_affaire_top_menu" 
+    />
+    <menuitem 
+        id="is_affaire_suivi_marge_menu" 
+        sequence="20" 
+        name="Affaires Chantier Suivi marge"
+        action="is_affaire_suivi_marge_action" 
+        parent="is_affaire_top_menu" 
+    />
+
+    <menuitem 
+        id="is_affaire_entretien_menu" 
+        sequence="30" 
+        name="Affaires Contrat d'entretien"
+        action="is_affaire_entretien_action" 
+        parent="is_affaire_top_menu" 
+    />
+
+    <menuitem 
+        id="is_affaire_sav_menu" 
+        sequence="40" 
+        name="Affaires Réparation"
+        action="is_affaire_sav_action" 
+        parent="is_affaire_top_menu" 
+    />
+
+    <menuitem 
+        id="is_affaire_interne_menu" 
+        sequence="50" 
+        name="Affaires internes"
+        action="is_affaire_interne_action" 
+        parent="is_affaire_top_menu" 
+    />
+    <menuitem 
+        id="is_import_salaire_menu" 
+        sequence="90" 
+        name="Importation des salaires dans les affaires"
+        action="is_import_salaire_action" 
+        parent="is_affaire_top_menu" 
+    />
+
+
+
+    <!-- Ventes / Configuration / Clients -->
+    <menuitem 
+        id="is_config_client_menu" 
+        sequence="900" 
+        name="Clients"
+        parent="sale.menu_sale_config" 
+    />
+    <menuitem 
+        id="is_statut_menu" 
+        sequence="10" 
+        name="Statut"
+        action="is_statut_action" 
+        parent="is_config_client_menu" 
+    />
+    <menuitem 
+        id="is_profil_menu" 
+        sequence="20" 
+        name="Profil"
+        action="is_profil_action" 
+        parent="is_config_client_menu" 
+    />
+    <menuitem 
+        id="is_origine_menu" 
+        sequence="30" 
+        name="Origine DP"
+        action="is_origine_action" 
+        parent="is_config_client_menu" 
+    />
+
+    <!-- Ventes / Configuration / Articles -->
+   <menuitem 
+        id="is_config_article_menu" 
+        sequence="910" 
+        name="Articles"
+        parent="sale.menu_sale_config" 
+    />
+    <menuitem 
+        id="is_famille_menu" 
+        sequence="10" 
+        name="Famille article"
+        action="is_famille_action" 
+        parent="is_config_article_menu" 
+    />
+    <menuitem 
+        id="is_sous_famille_menu" 
+        sequence="20" 
+        name="Sous-famille article"
+        action="is_sous_famille_action" 
+        parent="is_config_article_menu" 
+    />
+
+    <!-- Ventes / Configuration / Affaires -->
+    <menuitem 
+        id="is_config_affaire_menu" 
+        sequence="920" 
+        name="Affaires"
+        parent="sale.menu_sale_config" 
+    />
+    <menuitem 
+        id="is_nature_travaux_menu" 
+        sequence="10" 
+        name="Nature des travaux"
+        action="is_nature_travaux_action" 
+        parent="is_config_affaire_menu" 
+    />
+    <menuitem 
+        id="is_type_travaux_menu" 
+        sequence="20" 
+        name="Type des travaux"
+        action="is_type_travaux_action" 
+        parent="is_config_affaire_menu" 
+    />
+    <menuitem 
+        id="is_specificite_menu" 
+        sequence="30" 
+        name="Spécificités"
+        action="is_specificite_action" 
+        parent="is_config_affaire_menu" 
+    />
+
+
+    <!-- Achats / Commandes -->
+    <menuitem
+        id="is_purchase_order_line_menu"
+        name="Lignes des commandes"
+        parent="purchase.menu_procurement_management"
+        sequence="7"
+        action="is_purchase_order_line_action"
+    />
+    <menuitem 
+        id="is_purchase_affaire_menu" 
+        sequence="900" 
+        name="Affaires"
+        action="is_affaire_action" 
+        parent="purchase.menu_procurement_management" 
+    />
+    <menuitem 
+        id="is_modele_commande_menu" 
+        sequence="800" 
+        name="Modèles de commandes"
+        action="is_modele_commande_action" 
+        parent="purchase.menu_procurement_management" 
+    />
+
+    <!-- Achats / Configuration -->
+    <menuitem 
+        id="is_famille_purchase_menu" 
+        sequence="900" 
+        name="Famille article"
+        action="is_famille_action" 
+        parent="purchase.menu_product_in_config_purchase" 
+    />
+    <menuitem 
+        id="is_sous_famille_purchase_menu" 
+        sequence="910" 
+        name="Sous-famille article"
+        action="is_sous_famille_action" 
+        parent="purchase.menu_product_in_config_purchase" 
+    />
+    <menuitem 
+        id="is_config_demande_de_prix_menu" 
+        sequence="920" 
+        name="Demande de prix"
+        parent="purchase.menu_purchase_config" 
+    />
+    <menuitem 
+        id="is_mois_trimestre_menu" 
+        sequence="10" 
+        name="Mois / Trimestre"
+        action="is_mois_trimestre_action" 
+        parent="is_config_demande_de_prix_menu" 
+    />
+    <menuitem 
+        id="is_config_ligne_commande_achat_menu" 
+        sequence="930" 
+        name="Lignes de commandes"
+        parent="purchase.menu_purchase_config" 
+    />
+    <menuitem 
+        id="is_finition_menu" 
+        sequence="10" 
+        name="Finitions"
+        action="is_finition_action" 
+        parent="is_config_ligne_commande_achat_menu" 
+    />
+    <menuitem 
+        id="is_traitement_menu" 
+        sequence="20" 
+        name="Traitements"
+        action="is_traitement_action" 
+        parent="is_config_ligne_commande_achat_menu" 
+    />
+
+
+
+    <!-- Facturation -->
+    <menuitem 
+        id="is_account_move_line_menu" 
+        sequence="900" 
+        name="Lignes des factures"
+        action="is_account_move_line_action" 
+        parent="account.menu_finance_payables" 
+    />
+
+
+    <!-- Facturation / Client -->
+    <menuitem
+        id="is_suivi_facturation_mensuel_menu"
+        name="Suivi facturation mensuel"
+        parent="account.menu_finance_receivables"
+        sequence="800"
+        action="is_suivi_facturation_mensuel_action"
+    />
+    <menuitem
+        id="is_envoi_facture_menu"
+        name="Envoi de factures"
+        parent="account.menu_finance_receivables"
+        sequence="805"
+        action="is_envoi_facture_action"
+    />
+    <menuitem
+        id="is_suivi_retard_paiement_menu"
+        name="Suivi retard paiement"
+        parent="account.menu_finance_receivables"
+        sequence="810"
+        action="is_suivi_retard_paiement_action"
+    />
+    <menuitem
+        id="is_suivi_partiellemnt_regle_menu"
+        name="Suivi paiement RG"
+        parent="account.menu_finance_receivables"
+        sequence="820"
+        action="is_suivi_partiellemnt_regle_action"
+    />
+    <menuitem
+        id="is_relance_facture_menu"
+        name="Relance factures"
+        parent="account.menu_finance_receivables"
+        sequence="830"
+        action="is_relance_facture_action"
+    />
+
+
+
+
+
+    <menuitem
+        id="is_suivi_reste_a_facturer_menu"
+        name="Suivi RG 5% à facturer"
+        parent="account.menu_finance_receivables"
+        sequence="840"
+        action="is_suivi_reste_a_facturer_action"
+    />
+    <menuitem
+        id="is_export_compta_vente_menu"
+        name="Export Compta Vente"
+        parent="account.menu_finance_receivables"
+        sequence="910"
+        action="is_export_compta_vente_action"
+    />
+
+
+    <!-- Facturation / Fournisseur -->
+    <menuitem
+        id="is_preparation_facture_menu"
+        name="Préparation facture"
+        parent="account.menu_finance_payables"
+        sequence="910"
+        action="is_preparation_facture_action"
+    />
+    <menuitem
+        id="is_export_compta_achat_menu"
+        name="Export Compta Achat"
+        parent="account.menu_finance_payables"
+        sequence="920"
+        action="is_export_compta_achat_action"
+    />
+    <menuitem
+        id="is_traite_menu"
+        name="Traites"
+        parent="account.menu_finance_payables"
+        sequence="930"
+        action="is_traite_action"
+    />
+    <menuitem
+        id="is_suivi_paiement_fournisseur_menu"
+        name="Suivi paiement fournisseur"
+        parent="account.menu_finance_payables"
+        sequence="940"
+        action="is_suivi_paiement_fournisseur_action"
+    />
+
+
+
+
+    
+
+
+
+    <!-- Facturation / Courrier -->
+    <menuitem
+        id="is_courrier_expedie_menu"
+        name="Courrier"
+        parent="account.menu_finance"
+        sequence="4"
+        action="is_courrier_expedie_action"
+    />
+
+
+
+    <!-- Facturation / Suivi de trésorerie -->
+    <menuitem
+        id="is_suivi_tresorerie_menu"
+        name="Suivi de trésorerie"
+        parent="account.menu_finance"
+        sequence="5"
+        action="is_suivi_tresorerie_action"
+    />
+
+
+
+
+
+
+    <!-- Chantiers -->
+    <menuitem 
+        id="is_chantier_top_menu" 
+        sequence="136" 
+        name="Chantiers"
+    />
+    <menuitem
+        id="is_chantier_main_menu"
+        name="Chantiers"
+        parent="is_chantier_top_menu"
+        sequence="10"
+    />
+    <menuitem
+        id="is_planning_chantier_menu"
+        name="Planning des chantiers"
+        parent="is_chantier_top_menu"
+        sequence="10"
+        action="is_planning_chantier_action"
+    />
+    <menuitem
+        id="is_chantier_menu"
+        name="Chantiers"
+        parent="is_chantier_top_menu"
+        sequence="20"
+        action="is_chantier_action"
+    />
+    <menuitem
+        id="is_chantier_alerte_menu"
+        name="Alertes"
+        parent="is_chantier_top_menu"
+        sequence="30"
+        action="is_chantier_alerte_action"
+    />
+    <menuitem
+        id="is_fermeture_menu"
+        name="Fermetures"
+        parent="is_chantier_top_menu"
+        sequence="40"
+        action="is_fermeture_action"
+    />
+    <menuitem
+        id="is_chantier_table_menu"
+        name="Tables"
+        parent="is_chantier_top_menu"
+        sequence="90"
+    />
+    <menuitem
+        id="is_chantier_nature_travaux_menu"
+        name="Nature des travaux"
+        parent="is_chantier_table_menu"
+        sequence="10"
+        action="is_nature_travaux_action"
+    />
+    <menuitem
+        id="is_equipe_menu"
+        name="Equipes"
+        parent="is_chantier_table_menu"
+        sequence="20"
+        action="is_equipe_action"
+    />
+
+
+    <!-- Paramètres / Utilisateurs et sociétés -->
+    <menuitem
+        id="is_mem_var_menu"
+        name="Variables utilisateurs"
+        parent="base.menu_users"
+        sequence="900"
+        action="is_mem_var_action"
+    />
+
+
+    <!--  -->
+
+    
+
+
+    <!-- Déplacement des menus inutiles -->
+    <menuitem id="mail.menu_root_discuss"     parent="base.menu_custom" sequence="900"/>
+    <menuitem id="utm.menu_link_tracker_root" parent="base.menu_custom" sequence="901"/>
+</odoo>

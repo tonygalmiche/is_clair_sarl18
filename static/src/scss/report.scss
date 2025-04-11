@@ -1,0 +1,86 @@
+.clair_report .o_report_layout_boxed .page > table:not(.o_main_table) tr td:last-child {
+    background-color: white;
+}
+.clair_report h2{
+    font-size:14pt;
+    font-weight: bolder;
+}
+.clair_report h3{
+    font-size:12pt;
+    font-weight: bolder;
+}
+.clair_report h4{
+    font-size:11pt;
+    font-weight: bolder;
+}
+.clair_report .o_boxed_footer, .o_boxed_header, .o_report_layout_boxed{
+    font-size:11pt;
+}
+.clair_report .colisage th{
+    font-size:11pt;
+}
+.clair_report .colisage td{
+    font-size:11pt;
+    padding: 0;
+    padding-left:0.3em;
+    padding-right:0.3em;
+}
+// .clair_report .o_report_layout_boxed table tbody tr.o_line_section td, .clair_report .o_report_layout_boxed table tbody tr.o_line_note td, .clair_report .o_report_layout_boxed table tbody tr.is-subtotal td {
+//     border-top: 0px solid #495057;
+//     border-bottom: 0px solid #495057;
+// }
+
+.clair_report table tbody tr.o_line_section td, .clair_report table tbody tr.o_line_note td, .clair_report table tbody tr.is-subtotal td {
+    border-top: 0;
+    border-bottom: 0;
+}
+
+
+.clair_report .table-sm .o_line_note td {
+    padding: 0;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    // background-color: Gainsboro;
+}
+
+.clair_report .table-sm th, .table-sm td {
+    padding: 0.1rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+}
+
+.clair_report .table-sm th {
+    padding: 0.1rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    white-space: nowrap;
+}
+
+.o_report_layout_boxed table thead tr th {
+    text-transform: none;
+}
+
+.clair_report .situation{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size:18pt;
+    font-weight: bolder;
+    border: 2px solid;
+    text-align: center;
+}
+  
+.planning_chantier{
+    font-size: 7pt;
+}
+
+.planning_chantier td{
+    font-size: 7pt;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.planning_chantier th{
+    font-size: 6pt;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}

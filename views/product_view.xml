@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--is.famille -->
+    <record id="is_famille_form_view" model="ir.ui.view">
+        <field name="name">is_famille_from_view</field>
+        <field name="model">is.famille</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <style>
+                        .o_form_label{
+                            white-space: nowrap;
+                        }
+                    </style>
+                    <group>
+                        <field name="name" />
+                        <field name="sous_famille_ids" widget="many2many_tags"/>
+                    </group>
+                    <group string="Champs à afficher dans la fiche article">
+                        <field name="is_longueur"/>
+                        <field name="is_largeur_utile"/>
+                        <field name="is_surface_panneau"/>
+                        <field name="is_surface_palette"/>
+                        <field name="is_poids"/>
+                        <field name="is_poids_rouleau"/>
+                        <field name="is_ondes"/>
+                        <field name="is_resistance_thermique"/>
+                        <field name="is_lambda"/>
+                        <field name="is_lg_mini_forfait"/>
+                        <field name="is_forfait_coupe_id"/>
+                        <field name="is_conditionnement"/>
+                        <field name="is_ordre_tri"/>
+                        <field name="is_sous_article_ids"/>
+                        <field name="is_eco_contribution"/>
+                    </group>
+                    <group string="Autre">
+                        <field name="colisage"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_famille_tree_view">
+        <field name="name">is_famille_tree_view</field>
+        <field name="model">is.famille</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="sous_famille_ids" widget="many2many_tags"/>
+                <field name="is_longueur"             optional="show" widget="boolean_toggle"/>
+                <field name="is_largeur_utile"        optional="show" widget="boolean_toggle"/>
+                <field name="is_surface_panneau"      optional="show" widget="boolean_toggle"/>
+                <field name="is_surface_palette"      optional="show" widget="boolean_toggle"/>
+                <field name="is_poids"                optional="show" widget="boolean_toggle"/>
+                <field name="is_poids_rouleau"        optional="show" widget="boolean_toggle"/>
+                <field name="is_ondes"                optional="show" widget="boolean_toggle"/>
+                <field name="is_resistance_thermique" optional="show" widget="boolean_toggle"/>
+                <field name="is_lambda"               optional="show" widget="boolean_toggle"/>
+                <field name="is_lg_mini_forfait"      optional="show" widget="boolean_toggle"/>
+                <field name="is_forfait_coupe_id"     optional="show" widget="boolean_toggle"/>
+                <field name="is_conditionnement"      optional="show" widget="boolean_toggle"/>
+                <field name="is_ordre_tri"            optional="show" widget="boolean_toggle"/>
+                <field name="is_sous_article_ids"     optional="show" widget="boolean_toggle"/>
+                <field name="colisage"                optional="show" widget="boolean_toggle"/>
+                <field name="is_eco_contribution"     optional="show" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_famille_search_view" model="ir.ui.view">
+        <field name="name">is_famille_search_view</field>
+        <field name="model">is.famille</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+    <record id="is_famille_action" model="ir.actions.act_window">
+        <field name="name">Famille article</field>
+        <field name="res_model">is.famille</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <!--is.sous.famille -->
+    <record id="is_sous_famille_form_view" model="ir.ui.view">
+        <field name="name">is_sous_famille_from_view</field>
+        <field name="model">is.sous.famille</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="famille_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_sous_famille_tree_view">
+        <field name="name">is_sous_famille_tree_view</field>
+        <field name="model">is.sous.famille</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="famille_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_sous_famille_search_view" model="ir.ui.view">
+        <field name="name">is_sous_famille_search_view</field>
+        <field name="model">is.sous.famille</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="famille_ids"/>
+            </search>
+        </field>
+    </record>
+    <record id="is_sous_famille_action" model="ir.actions.act_window">
+        <field name="name">Sous-famille article</field>
+        <field name="res_model">is.sous.famille</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <!-- product.template -->
+    <record id="is_product_template_form_view" model="ir.ui.view">
+        <field name="name">is_product_template_form_view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet[1]" position="inside">
+                <style>
+                    .o_form_view .o_form_sheet_bg > .o_form_sheet{
+                        max-width: 1800px;
+                    }
+                    .o_form_label{
+                        white-space: nowrap;
+                    }
+                </style>
+            </xpath>
+
+
+            <button name="action_open_label_layout" position="replace">
+                <button string="Evolution du prix d'achat" type="object" name="evolution_prix_achat_action"/>
+            </button>
+
+
+           <div name="options" position="inside" >
+                <span class="d-inline-block">
+                    <field name="is_tache"/>
+                    <label for="is_tache"/>
+                </span>
+            </div>
+<!--             
+           <field name="detailed_type" position="after">
+                <field name="is_fournisseur_id" attrs="{'invisible':[('is_fournisseur_id','=',False)]}"/>
+                <field name="is_famille_id"/>
+                <field name="is_sous_famille_id"  domain="[('famille_ids', 'in', is_famille_id)]"/>
+
+                <field name="is_longueur_vsb"             invisible="1"/>
+                <field name="is_largeur_utile_vsb"        invisible="1"/>
+                <field name="is_surface_panneau_vsb"      invisible="1"/>
+                <field name="is_surface_palette_vsb"      invisible="1"/>
+                <field name="is_poids_vsb"                invisible="1"/>
+                <field name="is_poids_rouleau_vsb"        invisible="1"/>
+                <field name="is_ondes_vsb"                invisible="1"/>
+                <field name="is_resistance_thermique_vsb" invisible="1"/>
+                <field name="is_lambda_vsb"               invisible="1"/>
+                <field name="is_lg_mini_forfait_vsb"      invisible="1"/>
+                <field name="is_forfait_coupe_id_vsb"     invisible="1"/>
+                <field name="is_conditionnement_vsb"      invisible="1"/>
+                <field name="is_ordre_tri_vsb"            invisible="1"/>
+                <field name="is_eco_contribution_vsb"     invisible="1"/>
+                <field name="is_sous_article_ids_vsb"     invisible="1"/>
+
+                <field name="is_longueur"             attrs="{'invisible':[('is_longueur_vsb','=',False)]}"/>
+                <field name="is_largeur_utile"        attrs="{'invisible':[('is_largeur_utile_vsb','=',False)]}"/>
+                <field name="is_surface_panneau"      attrs="{'invisible':[('is_surface_panneau_vsb','=',False)]}"/>
+                <field name="is_surface_palette"      attrs="{'invisible':[('is_surface_palette_vsb','=',False)]}"/>
+                <field name="is_poids"                attrs="{'invisible':[('is_poids_vsb','=',False)]}"/>
+                <field name="is_poids_rouleau"        attrs="{'invisible':[('is_poids_rouleau_vsb','=',False)]}"/>
+                <field name="is_ondes"                attrs="{'invisible':[('is_ondes_vsb','=',False)]}"/>
+                <field name="is_resistance_thermique" attrs="{'invisible':[('is_resistance_thermique_vsb','=',False)]}"/>
+                <field name="is_lambda"               attrs="{'invisible':[('is_lambda_vsb','=',False)]}"/>
+                <field name="is_lg_mini_forfait"      attrs="{'invisible':[('is_lg_mini_forfait_vsb','=',False)]}"/>
+                <field name="is_forfait_coupe_id"     attrs="{'invisible':[('is_forfait_coupe_id_vsb','=',False)]}"/>
+                <field name="is_conditionnement"      attrs="{'invisible':[('is_conditionnement_vsb','=',False)]}"/>
+                <field name="is_ordre_tri"            attrs="{'invisible':[('is_ordre_tri_vsb','=',False)]}"/>
+                <field name="is_eco_contribution"     attrs="{'invisible':[('is_eco_contribution_vsb','=',False)]}"/>
+                <field name="is_sous_article_ids"     attrs="{'invisible':[('is_sous_article_ids_vsb','=',False)]}">
+                    <list editable="bottom">
+                        <field name="product_id"/>
+                        <field name="quantite"/>
+                    </list>
+                </field>
+            </field> -->
+        </field>
+    </record> 
+    <record id="is_product_template_tree_view" model="ir.ui.view">
+        <field name="name">is_product_template_tree_view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+           <field name="default_code" position="after">
+                <field name="is_fournisseur_id"        optional="show"/>
+                <field name="is_famille_id"            optional="show"/>
+                <field name="is_sous_famille_id"       optional="show"/>
+                <field name="is_longueur"              optional="show"/>
+                <field name="is_largeur_utile"         optional="show"/>
+                <field name="is_surface_panneau"       optional="hide"/>
+                <field name="is_surface_palette"       optional="hide"/>
+                <field name="is_poids"                 optional="hide"/>
+                <field name="is_poids_rouleau"         optional="hide"/>
+                <field name="is_ondes"                 optional="hide"/>
+                <field name="is_resistance_thermique"  optional="hide"/>
+                <field name="is_lambda"                optional="hide"/>
+                <field name="is_lg_mini_forfait"       optional="hide"/>
+                <field name="is_forfait_coupe_id"      optional="hide"/>
+                <field name="is_conditionnement"       optional="hide"/>
+                <field name="is_ordre_tri"             optional="hide"/>
+                <field name="is_tache"                 optional="hide"/>
+                <field name="property_account_expense_id" optional="hide"/>
+                <field name="property_account_income_id"  optional="hide"/>
+            </field>
+        </field>
+    </record> 
+
+    <record id="is_account_product_template_view_tree" model="ir.ui.view">
+        <field name="name">is_account_product_template_view_tree</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="account.product_template_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="activity_exception_decoration" position="after">
+                <field name="property_account_expense_id" optional="show"/>
+                <field name="property_account_income_id"  optional="show"/>
+            </field>
+        </field>
+    </record> 
+
+    <record id="is_product_template_search_view" model="ir.ui.view">
+        <field name="name">is_product_template_search_view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+           <field name="name" position="after">
+                <field name="is_fournisseur_id"/>
+                <field name="is_famille_id"/>
+                <field name="is_sous_famille_id"/>
+                <field name="is_tache"/>
+            </field>
+            <filter name="type" position="before">
+                <filter string="Fournisseur"  name="is_fournisseur_id"  context="{'group_by':'is_fournisseur_id'}"/>
+                <filter string="Famille"      name="is_famille_id"      context="{'group_by':'is_famille_id'}"/>
+                <filter string="Sous-famille" name="is_sous_famille_id" context="{'group_by':'is_sous_famille_id'}"/>
+            </filter>
+        </field>
+    </record> 
+
+    <!-- Vue tree par défaut -->
+    <record id="purchase.product_normal_action_puchased" model="ir.actions.act_window">
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,kanban,form,activity</field>
+    </record>
+    <record id="sale.product_template_action" model="ir.actions.act_window">
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,kanban,form,activity</field>
+        <field name="view_id" ref=""/>
+    </record>
+    <record id="product.product_template_action" model="ir.actions.act_window">
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,kanban,form,activity</field>
+    </record>
+    <record id="account.product_product_action_sellable" model="ir.actions.act_window">
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,kanban,form,activity</field>
+    </record>
+    <record id="product.product_template_action_all" model="ir.actions.act_window">
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,kanban,form,activity</field>
+    </record>
+    <record id="account.product_product_action_purchasable" model="ir.actions.act_window">
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,kanban,form,activity</field>
+    </record>
+
+
+
+    <record model="ir.ui.view" id="is_product_search_tree_view">
+        <field name="name">is_product_search_tree_view</field>
+        <field name="model">product.product</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="default_code" />
+                <field name="name" />
+                <field name="is_fournisseur_id" />
+                <field name="is_famille_id" />
+                <field name="is_sous_famille_id" />
+                <field name="is_longueur" />
+                <field name="is_largeur_utile" />
+            </list>
+        </field>
+    </record>
+
+
+
+
+</odoo>

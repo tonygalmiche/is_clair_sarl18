@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- is.import.clair -->
+    <record id="is_import_clair_form" model="ir.ui.view">
+        <field name="name">is.import.clair.form</field>
+        <field name="model">is.import.clair</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button
+                        name="importation_excel_action"
+                        type="object"
+                        string="Importer le fichier Excel"
+                    />
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="file_ids" widget="many2many_binary"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_import_clair_tree" model="ir.ui.view">
+        <field name="name">is.import.clair.tree</field>
+        <field name="model">is.import.clair</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_import_clair_search" model="ir.ui.view">
+        <field name="name">is.import.clair.search</field>
+        <field name="model">is.import.clair</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_import_clair_action" model="ir.actions.act_window">
+        <field name="name">Import Clair</field>
+        <field name="res_model">is.import.clair</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+    </record>
+    <menuitem
+        id="is_import_clair_menu"
+        name="Import Clair"
+        parent="base.menu_custom"
+        sequence="999"
+        action="is_import_clair_action"
+
+    />
+
+
+</odoo>

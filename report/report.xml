@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <!-- Planning des chantiers -->
+        <record id="is_chantier_paperformat" model="report.paperformat">
+            <field name="name">Planning des chantiers</field>
+            <field name="default" eval="True" />
+            <field name="format">A3</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">14</field>
+            <field name="margin_bottom">15</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">9</field>
+            <field name="dpi">90</field>
+        </record>
+        <record id="is_chantier_reports" model="ir.actions.report">
+            <field name="name">Planning des chantiers</field>
+            <field name="model">is.chantier</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">is_clair_sarl18.is_chantier_report</field>
+            <field name="report_file">is_clair_sarl18.is_chantier_report</field>
+            <field name="binding_model_id" ref="model_is_chantier"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="is_clair_sarl18.is_chantier_paperformat"/>
+        </record>
+
+        <!-- Retenue de garantie -->
+        <record id="retenue_de_garantie_reports" model="ir.actions.report">
+            <field name="name">Retenue de garantie</field>
+            <field name="model">sale.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">is_clair_sarl18.retenue_de_garantie_report</field>
+            <field name="report_file">is_clair_sarl18.retenue_de_garantie_report</field>
+            <field name="binding_model_id" ref="model_sale_order"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="base.paperformat_euro"/>
+        </record>
+    </data>
+</odoo>

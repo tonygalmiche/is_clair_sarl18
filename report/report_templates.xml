@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="is_external_layout_boxed" name="is_external_layout_boxed" inherit_id="web.external_layout_boxed">
+        <xpath expr="//div[hasclass('o_boxed_header')]" position="replace">
+            <style>
+                .o_boxed_header {
+                    border-bottom: 0;
+                }
+                .o_boxed_footer {
+                    border-top: 0;
+                }
+            </style>
+            <div class="o_boxed_header">
+                <div class="text-center">
+                    <img src="/is_clair_sarl/static/src/img/entete-correspondance-clair.png"/>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[3]" position="replace">
+            <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout" style="border-top:0">
+                <div class="text-center">
+                    <img src="/is_clair_sarl/static/src/img/bas-de-page-correspondance-clair.png" style="max-width:190mm"/>
+                    <div t-if="report_type == 'pdf'">
+                        Page: <span class="page"/> / <span class="topage"/>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- purchase.order  -->
+    <record model="ir.ui.view" id="is_taches_associees_tree_view">
+        <field name="name">is_taches_associees_tree_view</field>
+        <field name="model">purchase.order</field>
+        <field name="arch" type="xml">
+            <list>
+                <button name="view_order_action" type="object" icon="fa-search-plus" title="Commande"/>
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+
+    <!-- sale.order  -->   
+    <record id="actualiser_total_facture_action_server" model="ir.actions.server">
+        <field name="name">Actualiser total facturé</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">records._compute_is_total_facture()</field>
+    </record>
+    <!-- <record id="view_sale_order_form_inherit" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet[1]" position="inside">
+                <style>
+                    .o_form_view .o_form_sheet_bg > .o_form_sheet{
+                        max-width: 1800px;
+                    }
+                    .modal-lg, .modal-xl {
+                        max-width: 1400px;
+                    }
+                </style>
+            </xpath>
+            <xpath expr="//button[@name='287'][1]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='287'][1]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send'][1]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send'][2]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send'][3]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send'][4]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <field name="client_order_ref" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <button name="action_draft" position="after">
+                <button name="modifier_pourcentage_action" string="Modifier % facturable" type="object"/>
+                <button name="en_cours_facturable_action"  string="En cours facturable"   type="object"/>
+            </button>
+            <field name="partner_shipping_id" position="after">
+                <field name="is_affaire_id"/>
+                <field name="is_contact_facture_id"/>
+                <field name="client_order_ref"/>
+                <field name="is_affichage_pdf"/>
+                <field name="is_commande_soldee"/>
+            </field>
+            <xpath expr="//group[@name='order_details']/field[@name='payment_term_id']" position="after">
+                <field name="is_date_pv"/>
+                <field name="is_pv_ids" widget="many2many_binary"/>
+                <field name="is_taux_retenue_de_garantie" attrs="{'invisible':[('is_retenue_de_garantie','=',0)]}"/>
+                <field name="is_retenue_de_garantie"      attrs="{'invisible':[('is_retenue_de_garantie','=',0)]}"/>
+                <field name="is_rg_deduite"               attrs="{'invisible':[('is_retenue_de_garantie','=',0)]}"/>
+                <field name="is_compte_prorata"           attrs="{'invisible':[('is_compte_prorata','=',0)]}"/>
+                <field name="is_taux_compte_prorata"      attrs="{'invisible':[('is_taux_compte_prorata','=',0)]}"/>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree" position="attributes">
+                <attribute name="editable"></attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/form/group/group/field[@name='price_unit']" position="after">
+                <field name="is_unite"/>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/form/group/group/field[@name='tax_id']" position="after">
+                <field name="price_subtotal" readonly="1"/>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/form/group/group/field[@name='analytic_tag_ids']" position="before">
+                <field name="order_id" readonly="1"/>
+                <field name="is_section_id"/>
+                <field name="is_facturable_pourcent"/>
+                <field name="is_facturable"/>
+                <field name="is_deja_facture"/>
+                <field name="is_a_facturer"/>
+            </xpath>
+
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='product_id']" position="before">
+                <field name="is_section_id" readonly="1" optional="hide"/>
+            </xpath>
+
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
+                <field name="is_unite"  optional="show"/>
+            </xpath>
+
+
+
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                <field name="is_prix_achat" optional="hide"/>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
+                <field name="is_facturable_pourcent" readonly="1" optional="hide"/>
+                <field name="is_facturable"    optional="hide" sum="Total"/>
+                <field name="is_deja_facture"  optional="hide" sum="Total"/>
+                <field name="is_a_facturer"    optional="hide" sum="Total"/>
+                <field name="is_masquer_ligne" optional="hide" widget="boolean_toggle"/>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']" position="after">
+                <page string="Import devis xlsx">
+                    <group string="Fichier à importer">
+                        <field name="is_import_excel_ids" widget="many2many_binary" nolabel="1" attrs="{'readonly':[('state','not in',['draft','sent'])]}"/>
+                    </group>
+                    <group>
+                        <button 
+                            name="import_fichier_xlsx" 
+                            string="Importer le devis" type="object" 
+                            attrs="{'invisible':[('state','not in',['draft','sent'])]}"
+                        />
+                    </group>
+                    <group string="Alertes importation" attrs="{'invisible':[('is_import_alerte','=',False)]}" >
+                        <div style="background:orange;font-weight:bold;padding-left:5pt">
+                            <field name="is_import_alerte" nolabel="1"/>
+                        </div>
+                    </group>
+                    <group string="Fonctionnement"/>
+                    <div style="background-color:#F2F2F2">
+                        Colonne A : Description<br />
+                        Colonne C : Quantité<br />
+                        Colonne E : Prix unitaire<br />
+                        Colonne H : SECTION, OPTION, NOTE ou Référence interne d'un article<br />
+                        Colonne I : Remise (%)<br />
+                        Colonne J : Prix d'achat<br />
+                        Colonne K : x pour masquer la ligne sur le PDF<br />
+                    </div>
+                   
+                </page>
+                <page string="Facturation">
+
+                    <group string="Sections">
+                        <field name="is_section_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="sequence"/>
+                                <button 
+                                    name="lignes_section_action" 
+                                    type="object" icon="fa-list" 
+                                    title="Lignes de la section"
+                                />
+                                <field name="section"/>
+                                <field name="montant" sum="Total"/>
+                                <field name="facturable_pourcent"/>
+                                <field name="facturable_pourcent_calcule"/>
+                                <field name="facturable"   sum="Total"/>
+                                <field name="deja_facture" sum="Total"/>
+                                <field name="a_facturer"   sum="Total"/>
+                                <button 
+                                    name="option_section_action" 
+                                    type="object" icon="fa-refresh" 
+                                    title="Option/Section"
+                                />
+                                <field name="option"  readonly="1"/>
+
+                            </list>
+                        </field>
+                    </group>        
+                    <group string="Factures" states="sale">
+                        <field name="is_note_facturation"/>
+                        <field name="is_a_facturer"/>
+                        <field name="is_date_facture"/>
+                        <field name="is_numero_facture" />
+                        <field name="is_situation"/>
+                        <button
+                            name="generer_facture_action"
+                            type="object"
+                            string="Générer nouvelle facture"
+                        />
+
+
+                    </group>
+                    <group>
+                        <field name="is_invoice_ids" nolabel="1">
+                            <list>
+                                <button title="Facture" name="acceder_facture_action" type="object" icon="fa-search-plus"/>
+                                <field name="is_situation"/>
+                                <field name="name"/>
+                                <field name="move_type"/>
+                                <field name="invoice_date"/>
+                                <field name="invoice_date_due"/>
+                                <field name="is_a_facturer" sum="Total"/>
+                                <field name="amount_untaxed_signed" sum="Total" string="Montant HT"/>
+                                <field name="is_taux_retenue_de_garantie" optional="hide"/>
+                                <field name="is_retenue_de_garantie"      optional="hide"/>
+                                <field name="is_rg_deduite"               optional="hide"/>                
+                                <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')" decoration-success="payment_state in ('paid', 'reversed')" attrs="{'invisible': [('payment_state', 'in', ('invoicing_legacy'))]}" optional="show"/>
+                                <field name="state" widget="badge" decoration-success="state == 'posted'" decoration-info="state == 'draft'" optional="show"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree" position="attributes">
+                <attribute name="limit">1000</attribute>
+            </xpath>
+        </field>
+    </record> -->
+    <record id="is_view_quotation_tree" model="ir.ui.view">
+        <field name="name">is_view_quotation_tree</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="is_affaire_id" optional="show" class="white_space_normal"/>
+            </field>
+           <field name="invoice_status" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="user_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+           </field>
+           <field name="team_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="activity_ids" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="tag_ids" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+        </field>
+    </record>
+    <record id="is_view_order_tree" model="ir.ui.view">
+        <field name="name">is_view_order_tree</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="is_affaire_id"   optional="show" class="white_space_normal"/>
+                <field name="is_date_pv"      optional="show"/>
+                <field name="is_echeance_1an" optional="show" widget="remaining_days"/>
+                <field name="is_pv_ids"       optional="hide" widget="many2many_binary"/>
+            </field>
+            <field name="amount_total" position="after">
+                <field name="is_total_facture"    sum="Total" widget="monetary" decoration-bf="1" optional="show"/>
+                <field name="is_reste_a_facturer" sum="Total" widget="monetary" decoration-bf="1" optional="show"/>
+                <field name="is_a_facturer"               optional="show" sum="Total"/>
+                <field name="is_a_facturer_abs"           invisible="1"/>
+                <field name="is_pourcent_a_facturer"      optional="show"/>
+                <field name="is_taux_retenue_de_garantie" optional="hide"/>
+                <field name="is_retenue_de_garantie"      optional="hide" sum="Total"/>
+                <field name="is_rg_deduite"               optional="hide" />
+                <field name="is_compte_prorata"           optional="hide" sum="Total"/>
+                <field name="is_taux_compte_prorata"      optional="hide"/>
+                <field name="is_note_facturation"         optional="show" class="white_space_normal"/>
+            </field>
+            <field name="user_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+           </field>
+           <field name="team_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+           <field name="activity_ids" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="tag_ids" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+        </field>
+    </record>
+    <record id="is_view_sales_order_filter" model="ir.ui.view">
+        <field name="name">is_view_sales_order_filter</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="is_affaire_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="sale.action_orders_to_invoice" model="ir.actions.act_window">
+        <field name="domain">[
+                ('invoice_status','=','to invoice'),
+                ('is_commande_soldee','=',False),
+                ('is_a_facturer_abs','&gt;',1),
+            ]
+        </field>
+    </record>
+
+
+    <!-- Suivi RG 5% à facturer -->
+    <record id="is_suivi_reste_a_facturer_tree_view" model="ir.ui.view">
+        <field name="name">is_suivi_reste_a_facturer_tree_view</field>
+        <field name="model">sale.order</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <list create="false" default_order="name">
+                <field name="name" decoration-bf="1"/>
+                <field name="date_order"      optional="show" string="Date" widget="date" />
+                <field name="partner_id"      optional="show" widget="many2one_clickable"/>
+                <field name="is_affaire_id"   optional="show" widget="many2one_clickable"/>
+                <field name="is_situation"    optional="show" string="Situation"/>
+                <field name="is_date_pv"      optional="show"/>
+                <field name="is_echeance_1an" optional="show" widget="remaining_days"/>
+                <field name="amount_untaxed"  optional="hide" string="Montant HT"  sum="Total" widget="monetary" />
+                <field name="amount_tax"      optional="hide" string="Montant TVA" sum="Total" widget="monetary"/>
+                <field name="amount_total"    optional="show" string="Montant TTC" sum="Total" widget="monetary" decoration-bf="1"/>
+                <field name="is_total_facture"       optional="show" sum="Total" widget="monetary" decoration-bf="1"/>
+                <field name="is_reste_a_facturer"    optional="show" sum="Total" widget="monetary" decoration-bf="1"/>
+                <field name="is_pourcent_a_facturer" optional="show"/>
+                <field name="is_taux_retenue_de_garantie" string="RG" optional="show"/>
+                <field name="currency_id"    invisible="1"/>
+                <field name="invoice_status" optional="hide" decoration-success="invoice_status == 'invoiced'" decoration-info="invoice_status == 'to invoice'" decoration-warning="invoice_status == 'upselling'" widget="badge"/>
+                <field name="state"          invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_suivi_reste_a_facturer_action" model="ir.actions.act_window">
+        <field name="name">Suivi RG 5% à facturer</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="view_id" ref="is_clair_sarl18.is_suivi_reste_a_facturer_tree_view"/>
+        <field name="domain">[
+            ('is_total_facture', '&gt;', 0),
+            ('is_reste_a_facturer', '&gt;', 0),
+            ('state', '=', 'sale'),
+            ('is_commande_soldee', '!=', True),
+            ('is_taux_retenue_de_garantie', '&gt;', 0),
+        ]
+        </field>
+        <field name="context">{}</field>
+        <field name="limit">500</field>
+    </record>
+
+    <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
+        <field name="domain">[('state', 'not in', ('sale', 'done'))]</field>
+    </record>
+    <record id="sale.action_orders" model="ir.actions.act_window">
+        <field name="domain">[('state', 'not in', ('draft', 'sent', 'cancel')),('is_commande_soldee','=',False)]</field>
+    </record>
+    <record id="is_commande_soldee_action" model="ir.actions.act_window">
+        <field name="name">Commandes soldées</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,kanban,form,calendar,pivot,graph,activity</field>
+        <field name="domain">[('state', 'not in', ('draft', 'sent', 'cancel')),('is_commande_soldee','=',True)]</field>
+    </record>
+
+
+    <!-- sale.order.line -->
+    <record id="is_view_sales_order_line_filter" model="ir.ui.view">
+        <field name="name">is_view_sales_order_line_filter</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale.view_sales_order_line_filter"/>
+        <field name="arch" type="xml">
+            <filter name="my_sales_order_lines" position="replace">
+                <filter string="En cours facturable" name="en_cours_facturable" domain="[('is_a_facturer','!=', 0)]"/>
+            </filter>
+            <filter name="salesperson" position="replace">
+                <filter string="Section" name="group_by_section" domain="[]" context="{'group_by':'is_section_id'}"/>
+            </filter>
+        </field>
+    </record>
+
+
+    <!-- <record id="is_view_order_line_tree" model="ir.ui.view">
+        <field name="name">is_view_order_line_tree</field>
+        <field name="model">sale.order.line</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" decoration-info="display_type=='line_note'" decoration-warning="display_type=='line_section'">
+                <field name="order_id"         optional="hide" widget="many2one_clickable"/>
+                <field name="is_section_id"    optional="hide" widget="many2one_clickable"/>
+                <field name="order_partner_id" optional="hide" widget="many2one_clickable"/>
+                <field name="name"            readonly="1"/>
+                <field name="product_uom_qty" readonly="1" attrs="{'invisible': [('display_type', '!=', False)]}"/>
+                <field name="price_unit"      readonly="1" attrs="{'invisible': [('display_type', '!=', False)]}"/>
+                <field name="is_facturable_pourcent"       attrs="{'invisible': [('display_type', '!=', False)]}"/>
+                <field name="is_facturable"   sum="Total"  attrs="{'invisible': [('display_type', '!=', False)]}"/>
+                <field name="is_deja_facture" sum="Total"  attrs="{'invisible': [('display_type', '!=', False)]}"/>
+                <field name="is_a_facturer"   sum="Total"  attrs="{'invisible': [('display_type', '!=', False)]}"/>
+                <field name="product_uom_category_id" invisible="1"/>
+                <field name="product_uom" string="Unité"  optional="hide" readonly="1"         attrs="{'invisible': [('display_type', '!=', False)]}"/>
+                <field name="price_subtotal" sum="Total" widget="monetary" string="Montant HT" attrs="{'invisible': [('display_type', '!=', False)]}"/>
+                <field name="display_type" invisible="1"/>
+                <field name="currency_id"  invisible="1"/>
+            </list>
+        </field>
+    </record> -->
+</odoo>

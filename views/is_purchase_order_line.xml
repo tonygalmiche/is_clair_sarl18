@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="is_purchase_order_line_form" model="ir.ui.view">
+        <field name="name">is.purchase.order.line.form</field>
+        <field name="model">is.purchase.order.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="order_id"/>
+                        <field name="is_date"/>
+                        <field name="partner_id"/>
+                        <field name="is_affaire_id"/>
+                        <field name="is_date_livraison"/>
+                        <field name="product_tmpl_id"/>
+                        <field name="description"/>
+                        <field name="product_qty"/>
+                        <field name="product_uom"/>
+                        <field name="price_unit"/>
+                        <field name="price_subtotal"/>
+                        <field name="is_famille_id"/>
+                        <field name="is_sous_famille_id"/>
+                        <field name="is_finition_id"/>
+                        <field name="is_traitement_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_purchase_order_line_tree" model="ir.ui.view">
+        <field name="name">is.purchase.order.line.tree</field>
+        <field name="model">is.purchase.order.line</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="order_id"           optional="show" widget="many2one_clickable" />
+                <field name="is_date"            optional="show" />
+                <field name="partner_id"         optional="show" widget="many2one_clickable" />
+                <field name="is_affaire_id"      optional="hide" widget="many2one_clickable" class="white_space_normal"/>
+                <field name="is_date_livraison"  optional="show"/>
+                <field name="product_tmpl_id"    optional="show" widget="many2one_clickable" class="white_space_normal"/>
+                <field name="description"        optional="hide"/>
+                <field name="product_qty"        optional="show"/>
+                <field name="product_uom"        optional="show"/>
+                <field name="price_unit"         optional="show"/>
+                <field name="price_subtotal"     optional="show" sum="Total"/>
+                <field name="is_famille_id"      optional="hide" class="white_space_normal"/>
+                <field name="is_sous_famille_id" optional="hide" class="white_space_normal"/>
+                <field name="is_finition_id"     optional="hide" class="white_space_normal"/>
+                <field name="is_traitement_id"   optional="hide" class="white_space_normal"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_purchase_order_line_search_view" model="ir.ui.view">
+        <field name="name">is_purchase_order_line_search_view</field>
+        <field name="model">is.purchase.order.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="order_id"/>
+                <field name="partner_id"/>
+                <field name="is_affaire_id"/>
+                <field name="product_tmpl_id"/>
+                <field name="description"/>
+                <field name="is_famille_id"/>
+                <field name="is_sous_famille_id"/>
+                <field name="is_finition_id"/>
+                <field name="is_traitement_id"/>
+            </search>
+        </field>
+    </record>
+    <record id="is_purchase_order_line_pivot" model="ir.ui.view">
+        <field name="name">is_purchase_order_line_pivot</field>
+        <field name="model">is.purchase.order.line</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="partner_id"     type="row"/>
+                <field name="price_subtotal" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="is_purchase_order_line_graph" model="ir.ui.view">
+        <field name="name">is_purchase_order_line_graph</field>
+        <field name="model">is.purchase.order.line</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="partner_id"/>
+                <field name="price_subtotal" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="is_purchase_order_line_price_unit_graph" model="ir.ui.view">
+        <field name="name">is_purchase_order_line_price_unit_graph</field>
+        <field name="model">is.purchase.order.line</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="is_date" interval="day"/>
+                <field name="price_unit" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+
+
+    <record  id="is_purchase_order_line_action" model="ir.actions.act_window">
+        <field name="name">Lignes des commandes</field>
+        <field name="res_model">is.purchase.order.line</field>
+        <field name="limit">100</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="domain">[]</field>
+    </record>
+</odoo>

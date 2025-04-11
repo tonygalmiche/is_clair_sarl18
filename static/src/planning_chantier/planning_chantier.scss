@@ -1,0 +1,154 @@
+.planning_chantier{
+    // color:red;
+    margin:5pt;
+}
+
+.planning_chantier .btn{
+    margin-right:5pt;
+    margin-top:5pt;
+    margin-bottom:5pt;
+}
+
+.planning_chantier .unselectable {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.planning_chantier h2{
+    margin-top:10pt;
+}
+
+
+
+
+// tbody {
+//     display:block;
+//     height:50px;
+//     overflow:auto;
+// }
+// thead, tbody tr {
+//     display:table;
+//     width:100%;
+// }
+// thead {
+//     width: calc( 100% - 1em )
+// }
+// table {
+//     width:400px;
+// }
+
+
+
+
+.planning_chantier table {
+    // height: 85vh;
+    border-collapse: collapse;
+    //border-collapse: separate;
+
+    border: 1px solid black;
+
+
+    border-top: 1px solid black;
+    width: 98%;
+    display: block;
+    overflow-y: scroll;
+    background-color:none;
+
+    // table-layout: fixed;
+    // display: table;
+
+
+}
+
+
+
+.planning_chantier thead {
+    position: sticky;
+    top: 0;
+    // background: #eee;
+    background-color:none;
+}
+
+
+// .planning_chantier table {
+//     table-layout:fixed;
+// }
+// .planning_chantier tbody {
+//     display:block;
+//     height:200px;
+//     overflow-y:scroll;
+// }
+// .planning_chantier thead, .planning_chantier tbody tr {
+//     display:table;
+//     width:100%;
+//     table-layout:fixed;
+// }
+// .planning_chantier thead {
+//     width: calc( 100% - 1em );
+//     display: table;
+// }
+
+
+  
+.planning_chantier tr {
+    background-color:none;
+}
+
+
+
+.planning_chantier td {
+    border:none;
+    border-top: 1px solid gray;
+    padding:0;
+    // padding-left:5px;
+    // padding-right:5px;
+}
+
+.planning_chantier th {
+    text-align: center;
+    border: 1px solid white;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    padding: 0;
+    margin: 0;
+    color:white;
+}
+
+.planning_chantier th div {
+    background-color:black;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+
+
+.planning_chantier .buttons table{
+    border: 0;
+}
+.planning_chantier .buttons td{
+    border: 0;
+}
+
+.planning_chantier .alerte{
+    // color:red;
+    cursor: pointer;
+    font-size:14pt;
+}
+
+.planning_chantier .link{
+    cursor:pointer;
+}
+
+
+
+// .planning_chantier .col1 {
+//     overflow: hidden;
+//     word-break:break-all;
+//     min-width: 7em;
+//     white-space: nowrap;
+//     width: 100px;
+// }

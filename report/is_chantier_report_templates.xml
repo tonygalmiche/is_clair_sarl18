@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="is_chantier_external_layout_standard">
+        <t t-set="company" t-value="res_company"/>
+        <div t-attf-class="header" t-att-style="report_header_style">
+            <div class="row" style="background-color:white">
+                <div class="col-3">
+                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height:10mm;" alt="Logo"/>
+                </div>
+                <div class="col-9 text-right" style="font-size:11pt">
+                    <h2 style="font-size:18pt">Planning des chantiers</h2>
+                </div>
+            </div>
+        </div>
+        <div t-attf-class="article o_report_layout_standard" t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <t t-out="0"/>
+        </div>
+        <div t-attf-class="footer o_standard_footer">
+            <div class="text-right" style="border-top: 1px solid black;font-size:10pt">
+                 <div t-if="report_type == 'pdf'" class="text-muted">
+                    Page: <span class="page"/> / <span class="topage"/>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="is_chantier_external_layout">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+        <t t-call="is_clair_sarl18.is_chantier_external_layout_standard"><t t-out="0"/></t>
+    </template>
+
+    <template id="is_chantier_report_document">
+        <t t-call="is_clair_sarl18.is_chantier_external_layout">
+            <div class="page planning_chantier">
+
+                <t t-set="res"         t-value="o.get_chantiers()"/>
+                <t t-set="nb_semaines" t-value="res['nb_semaines']"/>
+                <t t-set="mois"        t-value="res['mois']"/>
+                <t t-set="semaines"    t-value="res['semaines']"/>
+                <t t-set="chantiers"   t-value="res['dict']"/>
+                <div class="row" style="background-color:white">
+                    <table style="width:100%">
+                        <thead>
+                            <tr>
+                                <th colspan="4" style="height:15pt"><div>Planning</div></th>
+
+                                <t t-foreach="mois" t-as="key">
+                                    <th style="height:15pt" t-att-colspan="mois[key]['colspan']">
+                                        <div t-esc="mois[key]['mois']"/>
+                                    </th>
+                                </t>
+                            </tr>
+                            <tr>
+                                <th colspan="4" style="height:15pt"></th>
+                                <t t-foreach="semaines" t-as="key">
+                                    <th style="height:15pt" t-att-colspan="semaines[key]['colspan']">
+                                        <div t-esc="semaines[key]['semaine']"/>
+                                    </th>
+                                </t>
+                            </tr>
+                            <tr>
+                                <th style="height:15pt"><div>Chantier</div></th>
+                                <th style="height:15pt"><div>Equipe</div></th>
+                                <th style="height:15pt"><div>Travaux</div></th>
+                                <t t-foreach="semaines" t-as="key">
+                                    <th style="height:15pt;text-align:left" t-att-colspan="semaines[key]['colspan']">
+                                        <div style="padding-left:5px" t-esc="semaines[key]['jour']"/>
+                                    </th>
+                                </t>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="chantiers" t-as="key">
+                                <t t-set="jours"   t-value="chantiers[key]['jours']"/>
+                                <tr 
+                                    t-att-style="chantiers[key]['trstyle']"
+                                >
+                                    <td style="width:18%;white-space: nowrap;">
+                                        <span>
+                                            <t t-esc="chantiers[key]['short_name']"/>
+                                        </span>
+                                    </td>
+                                    <td style="width:9%;white-space: nowrap;"><t t-esc="chantiers[key]['equipe']"/></td>
+                                    <td style="width:7%;white-space: nowrap;"><t t-esc="chantiers[key]['travaux']"/></td>
+
+
+
+                                    <t t-foreach="jours" t-as="j">
+
+                                        <t t-set="fermeture" t-value="jours[j]['fermeture'] or ''"/>
+
+
+                                        <t t-if="fermeture==''">
+                                            <td t-att-style="'width:'+jours[j]['width']+';background-color:'+jours[j]['color'] + ';border-left:'+jours[j]['border']"> 
+                                                <t  t-if="jours[j]['alerte']">
+                                                    <span class="alerte">!</span>
+                                                </t>
+                                            </td>
+                                        </t>
+                                        <t t-if="fermeture!=''">
+                                            <!-- <td t-att-style="'background-color:'+fermeture"> -->
+                                            <td t-att-style="'width:'+jours[j]['width']+';background-color:'+fermeture+';border-left:'+jours[j]['border']">
+                                            </td>
+                                        </t>
+                                    </t>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table> 
+                </div>
+                <div style="page-break-after:always;" />
+            </div>
+        </t>
+    </template>
+    
+    <template id="is_chantier_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="is_clair_sarl18.is_chantier_report_document"/>
+            </t>
+        </t>
+    </template>
+</odoo>

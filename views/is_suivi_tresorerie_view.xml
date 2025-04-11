@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- is.suivi.tresorerie -->
+
+    <record id="actualiser_suivi_tresorerie_cron" model="ir.cron">
+        <field name="name">Actualiser le suivi de la trésorerie</field>
+        <field name="model_id" ref="is_clair_sarl18.model_is_suivi_tresorerie"/>
+        <field name="state">code</field>
+        <field name="code">model.actualiser_suivi_tresorerie_action()</field>
+        <field name="interval_type">days</field>
+        <!-- <field name="numbercall">-1</field> -->
+    </record>
+
+
+    <record id="actualiser_suivi_tresorerie_action_server" model="ir.actions.server">
+        <field name="name">Actualiser le suivi de la trésorerie</field>
+        <field name="model_id" ref="is_clair_sarl18.model_is_suivi_tresorerie"/>
+        <field name="binding_model_id" ref="is_clair_sarl18.model_is_suivi_tresorerie"/>
+        <field name="state">code</field>
+        <field name="code">records.actualiser_suivi_tresorerie_action()</field>
+    </record>
+     <record id="is_suivi_tresorerie_form" model="ir.ui.view">
+        <field name="name">is.suivi.tresorerie.form</field>
+        <field name="model">is.suivi.tresorerie</field>
+        <field name="arch" type="xml">
+            <form>
+                <style>
+                    .o_form_label{
+                        white-space: nowrap;
+                    }
+                </style>
+                 <sheet>
+                    <widget name="web_ribbon" title="Archivée" bg_color="bg-danger" invisible="active==True"/>
+                    <field name="active" invisible="1"/>
+                    <group>
+                        <group>
+                            <field name="mois"          readonly="1"/>
+                            <field name="montant_achat" readonly="1"/>
+                            <field name="montant_vente" readonly="1"/>
+                            <field name="solde"         readonly="1"/>
+                            <field name="commentaire"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="is_suivi_tresorerie_tree" model="ir.ui.view">
+        <field name="name">is.suivi.tresorerie.tree</field>
+        <field name="model">is.suivi.tresorerie</field>
+        <field name="arch" type="xml">
+        <!-- decoration-danger="solde &lt; 0"  -->
+            <list create="0" editable="bottom">
+                <field name="mois"          readonly="1"/>
+                <field name="montant_achat" readonly="1" sum="Total"/>
+                <field name="montant_vente" readonly="1" sum="Total"/>
+                <field name="solde"         readonly="1" sum="Total"/>
+                <field name="commentaire"   optional="show"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_suivi_tresorerie_search" model="ir.ui.view">
+        <field name="name">is.suivi.tresorerie.search</field>
+        <field name="model">is.suivi.tresorerie</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="mois"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_suivi_tresorerie_action" model="ir.actions.act_window">
+        <field name="name">Suivi de trésorerie</field>
+        <field name="res_model">is.suivi.tresorerie</field>
+        <field name="view_mode">tree</field>
+    </record>
+</odoo>

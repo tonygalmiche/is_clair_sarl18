@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--Statut -->
+    <record id="is_statut_form_view" model="ir.ui.view">
+        <field name="name">is_statut_from_view</field>
+        <field name="model">is.statut</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_statut_tree_view">
+        <field name="name">is_statut_tree_view</field>
+        <field name="model">is.statut</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+            </list>
+        </field>
+    </record>
+    <record id="is_statut_search_view" model="ir.ui.view">
+        <field name="name">is_statut_search_view</field>
+        <field name="model">is.statut</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+    <record id="is_statut_action" model="ir.actions.act_window">
+        <field name="name">Statut</field>
+        <field name="res_model">is.statut</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <!--Profil -->
+    <record id="is_profil_form_view" model="ir.ui.view">
+        <field name="name">is_profil_from_view</field>
+        <field name="model">is.profil</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_profil_tree_view">
+        <field name="name">is_profil_tree_view</field>
+        <field name="model">is.profil</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+            </list>
+        </field>
+    </record>
+    <record id="is_profil_search_view" model="ir.ui.view">
+        <field name="name">is_profil_search_view</field>
+        <field name="model">is.profil</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+    <record id="is_profil_action" model="ir.actions.act_window">
+        <field name="name">Profil</field>
+        <field name="res_model">is.profil</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <!--Origine DP -->
+    <record id="is_origine_form_view" model="ir.ui.view">
+        <field name="name">is_origine_from_view</field>
+        <field name="model">is.origine</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_origine_tree_view">
+        <field name="name">is_origine_tree_view</field>
+        <field name="model">is.origine</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+            </list>
+        </field>
+    </record>
+    <record id="is_origine_search_view" model="ir.ui.view">
+        <field name="name">is_origine_search_view</field>
+        <field name="model">is.origine</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+    <record id="is_origine_action" model="ir.actions.act_window">
+        <field name="name">Origine DP</field>
+        <field name="res_model">is.origine</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <!-- res.partner -->
+    <record id="is_view_partner_form" model="ir.ui.view">
+        <field name="name">is_view_partner_form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//sheet[1]" position="inside">
+                <style>
+                    .o_form_label{
+                        white-space: nowrap;
+                    }
+                    .o_form_view .o_form_sheet_bg > .o_form_sheet{
+                        max-width: 1800px;
+                    }
+                </style>
+            </xpath>
+
+            <xpath expr="//sheet/group/group/field[@name='website']" position="before">
+                <field 
+                   name="is_contact_relance_facture_id" 
+                   invisible="is_company==False"
+               />
+           </xpath>
+
+
+
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="is_statut_id"/>
+                <field name="is_profil_id"/>
+                <field name="is_origine_id"/>
+            </xpath>
+            <group name="container_row_2" position="after">
+                <group>
+                    <field name="is_condition_tarifaire"/>
+                    <field name="is_banque_id"/>
+                </group>
+            </group>
+            <group name="misc" position="after">
+                <group>
+                    <field name="is_modele_commande_id"/>
+                    <button
+                        name="creer_modele_commande"
+                        type="object"
+                        string="Créer un modèle de commande"
+                        invisible="is_modele_commande_id!=False"
+                    />
+                </group>
+            </group>
+
+            <page name="internal_notes" position="after">
+                <page string="Affaires">
+                    <field name="is_affaire_ids" nolabel="1" readonly="1">
+                        <list>
+                            <!-- <field name="display_name"        optional="hide" class="white_space_normal" string="Nom complet" /> -->
+                            <field name="name"                optional="show"/>
+                            <field name="nom"                 optional="show" class="white_space_normal"/>
+                            <field name="date_creation"       optional="show"/>
+                            <field name="contact_chantier_id" optional="hide"/>
+                            <field name="adresse_chantier"    optional="show" class="test_scss"/>
+                            <field name="nature_travaux_ids"  optional="show" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                            <field name="type_travaux_ids"    optional="show" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                            <field name="specificite_ids"     optional="hide" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}"/>
+                            <field name="commentaire"         optional="hide"/>
+                            <field name="achat_facture"       optional="show" sum="Total"/>
+                            <field name="vente_facture"       optional="show" sum="Total"/>
+                            <field name="montant_salaire"     optional="show" sum="Total"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Commandes client">
+                    <field name="is_sale_order_ids" nolabel="1" readonly="1">
+                        <list>
+                            <button name="voir_commande_action" type="object" icon="fa-search-plus" title="Commande"/>
+                            <field name="name"  optional="show"/>
+                            <field name="date_order"/>
+                            <field name="amount_untaxed"      widget="monetary" optional="show" sum="Total"/>
+                            <field name="is_total_facture"    widget="monetary" optional="show" sum="Total"/>
+                            <field name="is_reste_a_facturer" widget="monetary" optional="show" sum="Total"/>
+                            <field name="invoice_status" decoration-success="invoice_status == 'invoiced'" decoration-info="invoice_status == 'to invoice'" decoration-warning="invoice_status == 'upselling'" widget="badge" optional="show"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                </page>
+            </page>
+
+
+
+        </field>
+    </record>
+    <record id="is_view_partner_property_form" model="ir.ui.view">
+        <field name="name">is_view_partner_property_form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form" />
+        <field name="arch" type="xml">
+            <field name="property_account_payable_id" position="after">
+                <field name="is_compte_auxiliaire_client"/>
+                <field name="is_compte_auxiliaire"/>
+            </field>
+            <field name="property_account_position_id" position="after">
+                <field name="is_type_paiement"/>
+            </field>
+        </field>
+    </record>
+    <record id="is_view_partner_tree" model="ir.ui.view">
+        <field name="name">is_view_partner_tree</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree" />
+        <field name="arch" type="xml">
+            <field name="activity_ids" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="user_id" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <!-- <field name="display_name" position="after">
+                <field name="is_adresse" optional="hide"/>
+            </field> -->
+            <field name="phone" position="after">
+                <field name="mobile" optional="show"/>
+            </field>
+            <field name="user_id" position="before">
+                <field name="is_statut_id"                 optional="hide"/>
+                <field name="is_profil_id"                 optional="hide"/>
+                <field name="is_origine_id"                optional="hide"/>
+                <field name="is_compte_auxiliaire_client"  optional="hide"/>
+                <field name="is_compte_auxiliaire"         optional="hide"/>
+                <field name="is_condition_tarifaire"       optional="hide"/>
+                <field name="is_banque_id"                 optional="hide"/>
+                <field name="property_account_position_id" optional="hide"/>
+                <field name="is_type_paiement"             optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="is_view_res_partner_filter" model="ir.ui.view">
+        <field name="name">is_view_res_partner_filter</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter" />
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="is_adresse"/>
+                <field name="is_statut_id"/>
+                <field name="is_profil_id"/>
+                <field name="is_origine_id"/>
+                <field name="is_banque_id"/>
+            </field>
+        </field>
+    </record>
+
+
+    <!-- Vue tree par défaut -->
+    <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,kanban,form,activity</field>
+    </record>
+    <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,kanban,form,activity</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- is.chantier -->
+    <record id="recalculer_duree_action_server" model="ir.actions.server">
+        <field name="name">Recalculer durée</field>
+        <field name="model_id" ref="is_clair_sarl18.model_is_chantier"/>
+        <field name="binding_model_id" ref="is_clair_sarl18.model_is_chantier"/>
+        <field name="state">code</field>
+        <field name="code">records.recalculer_duree_action()</field>
+    </record>
+    <record id="recalage_auto_chantier_cron" model="ir.cron">
+        <field name="name">Recalage automatique des chantiers à planifier</field>
+        <field name="model_id" ref="is_clair_sarl18.model_is_chantier"/>
+        <field name="state">code</field>
+        <field name="code">model.recalage_auto_chantier_cron()</field>
+        <field name="interval_type">days</field>
+        <!-- <field name="numbercall">-1</field> -->
+    </record>
+    <record id="is_chantier_seq" model="ir.sequence">
+        <field name="name">N°Chantier</field>
+        <field name="code">is.chantier</field>
+        <field name="prefix"></field>
+        <field name="padding">5</field>
+        <field eval="False" name="company_id"/>
+    </record>
+    <record id="is_chantier_form" model="ir.ui.view">
+        <field name="name">is.chantier.form</field>
+        <field name="model">is.chantier</field>
+        <field name="arch" type="xml">
+            <form>
+                <style>
+                    .o_form_label{
+                        white-space: nowrap;
+                    }
+                </style>
+                <header>
+                    <button 
+                        name="vers_en_encours" type="object" class="oe_highlight" 
+                        invisible="state!='a_planifier'"
+                        string="vers 'En cours'" groups="is_clair_sarl18.is_responsable_planning_chantiers_group"
+                    />
+                    <button 
+                        name="vers_a_planifier" type="object"
+                        invisible="state!='en_cours'"
+                        string="vers 'A planifier'" groups="is_clair_sarl18.is_responsable_planning_chantiers_group"
+                    />
+                    <button
+                        name="ajouter_alerte_action"
+                        type="object"
+                        string="Ajouter une alerte"
+                    />
+                <field name="state" widget="statusbar"/>
+                </header>
+                 <sheet>
+                    <widget name="web_ribbon" title="Archivée" bg_color="bg-danger" invisible="active==True"/>
+                    <field name="active" invisible="1"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="affaire_id"        required="1"/>
+                            <field name="contact_chantier_id"/>
+                            <field name="equipe_id"/>
+                            <field name="nature_travaux_id"/>
+                            <field name="date_debut"        required="state=='en_cours'"/>
+                            <field name="date_fin"          required="state=='en_cours'"/>
+                            <field name="duree"/>
+                        </group>
+                         <group>
+                            <field name="date_debut_souhaitee" readonly="state=='en_cours'"/>
+                            <field name="duree_souhaitee"      readonly="state=='en_cours'"/>
+                         </group>
+                    </group>
+                    <group>
+                        <field name="commentaire"/>
+                    </group>
+                    <field name="alerte_ids" nolabel="1">
+                        <list editable="bottom">
+                            <field name="date"/>
+                            <field name="alerte"/>                           
+                        </list>
+                    </field>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" />
+                    <field name="activity_ids" />
+                    <field name="message_ids" />
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="is_chantier_tree" model="ir.ui.view">
+        <field name="name">is.chantier.tree</field>
+        <field name="model">is.chantier</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="affaire_id"           optional="show" widget="many2one_clickable"/>
+                <field name="contact_chantier_id"  optional="show"/>
+                <field name="equipe_color"         optional="show" widget="color"/>
+                <field name="equipe_id"            optional="show" widget="many2one_clickable"/>
+                <field name="nature_travaux_id"    optional="show"/>
+                <field name="date_debut_souhaitee" optional="hide"/>
+                <field name="duree_souhaitee"      optional="hide"/>
+                <field name="date_debut"        optional="show"/>
+                <field name="date_fin"          optional="show"/>
+                <field name="duree"             optional="show" sum="Total"/>
+                <field name="commentaire"       optional="show"/>
+                <field name="create_date"       optional="hide"/>
+                <field name="create_uid"        optional="hide"/>
+                <field name="write_date"        optional="hide"/>
+                <field name="write_uid"         optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state == 'en_cours'" decoration-warning="state == 'a_planifier'" optional="show"/>
+            </list>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_chantier_calendar" >
+        <field name="name">is_chantier_calendar</field>
+        <field name="model">is.chantier</field>
+        <field name="arch" type="xml">
+            <calendar 
+                date_start="date_debut" 
+                date_stop="date_fin" 
+                color="equipe_id" 
+                mode="month"
+            >
+                <field name="equipe_id" filters="1" invisible="1"/>
+                <field name="name"/> 
+                <field name="affaire_id"/> 
+                <field name="nature_travaux_id"/> 
+                <field name="commentaire"/> 
+            </calendar>
+        </field>
+    </record>
+    <record id="is_chantier_search" model="ir.ui.view">
+        <field name="name">is.chantier.search</field>
+        <field name="model">is.chantier</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="affaire_id"/>
+                <field name="contact_chantier_id"/>
+                <field name="equipe_id"/>
+                <field name="nature_travaux_id"/>
+                <field name="commentaire"/>
+                <filter string="Contact chantier non défini" name="contact_chantier" domain="[('contact_chantier_id', '=', False)]"/>
+                <filter name="a_planifier" string="A planifier" domain="[('state' , '=', 'a_planifier')]"/>
+                <filter name="en_cours"    string="En cours"    domain="[('state' , '=', 'en_cours')]"/>
+                <filter name="archive"     string="Archivé"     domain="[('active', '=', False)]"/>
+           </search>
+        </field>
+    </record>
+    <record  id="is_chantier_action" model="ir.actions.act_window">
+        <field name="name">Chantiers</field>
+        <field name="res_model">is.chantier</field>
+        <field name="view_mode">list,form,calendar</field>
+        <!-- <field name="view_mode">list,form,planning_chantier,calendar</field> -->
+    </record>
+
+
+    <!-- Planning des chantiers -->
+    <!-- <record id="is_planning_chantier_view" model="ir.ui.view">
+        <field name="name">is_planning_chantier_view</field>
+        <field name="model">is.chantier</field>
+        <field name="arch" type="xml">
+            <planning_chantier>
+                <templates>
+                </templates>
+            </planning_chantier>
+        </field>
+    </record> -->
+    <record  id="is_planning_chantier_action" model="ir.actions.act_window">
+        <field name="name">Planning des chantiers</field>
+        <field name="res_model">is.chantier</field>
+        <field name="view_mode">calendar,list,form</field>
+        <!-- <field name="view_mode">planning_chantier,calendar,list,form</field> -->
+        <field name="domain">[]</field>
+    </record>
+
+
+
+    <!--is.equipe -->
+    <record id="is_equipe_form_view" model="ir.ui.view">
+        <field name="name">is_equipe_from_view</field>
+        <field name="model">is.equipe</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <label for="color_code"/>
+                            <div class="o_row no-gutters d-flex">
+                                <field name="color_code"  class="oe_inline"/>
+                                <a class="oe_inline" target="_blank" href="https://www.w3schools.com/colors/colors_picker.asp">Sélecteur de couleur en ligne</a>
+                            </div>
+                            <field name="color" widget="color"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_equipe_tree_view">
+        <field name="name">is_equipe_tree_view</field>
+        <field name="model">is.equipe</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="color" widget="color"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_equipe_search_view" model="ir.ui.view">
+        <field name="name">is_equipe_search_view</field>
+        <field name="model">is.equipe</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+    <record id="is_equipe_action" model="ir.actions.act_window">
+        <field name="name">Equipes</field>
+        <field name="res_model">is.equipe</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+
+    <!--is.chantier.alerte -->
+    <record id="is_chantier_alerte_form_view" model="ir.ui.view">
+        <field name="name">is_chantier_alerte_from_view</field>
+        <field name="model">is.chantier.alerte</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="chantier_id" />
+                        <field name="affaire_id" />
+                        <field name="alerte" />
+                        <field name="date"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_chantier_alerte_tree_view">
+        <field name="name">is_chantier_alerte_tree_view</field>
+        <field name="model">is.chantier.alerte</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="alerte"/>
+                <field name="chantier_id" widget="many2one_clickable"/>
+                <field name="affaire_id"  widget="many2one_clickable"/>
+                <field name="date"/>
+                <field name="create_date" string="Créée le"/>
+                <field name="create_uid"  string="par"/>
+                <field name="write_date"  string="Modifée le"/>
+                <field name="create_uid"  string="par"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_chantier_alerte_search_view" model="ir.ui.view">
+        <field name="name">is_chantier_alerte_search_view</field>
+        <field name="model">is.chantier.alerte</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="alerte"/>
+                <field name="chantier_id"/>
+            </search>
+        </field>
+    </record>
+    <record id="is_chantier_alerte_action" model="ir.actions.act_window">
+        <field name="name">Alertes</field>
+        <field name="res_model">is.chantier.alerte</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+
+    <!--is.fermeture -->
+    <record id="is_fermeture_form_view" model="ir.ui.view">
+        <field name="name">is_fermeture_from_view</field>
+        <field name="model">is.fermeture</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="date_debut" />
+                        <field name="date_fin" />
+                        <field name="commentaire" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="is_fermeture_tree_view">
+        <field name="name">is_fermeture_tree_view</field>
+        <field name="model">is.fermeture</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="date_debut"/>
+                <field name="date_fin"/>
+                <field name="commentaire"/>
+            </list>
+        </field>
+    </record>
+    <record id="is_fermeture_search_view" model="ir.ui.view">
+        <field name="name">is_fermeture_search_view</field>
+        <field name="model">is.fermeture</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="date_debut"/>
+                <field name="commentaire"/>
+            </search>
+        </field>
+    </record>
+    <record id="is_fermeture_action" model="ir.actions.act_window">
+        <field name="name">Fermetures</field>
+        <field name="res_model">is.fermeture</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+
+
+
+
+
+
+</odoo>
