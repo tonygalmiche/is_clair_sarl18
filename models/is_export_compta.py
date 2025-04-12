@@ -47,7 +47,7 @@ class IsExportCompta(models.Model):
 
 
     def generer_lignes_action(self):
-        cr, user, context, su = self.env.args
+        cr = self._cr
         for obj in self:
             invoices = self.env['account.move'].search([('is_export_compta_id','=',obj.id)])
             for invoice in invoices:

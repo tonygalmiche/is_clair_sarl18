@@ -222,7 +222,6 @@
         <field name="state">code</field>
         <field name="code">model.actualiser_marge_affaire_cron()</field>
         <field name="interval_type">days</field>
-        <!-- <field name="numbercall">-1</field> -->
     </record>
     <record id="actualiser_marge_affaire_action_server" model="ir.actions.server">
         <field name="name">Actualiser marge affaire</field>
@@ -247,11 +246,11 @@
         <field name="model">is.affaire</field>
         <field name="arch" type="xml">
             <form>
-                <style>
+                <!-- <style>
                     .o_form_label{
                         white-space: nowrap;
                     }
-                </style>
+                </style> -->
                 <header>
                     <button
                         name="actualiser_marge"
@@ -271,7 +270,7 @@
                     <field name="state" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
-                     <div class="oe_button_box" name="button_box">
+                    <div class="oe_button_box" name="button_box">
                         <button class="oe_stat_button" name="liste_commandes_action" type="object" icon="fa-bars">
                             <div class="o_stat_info">
                                 <span class="o_stat_value">
@@ -353,6 +352,7 @@
                                 invisible="budget_famille_ids != []"
                             />
                         </page>
+                        
                         <page string="Salaires">
                             <field name="salaire_ids" nolabel="1">
                                 <list editable="bottom">
@@ -383,11 +383,7 @@
                          </page>
                     </notebook>
                 </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
-                    <field name="activity_ids" widget="mail_activity"/>
-                    <field name="message_ids" widget="mail_thread"/>
-                </div>
+                <chatter/>
             </form>
         </field>
     </record>

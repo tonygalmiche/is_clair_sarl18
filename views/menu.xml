@@ -21,7 +21,7 @@
     <!-- Ventes / Affaire-->
     <menuitem 
         id="is_affaire_top_menu" 
-        sequence="3" 
+        sequence="21" 
         name="Affaires"
         parent="sale.sale_menu_root" 
     />

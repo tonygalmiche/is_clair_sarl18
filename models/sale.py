@@ -28,7 +28,7 @@ class sale_order_line(models.Model):
 
     @api.depends('order_id.is_invoice_ids','order_id.is_invoice_ids.state','is_facturable_pourcent','price_unit','product_uom_qty')
     def _compute_facturable(self):
-        cr,uid,context,su = self.env.args
+        cr = self._cr
         for obj in self:
             is_deja_facture=0
             if not isinstance(obj.id, models.NewId):
@@ -157,14 +157,14 @@ class is_sale_order_section(models.Model):
             tree_id = self.env.ref('is_clair_sarl18.is_view_order_line_tree').id
             return {
                 "name": "Section "+str(obj.section),
-                "view_mode": "tree",
+                "view_mode": "list",
                 "res_model": "sale.order.line",
                 "domain": [
                     ("is_section_id","=",obj.id),
                     ("product_id","!=",False),
                 ],
                 "type": "ir.actions.act_window",
-                "views"    : [[tree_id, "tree"]],
+                "views"    : [[tree_id, "list"]],
             }
 
 
@@ -454,7 +454,7 @@ class sale_order(models.Model):
 
 
     def generer_facture_action(self):
-        cr,uid,context,su = self.env.args
+        cr = self._cr
         for obj in self:
             obj._compute_is_retenue_de_garantie()
             move_type = 'out_invoice'
@@ -603,13 +603,13 @@ class sale_order(models.Model):
             tree_id = self.env.ref('is_clair_sarl18.is_view_order_line_tree').id
             return {
                 "name": obj.name,
-                "view_mode": "tree",
+                "view_mode": "list",
                 "res_model": "sale.order.line",
                 "domain": [
                     ("order_id","=",obj.id),
                 ],
                 "type": "ir.actions.act_window",
-                "views"    : [[tree_id, "tree"]],
+                "views"    : [[tree_id, "list"]],
                 "limit": 1000,
             }
 
@@ -620,14 +620,14 @@ class sale_order(models.Model):
             tree_id = self.env.ref('is_clair_sarl18.is_view_order_line_tree').id
             return {
                 "name": obj.name,
-                "view_mode": "tree",
+                "view_mode": "list",
                 "res_model": "sale.order.line",
                 "domain": [
                     ("order_id","=",obj.id),
                     ("is_a_facturer","!=",0),
                 ],
                 "type": "ir.actions.act_window",
-                "views"    : [[tree_id, "tree"]],
+                "views"    : [[tree_id, "list"]],
                 "limit": 1000,
             }
 

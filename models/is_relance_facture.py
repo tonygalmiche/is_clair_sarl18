@@ -50,7 +50,7 @@ class IsRelanceFactureLigne(models.Model):
         for obj in self:
             return {
                 "name": obj.relance_id.name,
-                "view_mode": "form,tree",
+                "view_mode": "form,list",
                 "res_model": "account.move",
                 "res_id"   : obj.invoice_id.id,
                 "type": "ir.actions.act_window",
@@ -173,13 +173,13 @@ class IsRelanceFacture(models.Model):
                 ids.append(line.invoice_id.id)
             return {
                 "name": obj.name,
-                "view_mode": "tree,form",
+                "view_mode": "list,form",
                 "res_model": "account.move",
                 "type": "ir.actions.act_window",
                 "domain": [
                     ('id','in',ids),
                 ],
-                "views": [[tree_id, "tree"],[False, "form"]],
+                "views": [[tree_id, "list"],[False, "form"]],
             }
 
 

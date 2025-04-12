@@ -133,7 +133,7 @@ class purchase_order(models.Model):
                 
 
     def update_reperes(self):
-        cr,uid,context,su = self.env.args
+        cr = self._cr
         for obj in self:
             #** Ajout des lignes des reperes **********************************
             ids=[]
@@ -196,7 +196,7 @@ class purchase_order(models.Model):
 
 
     def importer_tache_action(self):
-        cr,uid,context,su = self.env.args
+        cr = self._cr
         for obj in self:
             obj.order_line.unlink()
             SQL="""
@@ -633,7 +633,8 @@ class purchase_order(models.Model):
                             x = re.findall("Total HT", line)
                             if x:
                                 fin=True
-                                x = re.findall("[0-9]*\.[0-9]{2}$", line.strip())
+                                #x = re.findall("[0-9]*\.[0-9]{2}$", line.strip())
+                                x = re.findall(r"\d+\.\d{2}$", line.strip())
                                 if x:
                                     try:
                                         ht=float(x[0].strip())
@@ -944,7 +945,7 @@ class purchase_order_line(models.Model):
             }
             return {
                 "name": "Colis "+obj.name,
-                "view_mode": "tree,form",
+                "view_mode": "list,form",
                 "res_model": "is.purchase.order.line.colis",
                 "domain": [
                     ("line_id","=",obj.id),
@@ -969,7 +970,7 @@ class purchase_order_line(models.Model):
             }
             return {
                 "name": "Ligne "+str(obj.id),
-                "view_mode": "kanban,tree,form",
+                "view_mode": "kanban,list,form",
                 "res_model": "is.purchase.order.line.colis.line",
                 "domain": [
                     ("id","in",ids),

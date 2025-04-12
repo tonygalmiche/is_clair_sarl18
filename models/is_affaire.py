@@ -76,7 +76,7 @@ class IsAffaireAnalyse(models.Model):
         for obj in self:
             return {
                 "name": "Lignes des commandes ",
-                "view_mode": "tree,form",
+                "view_mode": "list,form",
                 "res_model": "purchase.order.line",
                 "domain": [
                     ("order_id.is_affaire_id","=",obj.affaire_id.id),
@@ -91,7 +91,7 @@ class IsAffaireAnalyse(models.Model):
         for obj in self:
             return {
                 "name": "Lignes des commandes ",
-                "view_mode": "tree,form",
+                "view_mode": "list,form",
                 "res_model": "purchase.order.line",
                 "domain": [
                     ("order_id.is_affaire_id","=",obj.affaire_id.id),
@@ -108,7 +108,7 @@ class IsAffaireAnalyse(models.Model):
             form_id = self.env.ref('is_clair_sarl18.is_account_move_line_form_view').id
             return {
                 "name": "Lignes des factures ",
-                "view_mode": "tree,form",
+                "view_mode": "list,form",
                 "res_model": "account.move.line",
                 "domain": [
                     ("is_affaire_id","=",obj.affaire_id.id),
@@ -118,7 +118,7 @@ class IsAffaireAnalyse(models.Model):
                     ("move_id.state","=","posted"),
                 ],
                 "type": "ir.actions.act_window",
-                "views"    : [[tree_id, "tree"],[form_id, "form"]],
+                "views"    : [[tree_id, "list"],[form_id, "form"]],
             }
 
 
@@ -128,7 +128,7 @@ class IsAffaireAnalyse(models.Model):
             form_id = self.env.ref('is_clair_sarl18.is_account_move_line_form_view').id
             return {
                 "name": "Lignes des factures ",
-                "view_mode": "tree,form",
+                "view_mode": "list,form",
                 "res_model": "account.move.line",
                 "domain": [
                     ("is_affaire_id","=",obj.affaire_id.id),
@@ -138,7 +138,7 @@ class IsAffaireAnalyse(models.Model):
                     ("move_id.state","=","posted"),
                 ],
                 "type": "ir.actions.act_window",
-                "views"    : [[tree_id, "tree"],[form_id, "form"]],
+                "views"    : [[tree_id, "list"],[form_id, "form"]],
             }
 
 
@@ -301,7 +301,7 @@ class IsAffaire(models.Model):
 
 
     def _update_achat_facture(self):
-        cr,uid,context,su = self.env.args
+        cr = self._cr
         for obj in self:
             val=0
             if isinstance(obj.id, int):
@@ -372,7 +372,7 @@ class IsAffaire(models.Model):
 
 
     def analyse_par_fournisseur_action(self):
-        cr,uid,context,su = self.env.args
+        cr = self._cr
         for obj in self:
             obj.analyse_ids.sudo().unlink()
             SQL="""
@@ -419,7 +419,7 @@ class IsAffaire(models.Model):
 
 
     def _update_budget_famille(self, analyse=False):
-        cr,uid,context,su = self.env.args
+        cr = self._cr
         for obj in self:
             if analyse:
                 obj.analyse_ids.sudo().unlink()
@@ -531,7 +531,7 @@ class IsAffaire(models.Model):
 
 
     def import_budget_famille_action(self):
-        cr,uid,context,su = self.env.args
+        cr = self._cr
         for obj in self:
             for line in obj.budget_famille_ids:
                 SQL="""
@@ -556,7 +556,7 @@ class IsAffaire(models.Model):
         for obj in self:
             return {
                 "name": name,
-                "view_mode": "tree,form,pivot,graph",
+                "view_mode": "list,form,pivot,graph",
                 "res_model": "is.affaire.analyse",
                 "res_id"   : obj.id,
                 "type": "ir.actions.act_window",
@@ -572,7 +572,7 @@ class IsAffaire(models.Model):
             form_id = self.env.ref('is_clair_sarl18.is_account_move_line_form_view').id
             return {
                 "name": "Lignes de factures ",
-                "view_mode": "tree,form",
+                "view_mode": "list,form",
                 "res_model": "account.move.line",
                 "domain": [
                     ("is_affaire_id","=",obj.id),
@@ -581,7 +581,7 @@ class IsAffaire(models.Model):
                     ("move_id.state","=","posted"),
                 ],
                 "type": "ir.actions.act_window",
-                "views"    : [[tree_id, "tree"],[form_id, "form"]],
+                "views"    : [[tree_id, "list"],[form_id, "form"]],
             }
 
 
@@ -589,7 +589,7 @@ class IsAffaire(models.Model):
         for obj in self:
             return {
                 "name": "Factures ",
-                "view_mode": "tree,form",
+                "view_mode": "list,form",
                 "res_model": "account.move",
                 "domain": [
                     ("is_affaire_id","=",obj.id),
@@ -603,7 +603,7 @@ class IsAffaire(models.Model):
         for obj in self:
             return {
                 "name": "Offres ",
-                "view_mode": "tree,form",
+                "view_mode": "list,form",
                 "res_model": "sale.order",
                 "domain": [
                     ("is_affaire_id","=",obj.id),

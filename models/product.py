@@ -102,7 +102,7 @@ class product_template(models.Model):
 
 
     def evolution_prix_achat_action(self):
-        cr,uid,context,su = self.env.args
+        cr = self._cr
         for obj in self:
             SQL="""
                 SELECT is_date, max(id)
@@ -117,13 +117,13 @@ class product_template(models.Model):
             graph_id = self.env.ref('is_clair_sarl18.is_purchase_order_line_price_unit_graph').id
             return {
                 "name": "Achats ",
-                "view_mode": "graph,tree,form,pivot",
+                "view_mode": "graph,list,form,pivot",
                 "res_model": "is.purchase.order.line",
                 "domain": [
                     ("id","in",ids),
                 ],
                 "type": "ir.actions.act_window",
-                "views"    : [[graph_id, "graph"], [False, "tree"], [False, "form"], [False, "pivot"]],
+                "views"    : [[graph_id, "graph"], [False, "list"], [False, "form"], [False, "pivot"]],
             }
 
 

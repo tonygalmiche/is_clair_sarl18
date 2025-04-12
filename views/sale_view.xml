@@ -22,7 +22,7 @@
         <field name="state">code</field>
         <field name="code">records._compute_is_total_facture()</field>
     </record>
-    <!-- <record id="view_sale_order_form_inherit" model="ir.ui.view">
+    <record id="view_sale_order_form_inherit" model="ir.ui.view">
         <field name="name">sale.order.form.inherit</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
@@ -35,14 +35,17 @@
                     .modal-lg, .modal-xl {
                         max-width: 1400px;
                     }
+                    .o_form_label{
+                        white-space: nowrap;
+                    }
                 </style>
             </xpath>
-            <xpath expr="//button[@name='287'][1]" position="attributes">
+            <!-- <xpath expr="//button[@name='287'][1]" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//button[@name='287'][1]" position="attributes">
                 <attribute name="invisible">1</attribute>
-            </xpath>
+            </xpath> -->
             <xpath expr="//button[@name='action_quotation_send'][1]" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
@@ -72,13 +75,13 @@
             <xpath expr="//group[@name='order_details']/field[@name='payment_term_id']" position="after">
                 <field name="is_date_pv"/>
                 <field name="is_pv_ids" widget="many2many_binary"/>
-                <field name="is_taux_retenue_de_garantie" attrs="{'invisible':[('is_retenue_de_garantie','=',0)]}"/>
-                <field name="is_retenue_de_garantie"      attrs="{'invisible':[('is_retenue_de_garantie','=',0)]}"/>
-                <field name="is_rg_deduite"               attrs="{'invisible':[('is_retenue_de_garantie','=',0)]}"/>
-                <field name="is_compte_prorata"           attrs="{'invisible':[('is_compte_prorata','=',0)]}"/>
-                <field name="is_taux_compte_prorata"      attrs="{'invisible':[('is_taux_compte_prorata','=',0)]}"/>
+                <field name="is_taux_retenue_de_garantie" invisible="is_retenue_de_garantie==0"/>
+                <field name="is_retenue_de_garantie"      invisible="is_retenue_de_garantie==0"/>
+                <field name="is_rg_deduite"               invisible="is_retenue_de_garantie==0"/>
+                <field name="is_compte_prorata"           invisible="is_compte_prorata==0"/>
+                <field name="is_taux_compte_prorata"      invisible="is_taux_compte_prorata==0"/>
             </xpath>
-            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree" position="attributes">
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list" position="attributes">
                 <attribute name="editable"></attribute>
             </xpath>
             <xpath expr="//page[@name='order_lines']/field[@name='order_line']/form/group/group/field[@name='price_unit']" position="after">
@@ -87,7 +90,7 @@
             <xpath expr="//page[@name='order_lines']/field[@name='order_line']/form/group/group/field[@name='tax_id']" position="after">
                 <field name="price_subtotal" readonly="1"/>
             </xpath>
-            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/form/group/group/field[@name='analytic_tag_ids']" position="before">
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/form/group/group/field[@name='analytic_distribution']" position="before">
                 <field name="order_id" readonly="1"/>
                 <field name="is_section_id"/>
                 <field name="is_facturable_pourcent"/>
@@ -95,22 +98,17 @@
                 <field name="is_deja_facture"/>
                 <field name="is_a_facturer"/>
             </xpath>
-
-            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='product_id']" position="before">
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='product_id']" position="before">
                 <field name="is_section_id" readonly="1" optional="hide"/>
             </xpath>
-
-            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='product_uom_qty']" position="after">
                 <field name="is_unite"  optional="show"/>
             </xpath>
-
-
-
-            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='price_unit']" position="after">
                 <field name="is_prix_achat" optional="hide"/>
             </xpath>
-            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
-                <field name="is_facturable_pourcent" readonly="1" optional="hide"/>
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='price_subtotal']" position="after">
+                <field name="is_facturable_pourcent" readonly="1" optional="hide" force-save="1"/>
                 <field name="is_facturable"    optional="hide" sum="Total"/>
                 <field name="is_deja_facture"  optional="hide" sum="Total"/>
                 <field name="is_a_facturer"    optional="hide" sum="Total"/>
@@ -119,16 +117,18 @@
             <xpath expr="//page[@name='order_lines']" position="after">
                 <page string="Import devis xlsx">
                     <group string="Fichier à importer">
-                        <field name="is_import_excel_ids" widget="many2many_binary" nolabel="1" attrs="{'readonly':[('state','not in',['draft','sent'])]}"/>
+                        <field 
+                            name="is_import_excel_ids" widget="many2many_binary" nolabel="1" 
+                            readonly="state not in ['draft','sent']"/>
                     </group>
                     <group>
                         <button 
                             name="import_fichier_xlsx" 
                             string="Importer le devis" type="object" 
-                            attrs="{'invisible':[('state','not in',['draft','sent'])]}"
+                            invisible="state not in ['draft','sent']"
                         />
                     </group>
-                    <group string="Alertes importation" attrs="{'invisible':[('is_import_alerte','=',False)]}" >
+                    <group string="Alertes importation" invisible="is_import_alerte==False" >
                         <div style="background:orange;font-weight:bold;padding-left:5pt">
                             <field name="is_import_alerte" nolabel="1"/>
                         </div>
@@ -172,8 +172,8 @@
 
                             </list>
                         </field>
-                    </group>        
-                    <group string="Factures" states="sale">
+                    </group>     
+                    <group string="Factures" invisible="state!='sale'">
                         <field name="is_note_facturation"/>
                         <field name="is_a_facturer"/>
                         <field name="is_date_facture"/>
@@ -201,18 +201,22 @@
                                 <field name="is_taux_retenue_de_garantie" optional="hide"/>
                                 <field name="is_retenue_de_garantie"      optional="hide"/>
                                 <field name="is_rg_deduite"               optional="hide"/>                
-                                <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')" decoration-success="payment_state in ('paid', 'reversed')" attrs="{'invisible': [('payment_state', 'in', ('invoicing_legacy'))]}" optional="show"/>
+                                <field name="payment_state" widget="badge" 
+                                    decoration-danger="payment_state == 'not_paid'" 
+                                    decoration-warning="payment_state in ('partial', 'in_payment')" decoration-success="payment_state in ('paid', 'reversed')" 
+                                    invisible="payment_state in ('invoicing_legacy')" optional="show"
+                                />
                                 <field name="state" widget="badge" decoration-success="state == 'posted'" decoration-info="state == 'draft'" optional="show"/>
                             </list>
                         </field>
                     </group>
                 </page>
             </xpath>
-            <xpath expr="//field[@name='order_line']/tree" position="attributes">
+            <xpath expr="//field[@name='order_line']/list" position="attributes">
                 <attribute name="limit">1000</attribute>
             </xpath>
         </field>
-    </record> -->
+    </record>
     <record id="is_view_quotation_tree" model="ir.ui.view">
         <field name="name">is_view_quotation_tree</field>
         <field name="model">sale.order</field>
@@ -371,7 +375,7 @@
     </record>
 
 
-    <!-- <record id="is_view_order_line_tree" model="ir.ui.view">
+    <record id="is_view_order_line_tree" model="ir.ui.view">
         <field name="name">is_view_order_line_tree</field>
         <field name="model">sale.order.line</field>
         <field name="arch" type="xml">
@@ -380,18 +384,18 @@
                 <field name="is_section_id"    optional="hide" widget="many2one_clickable"/>
                 <field name="order_partner_id" optional="hide" widget="many2one_clickable"/>
                 <field name="name"            readonly="1"/>
-                <field name="product_uom_qty" readonly="1" attrs="{'invisible': [('display_type', '!=', False)]}"/>
-                <field name="price_unit"      readonly="1" attrs="{'invisible': [('display_type', '!=', False)]}"/>
-                <field name="is_facturable_pourcent"       attrs="{'invisible': [('display_type', '!=', False)]}"/>
-                <field name="is_facturable"   sum="Total"  attrs="{'invisible': [('display_type', '!=', False)]}"/>
-                <field name="is_deja_facture" sum="Total"  attrs="{'invisible': [('display_type', '!=', False)]}"/>
-                <field name="is_a_facturer"   sum="Total"  attrs="{'invisible': [('display_type', '!=', False)]}"/>
-                <field name="product_uom_category_id" invisible="1"/>
-                <field name="product_uom" string="Unité"  optional="hide" readonly="1"         attrs="{'invisible': [('display_type', '!=', False)]}"/>
-                <field name="price_subtotal" sum="Total" widget="monetary" string="Montant HT" attrs="{'invisible': [('display_type', '!=', False)]}"/>
+                <field name="product_uom_qty" readonly="1" invisible="display_type!=False"/>
+                <field name="price_unit"      readonly="1" invisible="display_type!=False"/>
+                <field name="is_facturable_pourcent"       invisible="display_type!=False"/>
+                <field name="is_facturable"   sum="Total"  invisible="display_type!=False"/>
+                <field name="is_deja_facture" sum="Total"  invisible="display_type!=False"/>
+                <field name="is_a_facturer"   sum="Total"  invisible="display_type!=False"/>
+                <field name="product_uom_category_id"      invisible="1"/>
+                <field name="product_uom" string="Unité"   invisible="display_type!=False" optional="hide" readonly="1"  />
+                <field name="price_subtotal" sum="Total"   invisible="display_type!=False" widget="monetary" string="Montant HT"/>
                 <field name="display_type" invisible="1"/>
                 <field name="currency_id"  invisible="1"/>
             </list>
         </field>
-    </record> -->
+    </record>
 </odoo>
