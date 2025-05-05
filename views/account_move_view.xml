@@ -29,7 +29,7 @@
         <field name="state">code</field>
         <field name="code">records.initialiser_sections_facture_action()</field>
     </record>
-    <!-- <record id="is_view_move_form" model="ir.ui.view">
+    <record id="is_view_move_form" model="ir.ui.view">
         <field name="name">is_view_move_form</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
@@ -61,10 +61,13 @@
                     string="Enregistrer courrier expédié" 
                     class="oe_highlight" 
                     type="object"
-                    invisible="move_type in ['in_invoice','in_refund'] or state not in ['posted' or is_courrier_id!=False"
+                    invisible="move_type in ['in_invoice','in_refund'] or state not in ['posted'] or is_courrier_id!=False"
                     readonly="1"
                 />
             </button>
+
+
+          
             <field name="partner_bank_id" position="after">
                 <field name="is_attente_avoir" invisible="move_type in ['out_invoice','out_refund']"/>
             </field>
@@ -77,17 +80,26 @@
             <xpath expr="//field[@name='ref'][2]" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-            <field name="payment_reference" position="before">
+            <field name="invoice_vendor_bill_id" position="before">
                 <field name="ref" string="Référence facture"/>
                 <field name="is_motif_avoir" invisible="move_type not in ['out_invoice','out_refund']"/>
             </field>
-            <field name="payment_reference" position="after">
-                <field name="is_order_id"    invisible="move_type in ['out_invoice','out_refund']"/>
-                <field name="is_affaire_id"  invisible="move_type in ['out_invoice','out_refund']"/>
-                <field name="is_situation"   invisible="move_type in ['out_invoice','out_refund']"/>
+            <field name="invoice_vendor_bill_id" position="after">
+                <field name="is_order_id"    invisible="move_type in ['in_invoice','in_refund']"/>
+                <field name="is_affaire_id"  invisible="move_type in ['in_invoice','in_refund']"/>
+                <field name="is_situation"   invisible="move_type in ['in_invoice','in_refund']"/>
                 <field name="is_banque_id"   invisible="is_banque_id == False"/>
             </field>
-            <xpath expr="//page[@id='invoice_tab']/field[@name='invoice_line_ids']/tree/field[@name='quantity']" position="before">
+            <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
+                <attribute name="widget"></attribute>
+            </xpath>
+
+            <xpath expr="//div[hasclass('o_attachment_preview')]" position="replace"/>
+
+
+
+            <xpath expr="//page[@id='invoice_tab']/field[@name='invoice_line_ids']/list/field[@name='quantity']" position="before">
+                <field name="is_affaire_id" optional="hide" class="white_space_normal"/>
                 <field name="is_sale_line_id"        optional="hide" widget="many2one_clickable"/>
                 <field name="is_section_id"          optional="hide" widget="many2one_clickable"/>
                 <field name="is_qt_commande"         optional="hide"/>
@@ -95,19 +107,13 @@
                 <field name="is_facturable_pourcent" optional="hide"/>
                 <field name="is_a_facturer"          optional="hide" sum="Total"/>
             </xpath>
-            <xpath expr="//page[@id='invoice_tab']/field[@name='invoice_line_ids']/tree/field[@name='analytic_tag_ids']" position="after">
-                <field name="is_affaire_id" optional="hide" class="white_space_normal"/>
-            </xpath>
-            <xpath expr="//page[@id='aml_tab']/field[@name='line_ids']/tree/field[@name='name']" position="after">
-                <field name="is_affaire_id" optional="hide" class="white_space_normal"/>
-            </xpath>
             <label for="invoice_payment_term_id" position="replace"/>
             <xpath expr="//field[@name='invoice_date_due']/.." position="replace">
                 <field name="is_type_paiement" invisible="is_type_paiement == False"/>
                 <field name="invoice_payment_term_id"/>
                 <field name="invoice_date_due"/>
             </xpath>
-            <xpath expr="//field[@name='invoice_line_ids']/tree" position="attributes">
+            <xpath expr="//field[@name='invoice_line_ids']/list" position="attributes">
                 <attribute name="limit">1000</attribute>
             </xpath>
             <div name="journal_div" position="after">
@@ -117,6 +123,7 @@
                 <field name="is_date_envoi"   invisible="move_type in ['in_invoice','in_refund']"/>
                 <field name="is_date_relance" invisible="is_date_relance == False"/>
                 <field name="is_date_releve"  invisible="is_date_releve == False"/>
+                <field name="is_date_abandon" invisible="move_type in ['in_invoice','in_refund']"/>
                 <field 
                     name="is_courrier_id"
                     invisible="is_courrier_id == False"
@@ -163,10 +170,13 @@
                         </list>
                     </field>
                 </group>        
-            </xpath>
+            </xpath> 
         </field>
-    </record>  -->
-    <!-- <record id="is_view_out_invoice_tree" model="ir.ui.view">
+    </record> 
+
+
+
+    <record id="is_view_out_invoice_tree" model="ir.ui.view">
         <field name="name">is_view_out_invoice_tree</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_out_invoice_tree" />
@@ -180,35 +190,33 @@
                 <field name="invoice_payment_term_id" optional="show"/>
                 <field name="invoice_date_due"        optional="show"/>
             </field>
-            <field name="state" position="before">
+            <field name="status_in_payment" position="before">
                 <field name="is_export_compta_id" widget="many2one_clickable" optional="show"/>
                 <field name="is_courrier_id"      widget="many2one_clickable" optional="show"/>
-            </field>
-            <field name="payment_state" position="before">
                 <field name="is_taux_retenue_de_garantie" optional="show"/>
                 <field name="is_retenue_de_garantie"      optional="show"/>
                 <field name="is_rg_deduite"               optional="show"/>                
                 <field name="is_date_envoi"       optional="show"/>
             </field>
-            <field name="payment_state" position="after">
+            <field name="status_in_payment" position="after">
                 <field name="is_date_relance"      optional="hide"/>
                 <field name="is_remarque_paiement" optional="hide"/>
-            </field>
+            </field> 
         </field>
-    </record> -->
-    <!-- <record id="is_view_in_invoice_tree" model="ir.ui.view">
+    </record>
+    <record id="is_view_in_invoice_tree" model="ir.ui.view">
         <field name="name">is_view_in_invoice_tree</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_in_invoice_tree" />
         <field name="arch" type="xml">
-            <field name="partner_id" position="after">
+            <field name="invoice_partner_display_name" position="after">
                 <field name="is_affaire_id" optional="show" widget="many2one_clickable" class="white_space_normal"/>
             </field>
             <field name="invoice_date_due" position="before">
                 <field name="invoice_payment_term_id" optional="show"/>
                 <field name="invoice_date_due"        optional="show"/>
             </field>
-            <field name="state" position="before">
+            <field name="status_in_payment" position="before">
                 <field name="is_purchase_order_id" optional="hide" widget="many2one_clickable"/>
                 <field name="is_export_compta_id"  optional="show" widget="many2one_clickable"/>
                 <field name="is_attente_avoir"     optional="hide"/>
@@ -216,7 +224,7 @@
                 <field name="is_traite_id"         optional="show" widget="many2one_clickable"/>
             </field>
         </field> 
-    </record>-->
+    </record>
     <record id="is_view_invoice_tree" model="ir.ui.view">
         <field name="name">is_view_invoice_tree</field>
         <field name="model">account.move</field>

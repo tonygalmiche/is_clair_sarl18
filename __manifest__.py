@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+
+
+#TODO Facturation : 
+#- Il n'y a que les commentaires dans les lignes des factures
+#- Hiqotrique en bas
+#- Elarger la page
+#- Ajouter les champs perso
+#- Masquer apercu facture
+#- Manque les taxes
+# Erreur : Vous êtes sur le point de désactiver la fonctionnalité liste de prix. Toutes les listes de prix actives seront archivées.
+
+
 {
     "name"     : "Module Odoo 18 pour CLAIR-SARL",
     "version"  : "0.1",
@@ -14,11 +26,14 @@ Module Odoo 18 pour CLAIR-SARL
         "base",
         "sale_management",
         "purchase",
+        "product",
         "account",
         "l10n_fr",
         #"l10n_fr_fec",
         "web",
         #"web_company_color",
+        "web_chatter_position",
+        "l10n_fr_facturx_chorus_pro",
     ],
     "data" : [
         "security/res.groups.xml",
@@ -52,16 +67,16 @@ Module Odoo 18 pour CLAIR-SARL
         # "report/retenue_de_garantie_report_template.xml",
         # "report/report.xml",
     ],
-    # 'assets': {
-    #     'web.assets_backend': [
-    #         'is_clair_sarl18/static/src/scss/styles.scss',
-    #         'is_clair_sarl18/static/src/planning_chantier/planning_chantier.scss',
-    #         'is_clair_sarl18/static/src/planning_chantier/planning_chantier_controller.js',
-    #         'is_clair_sarl18/static/src/planning_chantier/planning_chantier_model.js',
-    #         'is_clair_sarl18/static/src/planning_chantier/planning_chantier_record.js',
-    #         'is_clair_sarl18/static/src/planning_chantier/planning_chantier_renderer.js',
-    #         'is_clair_sarl18/static/src/planning_chantier/planning_chantier_view.js',
-    #     ],
+    'assets': {
+        'web.assets_backend': [
+            'is_clair_sarl18/static/src/scss/styles.scss',
+            # 'is_clair_sarl18/static/src/planning_chantier/planning_chantier.scss',
+            # 'is_clair_sarl18/static/src/planning_chantier/planning_chantier_controller.js',
+            # 'is_clair_sarl18/static/src/planning_chantier/planning_chantier_model.js',
+            # 'is_clair_sarl18/static/src/planning_chantier/planning_chantier_record.js',
+            # 'is_clair_sarl18/static/src/planning_chantier/planning_chantier_renderer.js',
+            # 'is_clair_sarl18/static/src/planning_chantier/planning_chantier_view.js',
+        ],
     #     'web.assets_qweb': [
     #         'is_clair_sarl18/static/src/xml/**/*',
     #         'is_clair_sarl18/static/src/planning_chantier/planning_chantier_view.xml',
@@ -69,7 +84,7 @@ Module Odoo 18 pour CLAIR-SARL
     #    'web.report_assets_common': [
     #         'is_clair_sarl18/static/src/scss/report.scss',
     #     ]
-    # },
+    },
     "installable": True,
     "application": True,
     "license": "LGPL-3",

@@ -99,8 +99,8 @@ class AccountPaymentRegister(models.TransientModel):
     is_num_cheque    = fields.Char("N° du chèque")
 
  
-    def _create_payment_vals_from_wizard(self):
-        payment_vals = super(AccountPaymentRegister, self)._create_payment_vals_from_wizard()
-        payment_vals["is_type_paiement"] = self.is_type_paiement
-        payment_vals["is_num_cheque"]    = self.is_num_cheque
-        return payment_vals
+    # def _create_payment_vals_from_wizard(self):
+    #     payment_vals = super(AccountPaymentRegister, self)._create_payment_vals_from_wizard()
+    #     payment_vals["is_type_paiement"] = self.is_type_paiement
+    #     payment_vals["is_num_cheque"]    = self.is_num_cheque
+    #     return payment_vals

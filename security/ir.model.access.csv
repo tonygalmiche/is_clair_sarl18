@@ -5,10 +5,13 @@ access_is_origine,access_is_origine,model_is_origine,base.group_user,1,0,0,0
 access_is_statut_manager,access_is_statut_manager,model_is_statut,sales_team.group_sale_manager,1,1,1,1
 access_is_profil_manager,access_is_profil_manager,model_is_profil,sales_team.group_sale_manager,1,1,1,1
 access_is_origine_manager,access_is_origine_manager,model_is_origine,sales_team.group_sale_manager,1,1,1,1
-access_is_famille_manager,access_is_famille_manager,model_is_famille,base.group_user,1,0,0,0
-access_is_sous_famille_manager,access_is_sous_famille_manager,model_is_sous_famille,base.group_user,1,0,0,0
+
+access_is_famille,access_is_famille,model_is_famille,base.group_user,1,0,0,0
 access_is_famille_manager,access_is_famille_manager,model_is_famille,sales_team.group_sale_manager,1,1,1,1
+
+access_is_sous_famille,access_is_sous_famille,model_is_sous_famille,base.group_user,1,0,0,0
 access_is_sous_famille_manager,access_is_sous_famille_manager,model_is_sous_famille,sales_team.group_sale_manager,1,1,1,1
+
 access_is_nature_travaux,access_is_nature_travaux,model_is_nature_travaux,base.group_user,1,0,0,0
 access_is_type_travaux,access_is_type_travaux,model_is_type_travaux,base.group_user,1,0,0,0
 access_is_specificite,access_is_specificite,model_is_specificite,base.group_user,1,0,0,0

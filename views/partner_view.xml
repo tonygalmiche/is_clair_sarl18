@@ -254,6 +254,10 @@
                 <field name="is_banque_id"                 optional="hide"/>
                 <field name="property_account_position_id" optional="hide"/>
                 <field name="is_type_paiement"             optional="hide"/>
+                <field name="property_account_receivable_id"    optional="hide"/>
+                <field name="property_account_payable_id"       optional="hide"/>
+                <field name="property_payment_term_id"          optional="hide"/>
+                <field name="property_supplier_payment_term_id" optional="hide"/>
             </field>
         </field>
     </record>

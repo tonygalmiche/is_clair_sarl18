@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import models,fields,api # type: ignore
+from odoo import models,fields,api                      # type: ignore
+from odoo.tools.sql import column_exists, create_column # type: ignore
+from odoo.tools import index_exists                     # type: ignore
 from dateutil.relativedelta import relativedelta
 
 
@@ -66,6 +68,7 @@ class AccountMove(models.Model):
 
     invoice_payment_term_id = fields.Many2one(tracking=True)
     invoice_date_due        = fields.Date(tracking=True)
+    is_date_abandon         = fields.Date(string="Abandon solde paiement", help="Date d'abandon du solde => Ne sera jamais payé",tracking=True)
 
 
     @api.depends('state','amount_total_signed','invoice_line_ids','invoice_date')
