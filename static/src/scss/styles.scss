@@ -67,3 +67,17 @@
 .o_form_view {
     --fieldWidget-margin-bottom: 1px;
 }
+
+
+
+//Permet d'élargir la colonne 'Article' des commandes (sol_product) à 1000px
+.o_sol_product_many2one_cell{
+    width: 1000px !important;
+}
+
+//Permet d'élargir la colonne 'Article' des factures à 700px
+.o_product_label_section_and_note_field_cell{
+    width: 700px !important;
+}
+
+

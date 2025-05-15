@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- purchase.order  -->
-    <!-- <record id="is_purchase_order_form" model="ir.ui.view">
+    <record id="is_purchase_order_form" model="ir.ui.view">
         <field name="name">is_purchase_order_form</field>
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
@@ -24,19 +24,13 @@
                 <field name="is_contact_chantier_id"/>
                 <field 
                     name="is_modele_commande_id" 
-                    attrs="{'invisible': [
-                        ('is_modele_commande_id', '=', False),
-                    ]}"
+                    invisible="is_modele_commande_id==False"
                 />
                 <button
                     name="initialiser_depuis_modele_commande"
                     type="object"
                     string="Initialiser la commande à partir de ce modèle"
-                    attrs="{'invisible': ['|','|',
-                        ('is_modele_commande_id', '=', False),
-                        ('state', 'not in', ['draft','sent']),
-                        ('order_line', '!=', []),
-                    ]}"
+                    invisible="is_modele_commande_id==False or state not in ['draft','sent'] or order_line==[]"
                 />
             </field>
             <field name="date_order" position="before">
@@ -47,17 +41,12 @@
                 <field name="is_eco_contribution"/>
                 <field name="is_reste_a_facturer"/>
             </field>
-
             <field name="origin" position="after">
                 <field name="is_sale_order_id"/>
             </field>
-
-
-
             <field name="date_order" position="attributes">
                  <attribute name="invisible">1</attribute>
             </field>
-
             <label for="date_planned" position="attributes">
                  <attribute name="invisible">1</attribute>
             </label>
@@ -65,11 +54,9 @@
             <div name="date_planned_div" position="attributes">
                  <attribute name="invisible">1</attribute>
             </div>
-
             <div name="reminder" position="attributes">
                  <attribute name="invisible">1</attribute>
             </div>
-
             <label for="date_approve" position="attributes">
                  <attribute name="invisible">1</attribute>
             </label>
@@ -82,68 +69,54 @@
                     type="object"
                     string="Importer les tâches"
                     confirm="Voulez-vous vraiment remplacer toutes les lignes de cette commande ?"
-                    states="draft"
+                    invisible="state!='draft'"
                 />
             </field>
             <notebook position="before">
-                <div style="background:orange;color:white;font-weight:bold;padding-left:5pt" attrs="{'invisible':[('is_condition_tarifaire','=',False)]}">
+                <div style="background:orange;color:white;font-weight:bold;padding-left:5pt" invisible="is_condition_tarifaire==False">
                     <field 
                         name="is_condition_tarifaire"
                         readonly="1" nolabel="1" 
                     />
                 </div>
             </notebook>
-
-            <xpath expr="//page[@name='products']/field[@name='order_line']/tree" position="attributes">
+            <xpath expr="//page[@name='products']/field[@name='order_line']/list" position="attributes">
                 <attribute name="limit">500</attribute>
             </xpath>
-
-
-            <xpath expr="//page[@name='products']/field[@name='order_line']/tree" position="attributes">
+            <xpath expr="//page[@name='products']/field[@name='order_line']/list" position="attributes">
                 <attribute name="editable"></attribute>
             </xpath>
- 
-
-
-
-
-            <xpath expr="//page[@name='products']/field[@name='order_line']/tree/field[@name='name']" position="before">
+            <xpath expr="//page[@name='products']/field[@name='order_line']/list/field[@name='name']" position="before">
                 <field name="is_famille_id"      optional="hide"/>
                 <field name="is_sous_famille_id" optional="hide"/>
                 <field name="is_finition_id"     optional="show"/>
                 <field name="is_traitement_id"   optional="show"/>
             </xpath>
-            <xpath expr="//page[@name='products']/field[@name='order_line']/tree/field[@name='product_qty']" position="before">
+            <xpath expr="//page[@name='products']/field[@name='order_line']/list/field[@name='product_qty']" position="before">
                 <field name="is_colisage" optional="hide" widget="html"/>
                 <field name="is_nb_colis" optional="hide" sum="Total"/>
-                <field name="is_liste_colis_action_vsb" invisible="1"/>
+                <field name="is_liste_colis_action_vsb" column_invisible="1"/>
                 <button 
                     name="liste_colis_action" 
                     type="object" icon="fa-list-ul" 
                     title="Liste des colis"
-                    attrs="{'invisible':[('is_liste_colis_action_vsb','=',False)]}"
+                    invisible="is_liste_colis_action_vsb==False"
                 />
                 <button 
                     name="liste_lignes_colis_action" 
                     type="object" icon="fa-list" 
                     title="Liste des lignes des colis"
-                    attrs="{'invisible':[('is_liste_colis_action_vsb','=',False)]}"
+                    invisible="is_liste_colis_action_vsb==False"
                 />
             </xpath>
 
-            <xpath expr="//page[@name='products']/field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
+            <xpath expr="//page[@name='products']/field[@name='order_line']/list/field[@name='price_subtotal']" position="after">
                 <field name="is_reste_a_facturer"   optional="hide"/>
                 <field name="is_eco_contribution"   optional="hide"/>
             </xpath>
-
-
-
             <xpath expr="//page[@name='products']/field[@name='order_line']/form/group/group/field[@name='product_id']" position="attributes">
                 <attribute name="context">{'tree_view_ref': 'is_clair_sarl18.is_product_search_tree_view'}</attribute>
             </xpath>
-
-
-
             <xpath expr="//page[@name='products']/field[@name='order_line']/form/group/group/field[@name='date_planned']" position="attributes">
                  <attribute name="invisible">1</attribute>
             </xpath>
@@ -184,7 +157,7 @@
                             string="Importation du PDF" type="object" 
                         />
                     </group>
-                    <group string="Résultat importation" attrs="{'invisible':[('is_import_pdf_resultat','=',False)]}" >
+                    <group string="Résultat importation" invisible="is_import_pdf_resultat==False" >
                         <group>
                             <div style="background:gainsboro;font-weight:normal;padding-left:5pt;margin-right:10pt;font-family:courier, courier new, serif;">
                                 <field name="is_import_pdf_resultat" nolabel="1"/>
@@ -221,9 +194,9 @@
                         </field>
                     </group>
                 </page>
-            </xpath>
+            </xpath> 
         </field>
-    </record> -->
+    </record>
     <record id="is_purchase_order_kpis_tree" model="ir.ui.view">
         <field name="name">is_purchase_order_kpis_tree</field>
         <field name="model">purchase.order</field>

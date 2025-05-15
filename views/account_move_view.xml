@@ -90,9 +90,9 @@
                 <field name="is_situation"   invisible="move_type in ['in_invoice','in_refund']"/>
                 <field name="is_banque_id"   invisible="is_banque_id == False"/>
             </field>
-            <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
+            <!-- <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
                 <attribute name="widget"></attribute>
-            </xpath>
+            </xpath> -->
 
             <xpath expr="//div[hasclass('o_attachment_preview')]" position="replace"/>
 

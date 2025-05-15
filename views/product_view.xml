@@ -156,9 +156,9 @@
                     <label for="is_tache"/>
                 </span>
             </div>
-<!--             
-           <field name="detailed_type" position="after">
-                <field name="is_fournisseur_id" attrs="{'invisible':[('is_fournisseur_id','=',False)]}"/>
+       
+           <field name="product_tooltip" position="after">
+                <field name="is_fournisseur_id" invisible="is_fournisseur_id==False"/>
                 <field name="is_famille_id"/>
                 <field name="is_sous_famille_id"  domain="[('famille_ids', 'in', is_famille_id)]"/>
 
@@ -178,27 +178,27 @@
                 <field name="is_eco_contribution_vsb"     invisible="1"/>
                 <field name="is_sous_article_ids_vsb"     invisible="1"/>
 
-                <field name="is_longueur"             attrs="{'invisible':[('is_longueur_vsb','=',False)]}"/>
-                <field name="is_largeur_utile"        attrs="{'invisible':[('is_largeur_utile_vsb','=',False)]}"/>
-                <field name="is_surface_panneau"      attrs="{'invisible':[('is_surface_panneau_vsb','=',False)]}"/>
-                <field name="is_surface_palette"      attrs="{'invisible':[('is_surface_palette_vsb','=',False)]}"/>
-                <field name="is_poids"                attrs="{'invisible':[('is_poids_vsb','=',False)]}"/>
-                <field name="is_poids_rouleau"        attrs="{'invisible':[('is_poids_rouleau_vsb','=',False)]}"/>
-                <field name="is_ondes"                attrs="{'invisible':[('is_ondes_vsb','=',False)]}"/>
-                <field name="is_resistance_thermique" attrs="{'invisible':[('is_resistance_thermique_vsb','=',False)]}"/>
-                <field name="is_lambda"               attrs="{'invisible':[('is_lambda_vsb','=',False)]}"/>
-                <field name="is_lg_mini_forfait"      attrs="{'invisible':[('is_lg_mini_forfait_vsb','=',False)]}"/>
-                <field name="is_forfait_coupe_id"     attrs="{'invisible':[('is_forfait_coupe_id_vsb','=',False)]}"/>
-                <field name="is_conditionnement"      attrs="{'invisible':[('is_conditionnement_vsb','=',False)]}"/>
-                <field name="is_ordre_tri"            attrs="{'invisible':[('is_ordre_tri_vsb','=',False)]}"/>
-                <field name="is_eco_contribution"     attrs="{'invisible':[('is_eco_contribution_vsb','=',False)]}"/>
-                <field name="is_sous_article_ids"     attrs="{'invisible':[('is_sous_article_ids_vsb','=',False)]}">
+                <field name="is_longueur"             invisible="is_longueur_vsb==False"/>
+                <field name="is_largeur_utile"        invisible="is_largeur_utile_vsb==False"/>
+                <field name="is_surface_panneau"      invisible="is_surface_panneau_vsb==False"/>
+                <field name="is_surface_palette"      invisible="is_surface_palette_vsb==False"/>
+                <field name="is_poids"                invisible="is_poids_vsb==False"/>
+                <field name="is_poids_rouleau"        invisible="is_poids_rouleau_vsb==False"/>
+                <field name="is_ondes"                invisible="is_ondes_vsb==False"/>
+                <field name="is_resistance_thermique" invisible="is_resistance_thermique_vsb==False"/>
+                <field name="is_lambda"               invisible="is_lambda_vsb==False"/>
+                <field name="is_lg_mini_forfait"      invisible="is_lg_mini_forfait_vsb==False"/>
+                <field name="is_forfait_coupe_id"     invisible="is_forfait_coupe_id_vsb==False"/>
+                <field name="is_conditionnement"      invisible="is_conditionnement_vsb==False"/>
+                <field name="is_ordre_tri"            invisible="is_ordre_tri_vsb==False"/>
+                <field name="is_eco_contribution"     invisible="is_eco_contribution_vsb==False"/>
+                <field name="is_sous_article_ids"     invisible="is_sous_article_ids_vsb==False">
                     <list editable="bottom">
                         <field name="product_id"/>
                         <field name="quantite"/>
                     </list>
                 </field>
-            </field> -->
+            </field> 
         </field>
     </record> 
     <record id="is_product_template_tree_view" model="ir.ui.view">

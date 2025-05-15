@@ -272,6 +272,10 @@ class purchase_order(models.Model):
                 cde = "cd /tmp && pdftotext -layout %s.pdf"%name
                 p = Popen(cde, shell=True, stdout=PIPE, stderr=PIPE)
                 stdout, stderr = p.communicate()
+
+                print()
+
+
                 path = "/tmp/%s.txt"%name
                 r = open(path,'rb').read().decode('utf-8')
                 lines = r.split('\n')
@@ -833,7 +837,7 @@ class purchase_order_line(models.Model):
     is_colis_ids       = fields.One2many('is.purchase.order.line.colis', 'line_id', 'Colis', copy=True)
     is_nb_colis        = fields.Integer('Nb colis', store=True, readonly=True, compute='_compute_is_nb_colis')
     is_liste_colis_action_vsb = fields.Boolean("Liste colis vsb", store=False, readonly=True, compute='_compute_is_liste_colis_action_vsb')
-    is_colisage               = fields.Text("Colisage", store=False, readonly=True, compute='_compute_is_colisage')
+    is_colisage               = fields.Html("Colisage", store=False, readonly=True, compute='_compute_is_colisage')
     is_repere_ids             = fields.One2many('is.purchase.order.line.repere', 'line_id', 'Repère de plan')
     is_mois_ids               = fields.One2many('is.purchase.order.line.mois'  , 'line_id', 'Mois')
     is_preparation_id         = fields.Many2one('is.preparation.facture', 'Préparation facture', help="Utilisé par IsPreparationFacture")

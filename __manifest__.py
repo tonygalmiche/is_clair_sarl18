@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 
 
+#TODO : 
+#- La colonne 'Descriptions' des commandes de vente n'est pas assez large
+
+
 #TODO Facturation : 
 #- Il n'y a que les commentaires dans les lignes des factures
 #- Hiqotrique en bas
 #- Elarger la page
 #- Ajouter les champs perso
 #- Masquer apercu facture
-#- Manque les taxes
 # Erreur : Vous êtes sur le point de désactiver la fonctionnalité liste de prix. Toutes les listes de prix actives seront archivées.
 
 
