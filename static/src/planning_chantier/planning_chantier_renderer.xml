@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="planning_chantier.PlanningChantierRendererTemplate">
+        <t t-foreach="props.data" t-as="record" t-key="record.id">
+            <div><t t-esc="record.date_debut"/> <t t-esc="record.date_fin"/> <t t-esc="record.equipe_id[1]"/> (<t t-esc="record.id"/>)</div>
+        </t>
+    </t>
+</templates>

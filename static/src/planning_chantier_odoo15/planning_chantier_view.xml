@@ -87,7 +87,7 @@
                     </td>
                     <td>
                         <img 
-                            src="/is_clair_sarl/static/src/img/pdf.svg" 
+                            src="/is_clair_sarl18/static/src/img/pdf.svg" 
                             style="max-height:2em;margin-left:20px;margin-right:0.5em"
                             title="Télécharger le planning PDF"
                             class="link"

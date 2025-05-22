@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="planning_chantier.PlanningChantierControllerTemplate">
+        <div>
+            <Layout display="props.display">
+                <t t-set-slot="control-panel-additional-actions">
+                </t>
+                <t t-set-slot="layout-actions">
+                    <SearchBar/>
+                </t>
+                <t t-component="props.Renderer" t-props="rendererProps"/>
+            </Layout>
+        </div>
+    </t>
+</templates>

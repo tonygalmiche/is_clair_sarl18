@@ -153,7 +153,7 @@
 
 
     <!-- Planning des chantiers -->
-    <!-- <record id="is_planning_chantier_view" model="ir.ui.view">
+    <record id="is_planning_chantier_view" model="ir.ui.view">
         <field name="name">is_planning_chantier_view</field>
         <field name="model">is.chantier</field>
         <field name="arch" type="xml">
@@ -162,12 +162,12 @@
                 </templates>
             </planning_chantier>
         </field>
-    </record> -->
+    </record>
     <record  id="is_planning_chantier_action" model="ir.actions.act_window">
         <field name="name">Planning des chantiers</field>
         <field name="res_model">is.chantier</field>
-        <field name="view_mode">calendar,list,form</field>
-        <!-- <field name="view_mode">planning_chantier,calendar,list,form</field> -->
+        <!-- <field name="view_mode">calendar,list,form</field> -->
+        <field name="view_mode">planning_chantier,calendar,list,form</field>
         <field name="domain">[]</field>
     </record>
 

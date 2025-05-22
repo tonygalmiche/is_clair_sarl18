@@ -1,131 +1,74 @@
-/** @odoo-module **/
-import BasicModel from 'web.BasicModel';
-import session from 'web.session';
+//TODO : Je suis reparti du type de vue 'activity' "@mail/views/web/activity" qui est le plus simple
+import { RelationalModel } from "@web/model/relational_model/relational_model";
+
+console.log('PlanningChantierModel')
+
+export class PlanningChantierModel extends RelationalModel {
+    static DEFAULT_LIMIT = 100;
+
+    async load(params = {}) {
+        this.originalDomain = params.domain ? [...params.domain] : [];
+        //await Promise.all([this.fetchActivityData(params), super.load(params)]);
+        await Promise.all([this.fetchData(params), super.load(params)]);
+    }
 
 
-const PlanningChantierModel = BasicModel.extend({
-    // __get: function () {
-    //     var result = this._super.apply(this, arguments);
-    //     if (result && result.model === this.modelName && result.type === 'list') {
-    //         _.extend(result, this.additionalData, this.additionalChantier);
-    //         //_.extend(result, this.additionalData, this.additionalPartner);
-    //         //_.extend(result, this.additionalData, {getKanbanActivityData: this.getKanbanActivityData});
-    //     }
-
-    //     console.log(result);
-
-
-    //     return result;
-    // },
+    async fetchData(params) {
+        console.log('fetchData 1',params);
+        this.data = await this.orm.call(params.resModel, "search_read", [], {
+            fields : params.fields,
+            domain : params.domain,
+            order  : params.orderBy,
+            context: params.context,
+            limit  : params.limit,
+        })
+        console.log('fetchData 2',this.data);
+    }
 
 
-
-
-    /**
-     * @override
-     * @param {Array[]} params.domain
-     */
-    __load: function (params) {
-        console.log("PlanningChantierModel : __load : params=",params); 
-        this.originalDomain = _.extend([], params.domain);
-        //params.domain.push(['id', '=', false]);
-        this.domain = params.domain;
-        this.modelName = params.modelName;
-        params.groupedBy = [];
-        var def = this._super.apply(this, arguments);
-        return Promise.all([def, this._fetchData()]).then(function (result) {
-            return result[0];
+    async fetchActivityData(params) {
+        console.log('fetchActivityData',params);
+        this.activityData = await this.orm.call("mail.activity", "get_activity_data", [], {
+            res_model: this.config.resModel,
+            domain: params.domain || this.env.searchModel._domain,
+            limit: params.limit || this.initialLimit,
+            offset: params.offset || 0,
+            fetch_done: true,
         });
-    },
-    /**
-     * @override
-     * @param {Array[]} [params.domain]
-     */
-    __reload: function (handle, params) {
-        console.log("PlanningChantierModel : __reload : params=",params); 
-        if (params && 'domain' in params) {
-            this.originalDomain = _.extend([], params.domain);
-            //params.domain.push(['id', '=', false]);
-            this.domain = params.domain;
-        }
-        if (params && 'groupBy' in params) {
-            params.groupBy = [];
-        }
-        var def = this._super.apply(this, arguments);
-        return Promise.all([def, this._fetchData()]).then(function (result) {
-            return result[0];
-        });
-    },
+        console.log(this.activityData);
+    }
 
 
 
-    /**
-     * Fetch activity data.
-     *
-     * @private
-     * @returns {Promise}
-     */
-    _fetchData: function () {
-        console.log("PlanningChantierModel : this.domain=",this.domain); 
+    //setup(params) {
+    //    this.params = params;
+        // this.model_name = params.resModel;
+        // this.fields = this.params.fields;
+        // this.date_start = this.params.date_start;
+        // this.date_stop = this.params.date_stop;
+        // this.date_delay = this.params.date_delay;
+        // this.colors = this.params.colors;
+        // this.last_group_bys = this.params.default_group_by.split(",");
+        // const templates = useViewCompiler(KanbanCompiler, this.params.templateDocs);
+        // this.recordTemplate = templates["timeline-item"];
 
-
-
-
-
-        //var self = this;
-        // this._rpc({
-        //     model: "mail.activity",
-        //     method: 'get_activity_data',
-        //     kwargs: {
-        //         res_model: this.modelName,
-        //         domain: this.domain,
-        //         context: session.user_context,
-        //     }
-        // }).then(function (result) {
-        //     self.additionalData = result;
-        //     console.log("_fetchData : additionalData : result=",result);
-        //     console.log("_fetchData : additionalData : self=",self);
+        // this.keepLast = new KeepLast();
+        // onWillStart(async () => {
+        //     this.write_right = await this.orm.call(
+        //         this.model_name,
+        //         "check_access_rights",
+        //         ["write", false]
+        //     );
+        //     this.unlink_right = await this.orm.call(
+        //         this.model_name,
+        //         "check_access_rights",
+        //         ["unlink", false]
+        //     );
+        //     this.create_right = await this.orm.call(
+        //         this.model_name,
+        //         "check_access_rights",
+        //         ["create", false]
+        //     );
         // });
-
-        // this._rpc({
-        //     model: 'res.partner',
-        //     method: 'get_vue_owl_99',
-        //     kwargs: {
-        //         domain: this.domain,
-        //     }
-        // }).then(function (result) {
-        //     //console.log("get_vue_owl_99 : result=",result);
-        //     //self.additionalPartner = result;
-        //     self.additionalData = result;
-        //     console.log("_fetchData : additionalData : result=",result);
-        //     console.log("_fetchData : additionalData : self=",self);
-        // });
-
-        // this._rpc({
-        //     model: 'is.chantier',
-        //     method: 'get_chantiers',
-        //     kwargs: {
-        //         domain: this.domain,
-        //     }
-        // }).then(function (result) {
-        //     //console.log("get_vue_owl_99 : result=",result);
-        //     //self.additionalPartner = result;
-        //     self.additionalChantier = result;
-        //     console.log("_fetchData : additionalChantier : result=",result);
-        //     //console.log("_fetchData : additionalChantier : self=",self);
-        // });
-
-
-
-    },
-
-
-
-
-
-
-
-
-});
-
-export default PlanningChantierModel;
+    //}
+}

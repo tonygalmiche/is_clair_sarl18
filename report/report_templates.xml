@@ -12,14 +12,14 @@
             </style>
             <div class="o_boxed_header">
                 <div class="text-center">
-                    <img src="/is_clair_sarl/static/src/img/entete-correspondance-clair.png"/>
+                    <img src="/is_clair_sarl18/static/src/img/entete-correspondance-clair.png"/>
                 </div>
             </div>
         </xpath>
         <xpath expr="//div[3]" position="replace">
             <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout" style="border-top:0">
                 <div class="text-center">
-                    <img src="/is_clair_sarl/static/src/img/bas-de-page-correspondance-clair.png" style="max-width:190mm"/>
+                    <img src="/is_clair_sarl18/static/src/img/bas-de-page-correspondance-clair.png" style="max-width:190mm"/>
                     <div t-if="report_type == 'pdf'">
                         Page: <span class="page"/> / <span class="topage"/>
                     </div>
