@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models,fields,api  # type: ignore
+from odoo import models,fields,api  
 from datetime import date
 
 

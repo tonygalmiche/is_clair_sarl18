@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models  # type: ignore
+from odoo import api, fields, models  
 from random import randint
 from datetime import datetime, date, timedelta
 import re

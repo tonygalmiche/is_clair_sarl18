@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models, api  # type: ignore
+from odoo import fields, models, api  
 
 
 class IsFamille(models.Model):

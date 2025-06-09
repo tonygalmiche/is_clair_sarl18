@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _                        # type: ignore
-from odoo.tools.misc import formatLang, format_date, get_lang  # type: ignore
-from odoo.http import request                                  # type: ignore
+from odoo import api, fields, models, _                        
+from odoo.tools.misc import formatLang, format_date, get_lang  
+from odoo.http import request                                  
 import codecs
 import unicodedata
 import base64

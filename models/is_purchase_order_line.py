@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models             # type: ignore
-from odoo.tools.sql import drop_view_if_exists   # type: ignore
+from odoo import api, fields, models             
+from odoo.tools.sql import drop_view_if_exists   
 
 
 class is_purchase_order_line(models.Model):

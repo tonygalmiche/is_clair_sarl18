@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models,fields  # type: ignore
+from odoo import models,fields  
 
 
 class is_mem_var(models.Model):

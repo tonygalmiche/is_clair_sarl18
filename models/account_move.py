@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import models,fields,api                      # type: ignore
-from odoo.tools.sql import column_exists, create_column # type: ignore
-from odoo.tools import index_exists                     # type: ignore
+from odoo import models,fields,api                      
+from odoo.tools.sql import column_exists, create_column 
+from odoo.tools import index_exists                     
 from dateutil.relativedelta import relativedelta
 
 

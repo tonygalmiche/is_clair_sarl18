@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import models,fields,api                      # type: ignore
-from odoo.http import request                           # type: ignore
-from odoo.exceptions import UserError, ValidationError  # type: ignore
+from odoo import models,fields,api                      
+from odoo.http import request                           
+from odoo.exceptions import UserError, ValidationError  
 import datetime
 from dateutil.relativedelta import relativedelta
 import math

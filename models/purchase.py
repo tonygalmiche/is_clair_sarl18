@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from itertools import product
 from pdb import line_prefix
-from odoo import models,fields,api               # type: ignore
-from odoo.tools.misc import formatLang, get_lang # type: ignore
+from odoo import models,fields,api               
+from odoo.tools.misc import formatLang, get_lang 
 import base64
 from subprocess import PIPE, Popen
 import re
-from thefuzz import fuzz # type: ignore
+from thefuzz import fuzz 
 from collections import OrderedDict
 import operator
 from datetime import datetime

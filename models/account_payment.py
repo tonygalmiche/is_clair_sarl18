@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import models,fields,api                                        # type: ignore
-from odoo.addons.is_clair_sarl18.models.res_partner import _TYPE_PAIEMENT   # type: ignore
+from odoo import models,fields,api                                        
+from odoo.addons.is_clair_sarl18.models.res_partner import _TYPE_PAIEMENT   
 
 
 class IsTraite(models.Model):

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models  # type: ignore
+from odoo import api, fields, models  
 
 class res_company(models.Model):
     _inherit = "res.company"

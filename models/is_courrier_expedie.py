@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models  # type: ignore
+from odoo import fields, models  
 
 
 class IsCourrierExpedie(models.Model):

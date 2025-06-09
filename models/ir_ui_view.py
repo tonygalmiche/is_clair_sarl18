@@ -1,4 +1,4 @@
-from odoo import fields, models  # type: ignore
+from odoo import fields, models  
 
 MY_VIEW = ("planning_chantier", "Planning chantier")
 
@@ -28,7 +28,7 @@ class IrUIView(models.Model):
 
 
 
-# from odoo import fields, models   # type: ignore
+# from odoo import fields, models   
 
 # class View(models.Model):
 #     _inherit = "ir.ui.view"
