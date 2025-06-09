@@ -20,7 +20,6 @@ class IsEquipe(models.Model):
         ('name_uniq', 'unique (name)', "Cette équipe exite déjà !"),
     ]
 
-
     @api.onchange('color_code')
     def onchange_color_code(self):
         for obj in self:
@@ -55,7 +54,6 @@ class IsChantier(models.Model):
     alerte_html = fields.Text('Alertes ',compute='_compute_alerte_html', store=True, readonly=True, tracking=True)
     active      = fields.Boolean("Actif", default=True, copy=False)
 
-
     @api.depends('alerte_ids')
     def _compute_alerte_html(self):
         for obj in self:
@@ -65,12 +63,10 @@ class IsChantier(models.Model):
                     html.append('%s:%s'%(line.date, line.alerte))
             obj.alerte_html='\n'.join(html)
 
-
     def recalculer_duree_action(self):
         for obj in self:
             obj._compute_duree()
  
-
     @api.depends('date_debut','date_fin')
     def _compute_duree(self):
         for obj in self:
@@ -81,13 +77,11 @@ class IsChantier(models.Model):
                     duree=0
             obj.duree=duree
 
-
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             vals['name'] = self.env['ir.sequence'].next_by_code('is.chantier')
         return super().create(vals_list)
-
 
     @api.model
     def move_chantier(self,chantierid=False,debut=False,decale_planning=0):
@@ -103,7 +97,6 @@ class IsChantier(models.Model):
                 chantier.date_fin = chantier.date_debut + timedelta(days=duree)
         return 'OK'
 
-
     @api.model
     def modif_duree_chantier(self,chantierid=False,duree=False):
         if chantierid and duree:
@@ -113,16 +106,13 @@ class IsChantier(models.Model):
                     chantier.date_fin = chantier.date_debut + timedelta(days=duree)
         return 'OK'
 
-
     def vers_en_encours(self):
         for obj in self:
             obj.state='en_cours'
 
-
     def vers_a_planifier(self):
         for obj in self:
             obj.state='a_planifier'
-
 
     def ajouter_alerte_action(self):
         date=self.date_debut - timedelta(days=1)
@@ -136,11 +126,13 @@ class IsChantier(models.Model):
         }
         return res
 
-
     @api.model
     def get_chantiers(self,domain=[],decale_planning="", nb_semaines="", filtre_chantier=False, filtre_equipe=False, filtre_travaux=False, chantier_state=""):
         autorise_modif=False
-        if self.user_has_groups('is_clair_sarl18.is_responsable_planning_chantiers_group'):
+        # Correction : utiliser self.env.user au lieu de self.user_has_groups
+        domain=[]
+
+        if self.env.user.has_group('is_clair_sarl18.is_responsable_planning_chantiers_group'):
             autorise_modif=True
 
         if nb_semaines=="":
@@ -170,7 +162,6 @@ class IsChantier(models.Model):
         else:
             self.env['is.mem.var'].set(self._uid, 'chantier_state', chantier_state)
 
-
         #** Liste de choix ****************************************************
         options = ["A planifier","En cours", "Tous"]
         state_options=[]
@@ -191,14 +182,12 @@ class IsChantier(models.Model):
         for line in lines:
             chantier_id = line.chantier_id.id
             date_alerte = line.date
-
             if chantier_id not in alertes:
                 alertes[chantier_id]={}
             if date_alerte not in alertes[chantier_id]:
                 alertes[chantier_id][date_alerte]=[]
             alertes[chantier_id][date_alerte].append(line)
         #**********************************************************************
-
 
         #** Recherche des jours de fermeture **********************************
         lines=self.env['is.fermeture'].search([], order='date_debut')
@@ -281,7 +270,6 @@ class IsChantier(models.Model):
             domain.append(['nature_travaux_id', 'ilike', filtre_travaux])
         #**********************************************************************
 
-
         #** Recherche de la date de début de chaque affaire pour le tri *******
         date_debut_affaire={}
         chantiers=self.env['is.chantier'].search(domain)
@@ -292,7 +280,6 @@ class IsChantier(models.Model):
             if date_debut_affaire[affaire_id]>chantier.date_debut:
                 date_debut_affaire[affaire_id]=chantier.date_debut
         #**********************************************************************
-
 
         #** Dictionnaire trié des chantiers par date début affaire ***********
         chantiers=self.env['is.chantier'].search(domain)
@@ -309,7 +296,6 @@ class IsChantier(models.Model):
             my_dict[key]=chantier
         sorted_chantiers = dict(sorted(my_dict.items()))
         #**********************************************************************
-
 
         #** Contruction du dictionnaire finale des données dans le bon ordre **
         trcolor="#ffffff"
@@ -351,10 +337,7 @@ class IsChantier(models.Model):
                 #**************************************************************
 
                 decal = (chantier.date_debut - debut_planning).days
-                #if decal<0:
-                #    decal=0
                 jours={}
-
                 duree = chantier.duree or (chantier.date_fin - chantier.date_debut).days
                 if duree<1:
                     duree=1
@@ -367,8 +350,6 @@ class IsChantier(models.Model):
                     fermeture=''
                     if date_jour in fermetures:
                         fermeture='#FFE4C4'
-                    #if int(date_jour.strftime('%w')) in [0,6]:
-                    #    fermeture='#F5F5DC'
                     #**********************************************************                    
                     
                     alerte=False
@@ -435,6 +416,7 @@ class IsChantier(models.Model):
                 res.append(vals)
                 my_dict[key]=vals
         sorted_dict = dict(sorted(my_dict.items()))
+
         return {
             "dict"           : sorted_dict,
             "mois"           : mois,
@@ -449,7 +431,6 @@ class IsChantier(models.Model):
             "filtre_travaux" : filtre_travaux,
         }
     
-
     @api.model
     def get_planning_pdf(self):
         #** Recherche du premier chantier pour générer le planning PDF
@@ -457,8 +438,9 @@ class IsChantier(models.Model):
 
         if len(chantiers)>0:
             chantier_id = chantiers[0].id
-            pdf = self.env.ref('is_clair_sarl18.is_chantier_reports')._render_qweb_pdf(chantier_id)[0]
-            datas = base64.b64encode(pdf).decode()
+            report = self.env.ref('is_clair_sarl18.is_chantier_reports')
+            pdf_content, _ = report._render_qweb_pdf(report, [chantier_id])
+            datas = base64.b64encode(pdf_content).decode()
 
             # ** Recherche si une pièce jointe est déja associèe *******************
             attachment_obj = self.env['ir.attachment']
@@ -482,7 +464,6 @@ class IsChantier(models.Model):
             #***********************************************************************
             return attachment_id
 
-
     def recalage_auto_chantier_cron(self):
         today = date.today()
         filtre=[
@@ -503,7 +484,6 @@ class IsChantierAlerte(models.Model):
     _name='is.chantier.alerte'
     _description = "Alertes pour les chantiers"
     _order='id desc'
-
 
     chantier_id = fields.Many2one('is.chantier', 'Chantier', required=True, index=True)
     affaire_id  = fields.Many2one(related="chantier_id.affaire_id")

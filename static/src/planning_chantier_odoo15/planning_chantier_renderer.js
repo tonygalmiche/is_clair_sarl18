@@ -6,7 +6,6 @@ import session from 'web.session';
 import utils from 'web.utils';
 
 const _t = core._t;
-//const { useState } = owl.hooks;
 
 const { useState, onMounted, onPatched, onWillUnmount } = owl.hooks;
 
@@ -21,8 +20,6 @@ class PlanningChantierRenderer extends AbstractRendererOwl {
         this.qweb = new QWeb(this.env.isDebug(), {_s: session.origin});
         this.qweb.add_template(utils.json_node_to_xml(props.templates));
  
-        //useState permet de faire un lien entre la vue XML et l'Object Javascript
-        //Chaque modification de l'objet this.state entraine une modification de l'interface utilisateur
         this.state = useState({
             decale_planning: "",
             nb_semaines:"",
@@ -33,6 +30,8 @@ class PlanningChantierRenderer extends AbstractRendererOwl {
         //onPatched(() => this._patched());
     }
 
+
+    
     mounted() {
         this.GetChantiers();
     }
@@ -277,28 +276,6 @@ class PlanningChantierRenderer extends AbstractRendererOwl {
 
 
 
-    // chantier_id = fields.Many2one('is.chantier', 'Chantier', required=True, index=True)
-    // affaire_id  = fields.Many2one(related="chantier_id.affaire_id")
-    // alerte      = fields.Text('Alerte'                     , required=True)
-    // date        = fields.Date('Date alerte', default=fields.Datetime.now, index=True, help="Date à laquelle l'alerte sera positionnée sur le planning des chantiers")
-
-
-
-//     return {
-//         type: 'ir.actions.act_window',
-//         name: _t('Employee Termination'),
-//         res_model: 'hr.departure.wizard',
-//         views: [[false, 'form']],
-//         view_mode: 'form',
-//         target: 'new',
-//         context: {
-//             'active_id': id,
-//             'toggle_active': true,
-//         }
-//     }
-// }
-
-
 
     ModifierChantierClick(ev) {
         const id=ev.target.attributes.id.value;
@@ -349,6 +326,9 @@ class PlanningChantierRenderer extends AbstractRendererOwl {
         this.state.decale_planning = 0;
         this.GetChantiers();
     }
+
+
+
     async GetChantiers(){
         var self=this;
         rpc.query({

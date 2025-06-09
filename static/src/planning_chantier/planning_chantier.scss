@@ -1,0 +1,92 @@
+.planning_chantier{
+    margin:5pt;
+}
+
+.planning_chantier .btn{
+    margin-right:5pt;
+    margin-top:5pt;
+    margin-bottom:5pt;
+}
+
+.planning_chantier .unselectable {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.planning_chantier h2{
+    margin-top:10pt;
+}
+
+
+.planning_chantier table {
+    border-collapse: collapse;
+    border: 1px solid black;
+    border-top: 1px solid black;
+    width: 98%;
+    display: block;
+    overflow-y: scroll;
+    background-color:none;
+}
+
+
+
+.planning_chantier thead {
+    position: sticky;
+    top: 0;
+    background-color:none;
+}
+
+
+  
+.planning_chantier tr {
+    background-color:none;
+}
+
+
+
+.planning_chantier td {
+    border:none;
+    border-top: 1px solid gray;
+    padding:0;
+}
+
+.planning_chantier th {
+    text-align: center;
+    border: 1px solid white;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    padding: 0;
+    margin: 0;
+    color:white;
+}
+
+.planning_chantier th div {
+    background-color:black;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+
+
+.planning_chantier .buttons table{
+    border: 0;
+}
+.planning_chantier .buttons td{
+    border: 0;
+}
+
+.planning_chantier .alerte{
+    // color:red;
+    cursor: pointer;
+    font-size:14pt;
+}
+
+.planning_chantier .link{
+    cursor:pointer;
+}
+
+

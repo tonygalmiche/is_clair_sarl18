@@ -66,9 +66,9 @@ Module Odoo 18 pour CLAIR-SARL
         # "report/purchase_order_templates.xml",
         # "report/sale_report_templates.xml",
         # "report/report_templates.xml",
-        # "report/is_chantier_report_templates.xml",
-        # "report/retenue_de_garantie_report_template.xml",
-        # "report/report.xml",
+        "report/is_chantier_report_templates.xml",
+        "report/retenue_de_garantie_report_template.xml",
+        "report/report.xml",
     ],
 
 
