@@ -41,6 +41,11 @@
                 </style>
             </xpath>
 
+            <xpath expr="//form" position="attributes">
+                <attribute name="class">form_sale_order</attribute>
+            </xpath>
+
+
             <xpath expr="//button[@name='action_quotation_send'][1]" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>

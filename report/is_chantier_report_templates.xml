@@ -7,7 +7,7 @@
                 <div class="col-3">
                     <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height:10mm;" alt="Logo"/>
                 </div>
-                <div class="col-9 text-right" style="font-size:11pt">
+                <div class="col-9 text-end" style="font-size:11pt">
                     <h2 style="font-size:18pt">Planning des chantiers</h2>
                 </div>
             </div>
@@ -16,7 +16,7 @@
             <t t-out="0"/>
         </div>
         <div t-attf-class="footer o_standard_footer">
-            <div class="text-right" style="border-top: 1px solid black;font-size:10pt">
+            <div class="text-end" style="border-top: 1px solid black;font-size:10pt">
                  <div t-if="report_type == 'pdf'" class="text-muted">
                     Page: <span class="page"/> / <span class="topage"/>
                 </div>

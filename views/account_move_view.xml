@@ -44,6 +44,12 @@
                     }
                 </style>
             </xpath>
+
+            <xpath expr="//form" position="attributes">
+                <attribute name="class">form_account_move</attribute>
+            </xpath>
+
+
             <xpath expr="//widget[@name='web_ribbon'][1]" position="after">
                 <widget name="web_ribbon" title="Archivée" bg_color="bg-danger" invisible="active == True"/>
                 <field name="active" invisible="1"/> 

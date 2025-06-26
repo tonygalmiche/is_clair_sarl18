@@ -70,14 +70,59 @@
 
 
 
-//Permet d'élargir la colonne 'Article' des commandes (sol_product) à 1000px
-.o_sol_product_many2one_cell{
-    width: 1000px !important;
+// Permet de forcer la largeur de la colonne article sur les sale_order
+.form_sale_order{
+    th[data-name="product_template_id"] {
+        width: 700px !important;
+    }
+}
+.form_sale_order{
+    th:not([data-name="product_template_id"]) {
+        width: auto !important;
+    }
+}
+.form_sale_order{
+    th[data-name="sequence"] {
+        width: 25px !important;
+    }
 }
 
-//Permet d'élargir la colonne 'Article' des factures à 700px
-.o_product_label_section_and_note_field_cell{
-    width: 700px !important;
+
+// Permet de forcer la largeur de la colonne article sur les account_move
+.form_account_move{
+    th[data-name="product_id"] {
+        width: 700px !important;
+    }
+}
+.form_account_move{
+    th:not([data-name="product_id"]) {
+        width: auto !important;
+    }
+}
+.form_account_move{
+    th[data-name="sequence"] {
+        width: 25px !important;
+    }
 }
 
+
+// Permet de forcer la largeur de la colonne article sur les purchase_order
+.form_purchase_order{
+    th[data-name="product_id"] {
+        width: 600px !important;
+    }
+}
+.form_purchase_order{
+    th[data-name="is_colisage"] {
+        width: 400px !important;
+    }
+}
+.form_purchase_order th:not([data-name="product_id"]):not([data-name="is_colisage"]) {
+    width: auto !important;
+}
+.form_purchase_order{
+    th[data-name="sequence"] {
+        width: 25px !important;
+    }
+}
 

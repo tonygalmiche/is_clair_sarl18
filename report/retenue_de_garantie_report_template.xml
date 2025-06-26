@@ -47,19 +47,19 @@
                                     <t t-set="total" t-value="total + l.montant"/>
                                     <tr>
                                         <td style="width:80%" class="text-left"><span t-field="l.section"/></td>
-                                        <td class="text-right"><span t-if="l.montant" t-field="l.montant"/></td>
+                                        <td class="text-end"><span t-if="l.montant" t-field="l.montant"/></td>
                                     </tr>
                                 </t>
                             </t>
                             <tr>
-                                <td class="text-right"><b>TRAVAUX EXÉCUTÉS AU <span t-field="o.is_date_pv"/> : </b></td>
-                                <td class="text-right">
+                                <td class="text-end"><b>TRAVAUX EXÉCUTÉS AU <span t-field="o.is_date_pv"/> : </b></td>
+                                <td class="text-end">
                                     <b><span t-esc="total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></b>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="text-right"><b>LEVÉE DE LA RETENUE DE GARANTIE <span t-field="o.is_taux_retenue_de_garantie"/>% : </b></td>
-                                <td class="text-right">
+                                <td class="text-end"><b>LEVÉE DE LA RETENUE DE GARANTIE <span t-field="o.is_taux_retenue_de_garantie"/>% : </b></td>
+                                <td class="text-end">
                                     <b><span t-field="o.is_retenue_de_garantie"/></b>
                                 </td>
                             </tr>

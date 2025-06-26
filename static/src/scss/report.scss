@@ -84,3 +84,66 @@
     border-top: 1px solid black;
     border-bottom: 1px solid black;
 }
+
+
+
+
+.clair_report .table{
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+}
+
+
+//Cela s'applique aux enfants et petit-enfants (thead, tbody, th et td)
+.clair_report .table > :not(caption) > * > *{
+    border-bottom-width:0;
+    padding: 0.1rem 0.5rem 0.1rem 0.5rem; // haut droite bas gauche;
+}
+
+.clair_report .table th{
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    padding: 0.1rem 0.5rem 0.1rem 0.5rem; // haut droite bas gauche;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+
+
+}
+
+.clair_report .table td{
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    //padding: 0.1rem 0.5rem 0.1rem 0.5rem; // haut droite bas gauche;
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+
+.clair_report table:not(.o_ignore_layout_styling) td:last-child {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.clair_report table:not(.o_ignore_layout_styling) td:first-child {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.o_table_standard table:not(.o_ignore_layout_styling) th:last-child, .o_table_standard table:not(.o_ignore_layout_styling) td:last-child {
+  padding-right: 0.5rem;
+}
+
+.o_table_standard table:not(.o_ignore_layout_styling) th:first-child, .o_table_standard table:not(.o_ignore_layout_styling) td:first-child {
+  padding-left: 0.5rem;
+}
+
+
+.clair_report td{
+    font-size:10pt;
+}

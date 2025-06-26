@@ -179,18 +179,17 @@ class AccountMove(models.Model):
         for obj in self:
             res=[]
             for line in obj.line_ids:
-                internal_type = line.account_internal_type
-                if internal_type in ('receivable', 'payable'):
-                    for partial in line.matched_credit_ids:
-                        payment = partial.credit_move_id.payment_id
-                        type_paiement = dict(payment._fields['is_type_paiement'].selection).get(payment.is_type_paiement).lower()
-                        num_cheque=''
-                        if payment.is_num_cheque:
-                            num_cheque = " %s"%payment.is_num_cheque
-                        #montant = ("%,.2f €"%payment.amount).replace('.',',')
-                        montant = '{:,.2f} €'.format(payment.amount).replace(',',' ').replace('.',',')
-                        txt="Votre %s%s du %s"%(type_paiement,num_cheque,payment.date.strftime('%d/%m/%Y'))
-                        res.append([montant,txt])
+                internal_type = line.account_type
+                #if internal_type in ('receivable', 'payable'):
+                for partial in line.matched_credit_ids:
+                    payment = partial.credit_move_id.payment_id
+                    type_paiement = dict(payment._fields['is_type_paiement'].selection).get(payment.is_type_paiement).lower()
+                    num_cheque=''
+                    if payment.is_num_cheque:
+                        num_cheque = " %s"%payment.is_num_cheque
+                    montant = '{:,.2f} €'.format(payment.amount).replace(',',' ').replace('.',',')
+                    txt="Votre %s%s du %s"%(type_paiement,num_cheque,payment.date.strftime('%d/%m/%Y'))
+                    res.append([montant,txt])
             return res
 
 

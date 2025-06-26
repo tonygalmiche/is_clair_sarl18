@@ -19,6 +19,9 @@
                     }
                 </style>
             </xpath>
+            <xpath expr="//form" position="attributes">
+                <attribute name="class">form_purchase_order</attribute>
+            </xpath>
             <field name="partner_id" position="after">
                 <field name="is_affaire_id"/>
                 <field name="is_contact_chantier_id"/>

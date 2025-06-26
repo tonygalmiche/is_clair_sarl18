@@ -57,13 +57,13 @@
                                             <t t-set="total" t-value="total + l.montant"/>
                                             <tr>
                                                 <td style="width:80%" class="text-left"><span t-field="l.section"/></td>
-                                                <td class="text-right"><span t-if="l.montant" t-field="l.montant"/></td>
+                                                <td class="text-end"><span t-if="l.montant" t-field="l.montant"/></td>
                                             </tr>
                                         </t>
                                     </t>
                                     <tr>
-                                        <td class="text-right"><b>Total HT : </b></td>
-                                        <td class="text-right">
+                                        <td class="text-end"><b>Total HT : </b></td>
+                                        <td class="text-end">
                                             <b><span t-esc="total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></b>
                                         </td>
                                     </tr>
@@ -95,7 +95,7 @@
                                                 <td style="width:80%" class="text-left">
                                                     <span t-field="l.section"/> (<span t-esc="facturable_pourcent"/>%)
                                                 </td>
-                                                <td class="text-right"><span  t-if="total_section" t-esc="total_section" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                                                <td class="text-end"><span  t-if="total_section" t-esc="total_section" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
                                             </tr>
                                         </t>
                                     </t>
@@ -123,21 +123,20 @@
                             <tbody class="invoice_tbody">
                                 <t t-set="current_subtotal" t-value="0"/>
                                 <t t-foreach="lines" t-as="line">
-                                    <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
-                                    <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
-                                    <t t-if="not line.display_type" name="account_invoice_line_accountable">
+                                    <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal"/>
+                                    <t t-if="line.display_type=='product'">
                                         <t t-if="line.product_id and line.product_id.is_famille_id.name!='Facturation'">
                                             <t t-if="o.is_order_id.is_affichage_pdf!='total_section'">
                                                 <tr>
                                                     <td name="account_invoice_line_name"><span t-field="line.name" t-options="{'widget': 'text'}"/></td>
-                                                    <td class="text-right text-nowrap">
+                                                    <td class="text-end text-nowrap">
                                                         <span t-field="line.is_qt_commande" t-options="{'widget': 'float', 'precision': 2}"/>
                                                     </td>
                                                     <td class="text-left"><span t-field="line.is_sale_line_id.is_unite"/></td>
-                                                    <td t-attf-class="text-nowrap text-right"><span t-field="line.price_unit" t-options="{'widget': 'float', 'precision': 2}"/></td>
-                                                    <td t-attf-class="text-nowrap text-right"><span t-field="line.is_sale_line_id.price_subtotal" t-options="{'widget': 'float', 'precision': 2}"/></td>
-                                                    <td t-attf-class="text-nowrap text-right"><span t-field="line.is_facturable_pourcent" t-options="{'widget': 'float', 'precision': 0}"/>%</td>
-                                                    <td class="text-right">
+                                                    <td t-attf-class="text-nowrap text-end"><span t-field="line.price_unit" t-options="{'widget': 'float', 'precision': 2}"/></td>
+                                                    <td t-attf-class="text-nowrap text-end"><span t-field="line.is_sale_line_id.price_subtotal" t-options="{'widget': 'float', 'precision': 2}"/></td>
+                                                    <td t-attf-class="text-nowrap text-end"><span t-field="line.is_facturable_pourcent" t-options="{'widget': 'float', 'precision': 0}"/>%</td>
+                                                    <td class="text-end">
                                                         <span class="text-nowrap" t-field="line.price_subtotal"/>
                                                     </td>
                                                 </tr>
@@ -168,7 +167,7 @@
                                     </t>
                                     <t t-if="current_section and (line_last or lines[line_index+1].display_type == 'line_section')">
                                         <t t-if="not line_last">
-                                            <tr class="is-subtotal text-right">
+                                            <tr class="is-subtotal text-end">
                                                 <td colspan="99">
                                                     <strong class="mr16">Montant marché : </strong>
                                                     <span
@@ -209,7 +208,7 @@
                                 <table class="table table-sm" style="page-break-inside: avoid;">
                                     <tr class="border-black">
                                         <td style="color:black"><strong>TOTAL HT réalisé</strong></td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             <span t-field="o.is_facture"/>
                                         </td>
                                     </tr>
@@ -230,7 +229,7 @@
                                     <t t-if="total_situation!=0">
                                         <tr>
                                             <td class="text-left" style="color:black">Situations précédentes</td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 <span t-esc="round(total_situation,2)" t-options="{'widget': 'float', 'precision': 2}"/> €
                                             </td>
                                         </tr>
@@ -241,7 +240,7 @@
                                             <t t-if="line.product_id and line.product_id.default_code!='FACTURE'">
                                                 <tr>
                                                     <td class="text-left" style="color:black"><span t-field="line.name"/></td>
-                                                    <td class="text-right">
+                                                    <td class="text-end">
                                                         <t t-if="line.price_subtotal">
                                                             <span t-field="line.price_subtotal"/>
                                                         </t>
@@ -255,30 +254,47 @@
                                     </t>
                                     <tr class="border-black">
                                         <td style="background-color:white"><strong style="color:black">Reste dû HT</strong></td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             <span t-field="o.amount_untaxed"/>
                                         </td>
                                     </tr>
+
                                     <t t-if="o.amount_total>o.amount_untaxed">
-                                        <t t-set="tax_totals" t-value="json.loads(o.tax_totals_json)"/>
+                                        <!-- TVA -->
+                                        <t t-set="tax_totals" t-value="o.tax_totals"/>
+                                        <t t-set="currency" t-value="o.company_currency_id"/>
+                                        <t t-set="same_tax_base" t-value="tax_totals['same_tax_base']"/>
                                         <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
-                                            <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
-                                            <t t-call="account.tax_groups_totals"/>
+                                            <t t-foreach="subtotal['tax_groups']" t-as="tax_group">
+                                                <tr class="o_taxes">
+                                                    <t t-if="same_tax_base or tax_group['display_base_amount'] is None">
+                                                        <td>
+                                                            <span class="text-nowrap" t-out="tax_group['group_name']"/>
+                                                        </td>
+                                                        <td class="text-end o_price_total">
+                                                            <span class="text-nowrap"
+                                                                t-out="tax_group['tax_amount']"
+                                                                t-options='{"widget": "monetary", "display_currency": currency}'
+                                                            ></span>
+                                                        </td>
+                                                    </t>
+                                                </tr>
+                                            </t>
                                         </t>
+                                        <!-- TTC -->
                                         <tr>
                                             <td style="background-color:white"><strong style="color:black">TTC</strong></td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 <span t-field="o.amount_total"/>
                                             </td>
                                         </tr>
                                     </t>
 
-
                                     <!-- Déductions après le TTC (ex : retenue de garantie) -->
                                     <t t-foreach="o.is_remise_ids" t-as="line">
                                         <tr>
                                             <td class="text-left" style="background-color:white;color:black"><span t-field="line.libelle"/></td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 <span t-field="line.montant"/>
                                             </td>
                                         </tr>
@@ -286,7 +302,7 @@
 
                                     <tr t-if="o.is_remise_ids">
                                         <td style="background-color:white"><strong style="color:black">Reste dû TTC</strong></td>
-                                        <td class="text-right">
+                                        <td class="text-end">
                                             <span t-field="o.is_reste_du_ttc"/>
                                         </td>
                                     </tr>
@@ -297,14 +313,14 @@
                                         <t t-foreach="paiements" t-as="line">
                                             <tr>
                                                 <td class="text-left" style="background-color:white;color:black"><span t-esc="line[1]"/></td>
-                                                <td class="text-right">
+                                                <td class="text-end">
                                                     <span t-esc="line[0]"/>
                                                 </td>
                                             </tr>
                                         </t>
                                         <tr>
                                             <td style="background-color:white"><strong style="color:black">Reste dû</strong></td>
-                                            <td class="text-right">
+                                            <td class="text-end">
                                                 <span t-field="o.amount_residual"/>
                                             </td>
                                         </tr>

@@ -207,6 +207,7 @@ class IsAffaire(models.Model):
     _name='is.affaire'
     _inherit = ['portal.mixin', 'mail.thread', 'mail.activity.mixin']
     _description = "Affaire"
+    _rec_name = 'rec_name'
     _order='name desc'
 
     name                = fields.Char("N° d'Affaire", index=True, help="Sous la forme AA-XXXX")
@@ -250,6 +251,77 @@ class IsAffaire(models.Model):
         ('commande', 'Commande'),
         ('terminee', 'Terminée'),
     ], 'Etat', index=True, default="offre", required=True, tracking=True)
+    rec_name = fields.Char("Nom du document", compute='_compute_rec_name', readonly=True, store=True)
+
+
+    @api.depends('nom','name')
+    def _compute_rec_name(self):
+        for obj in self:
+            name=""
+            if obj.name and obj.nom:
+                name = "[%s] %s"%(obj.name,obj.nom)
+            if obj.name and not obj.nom:
+                name = "%s"%(obj.name)
+            if obj.nom and not obj.name:
+                name = "%s"%(obj.nom)
+            obj.rec_name = name
+
+
+
+
+    # TODO : name_get ne fonctionne plus avec Odoo 18, il faut créer un champ calculé rec_name
+    # def name_get(self):
+    #     result = []
+    #     for obj in self:
+
+    #         name=""
+    #         if obj.name and obj.nom:
+    #             name = "[%s] %s"%(obj.name,obj.nom)
+    #         if obj.name and not obj.nom:
+    #             name = "%s"%(obj.name)
+    #         if obj.nom and not obj.name:
+    #             name = "%s"%(obj.nom)
+    #         result.append((obj.id, name))
+    #     return result
+
+
+    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
+        if args is None:
+            args = []
+
+        ids = []
+        if len(name) >= 1:
+            filtre=[
+                '|','|','|','|','|',
+                ('name'   , 'ilike', name),
+                ('nom'    , 'ilike', name),
+                ('street' , 'ilike', name),
+                ('street2', 'ilike', name),
+                ('zip'    , 'ilike', name),
+                ('city'   , 'ilike', name),
+            ]
+            if name=="[":
+                filtre=[('name', '!=', False)]
+            if name=="#":
+                filtre=[('name', '=', False)]
+            ids = list(self._search(filtre + args, limit=limit))
+
+        search_domain = [('name', operator, name)]
+        if ids:
+            search_domain.append(('id', 'not in', ids))
+        ids += list(self._search(search_domain + args, limit=limit))
+        return ids
+
+
+
+
+
+
+
+
+
+
+
 
 
     def write(self, vals):
@@ -611,48 +683,6 @@ class IsAffaire(models.Model):
                 "type": "ir.actions.act_window",
             }
 
-
-    def name_get(self):
-        result = []
-        for obj in self:
-
-            name=""
-            if obj.name and obj.nom:
-                name = "[%s] %s"%(obj.name,obj.nom)
-            if obj.name and not obj.nom:
-                name = "%s"%(obj.name)
-            if obj.nom and not obj.name:
-                name = "%s"%(obj.nom)
-            result.append((obj.id, name))
-        return result
-
-
-    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
-        if args is None:
-            args = []
-
-        ids = []
-        if len(name) >= 1:
-            filtre=[
-                '|','|','|','|','|',
-                ('name'   , 'ilike', name),
-                ('nom'    , 'ilike', name),
-                ('street' , 'ilike', name),
-                ('street2', 'ilike', name),
-                ('zip'    , 'ilike', name),
-                ('city'   , 'ilike', name),
-            ]
-            if name=="[":
-                filtre=[('name', '!=', False)]
-            if name=="#":
-                filtre=[('name', '=', False)]
-            ids = list(self._search(filtre + args, limit=limit))
-
-        search_domain = [('name', operator, name)]
-        if ids:
-            search_domain.append(('id', 'not in', ids))
-        ids += list(self._search(search_domain + args, limit=limit))
-        return ids
 
 
     def creer_chantier_affaire_action(self):

@@ -487,18 +487,18 @@ class sale_order(models.Model):
                     vals={
                         'sequence'  : line.sequence,
                         'product_id': line.product_id.id,
-                        'account_id': account_id,
+                        'account_id': account_id.id,
                         'name'      : line.name,
                         'quantity'  : sens*quantity,
                         'is_facturable_pourcent': sens*line.is_facturable_pourcent,
                         'price_unit'            : line.price_unit,
                         'is_sale_line_id'       : line.id,
-                        'tax_ids'               : tax_ids,
+                        'tax_ids'               : [(6, 0, tax_ids)],  # Format correct pour Many2many
                         "is_a_facturer"         : line.is_a_facturer,
                     }
                     total_cumul_ht+=sens*quantity*line.price_unit
                     is_a_facturer+=line.is_a_facturer
-                invoice_line_ids.append(vals)
+                invoice_line_ids.append((0, 0, vals))  # Format correct pour One2many
                 sequence=line.sequence
 
             #** Ajout de la section pour le repport des factures **************
@@ -508,7 +508,7 @@ class sale_order(models.Model):
                 "name"           : "AUTRE",
                 "display_type"   : "line_section",
             }
-            invoice_line_ids.append(vals)
+            invoice_line_ids.append((0, 0, vals))  # Format correct pour One2many
             #******************************************************************
 
             #** Ajout des factures ********************************************
@@ -528,14 +528,13 @@ class sale_order(models.Model):
                 vals={
                     'sequence'  : sequence,
                     'product_id': product.id,
-                    'account_id': account_id,
+                    'account_id': account_id.id,
                     'name'      : "Situation %s (Facture %s)"%(invoice.is_situation,invoice.name),
                     'quantity'  : -1*sens,
                     'price_unit': invoice.amount_untaxed_signed,
-                    'tax_ids'   : tax_ids,
+                    'tax_ids'   : [(6, 0, tax_ids)],  # Format correct pour Many2many
                 }
-                invoice_line_ids.append(vals)
-
+                invoice_line_ids.append((0, 0, vals))  # Format correct pour One2many
 
             #** Ajout des remises *********************************************
             for line in obj.is_affaire_id.remise_ids:
@@ -560,21 +559,18 @@ class sale_order(models.Model):
                             'account_id': account_id.id,
                             'name'      : name,
                             'quantity'  : -sens*line.remise/100,
-                            'price_unit': price_unit, # La remise est calculée sur le cumul et ensuite il y a une déduction des facutres précédentes et de leur prorata
-                            'tax_ids'   : tax_ids,
+                            'price_unit': price_unit,
+                            'tax_ids'   : [(6, 0, tax_ids)],  # Format correct pour Many2many
                         }
-                        invoice_line_ids.append(vals)
+                        invoice_line_ids.append((0, 0, vals))  # Format correct pour One2many
                     else:
                         vals={
                             'product_id': product.id,
                             'libelle'   : name,
                             'remise'    : line.remise,
-                            #'montant'   : round(total_cumul_ht*line.remise/100,2)
                         }
-                        remise_ids.append(vals)
+                        remise_ids.append((0, 0, vals))  # Format correct pour One2many
             #******************************************************************
-
-
 
             #** Création entête facture ***************************************
             vals={
@@ -584,12 +580,13 @@ class sale_order(models.Model):
                 'partner_id'         : obj.partner_id.id,
                 'is_order_id'        : obj.id,
                 'move_type'          : move_type,
-                'invoice_line_ids'   : invoice_line_ids,
-                'is_remise_ids'      : remise_ids,
+                'invoice_line_ids'   : invoice_line_ids,  # Maintenant au bon format
+                'is_remise_ids'      : remise_ids,        # Maintenant au bon format
             }
+
             move=self.env['account.move'].create(vals)
             move._onchange_partner_id()
-            move._onchange_invoice_date()
+            #move._onchange_invoice_date()
             move.action_post()
 
             #** Calcul des remises sur le TTC *********************************
