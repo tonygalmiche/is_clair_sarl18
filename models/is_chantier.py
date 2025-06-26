@@ -390,7 +390,7 @@ class IsChantier(models.Model):
                     jours[i]=jour
                 name=chantier.commentaire or chantier.name
                 if chantier.affaire_id:
-                    name=chantier.affaire_id.name_get()[0][1]
+                    name=chantier.affaire_id.rec_name or '' #  name_get()[0][1]
                 short_name = name[0:40]
                 affaire_id = chantier.affaire_id.id or 0
                 date_affaire = date_debut_affaire[affaire_id]
