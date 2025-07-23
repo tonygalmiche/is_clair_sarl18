@@ -438,7 +438,7 @@ class sale_order(models.Model):
                                 "is_masquer_ligne": is_masquer_ligne,
                             }
                     if vals:
-                        res = self.env['sale.order.line'].create(vals)
+                        res = self.env['sale.order.line'].sudo().create(vals)
                     lig+=1
                     sequence+=1
             if alertes:
