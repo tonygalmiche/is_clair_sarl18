@@ -188,10 +188,12 @@
                     <!-- Totaux / Bas de page -->
                     <div class="clearfix">
                         <div id="total" class="row">
-                            <div class="col-6">
-                                <p t-if="o.fiscal_position_id">
-                                    <b><span t-field="o.fiscal_position_id.note"/></b>
-                                </p>
+                            <div class="col-7">
+                                <t t-if="o.fiscal_position_id.note">
+                                    <div>
+                                        <b><span t-field="o.fiscal_position_id.note"/></b>
+                                    </div>
+                                </t>
                                 <p t-if="o.invoice_date_due">
                                     <strong>Règlement au <span t-field="o.invoice_date_due"/></strong>
                                 </p>
@@ -204,7 +206,7 @@
                                     <span t-field="res_company.is_indemnite_forfaitaire"/>
                                 </p>
                             </div>
-                            <div class="col-6">
+                            <div class="col-5">
                                 <table class="table table-sm" style="page-break-inside: avoid;">
                                     <tr class="border-black">
                                         <td style="color:black"><strong>TOTAL HT réalisé</strong></td>
