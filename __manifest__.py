@@ -19,6 +19,7 @@ Module Odoo 18 pour CLAIR-SARL
         "l10n_fr",
         "web",
         "web_chatter_position",
+        "web_m2x_options",
         "l10n_fr_facturx_chorus_pro",
     ],
     "data" : [

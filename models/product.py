@@ -130,12 +130,12 @@ class product_template(models.Model):
 
 
 
-    @api.depends('seller_ids')
+    @api.depends('seller_ids','seller_ids.sequence','seller_ids.partner_id')
     def _compute_is_fournisseur_id(self):
         for obj in self:
             is_fournisseur_id=False
-            for line in obj.seller_ids:
-                is_fournisseur_id = line.name.id
+            for line in obj.seller_ids.sorted('sequence'):
+                is_fournisseur_id = line.partner_id.id
                 break
             obj.is_fournisseur_id =is_fournisseur_id
 

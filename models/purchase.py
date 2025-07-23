@@ -121,7 +121,7 @@ class purchase_order(models.Model):
                         vals={
                             'order_id': obj.id,
                             'product_id': product.id,
-                            'name': product.name_get()[0][1],
+                            'name': product.name, #name_get()[0][1],
                             'product_qty': 1,
                             'price_unit':obj.is_eco_contribution,
                             'sequence': sequence,
