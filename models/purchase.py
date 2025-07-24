@@ -476,11 +476,36 @@ class purchase_order(models.Model):
                     return val
                 if type_pdf=='PUM':
                     for line in lines:
+                        #print('TEST 1',line)
                         code_pum    = line[0:19].strip()
                         designation = line[19:85].strip()
+                        #print('TEST 2',code_pum,designation)
                         reste = line[86:].strip()
-                        x1 = ' '.join(reste.split()) # Supprimer les espaces en double
-                        x2 = x1.split()
+                        # Remplacer les espaces multiples par un seul
+                        x1 = re.sub(r' +', ' ', reste)
+                        # 1. Fusionner d'abord les groupes de milliers (ex: 2 164,80 -> 2164,80), mais uniquement si l'espace est précédé d'un entier (pas de décimal)
+                        x1_fused = re.sub(r'(?<![\d,])(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), x1)
+                        # 2. Extraire tous les montants décimaux (ex: 13,73 ou 2164,80 ou 686,50)
+                        montants = re.findall(r'\d+,\d{2}', x1_fused)
+                        # 3. Remplacer chaque montant par un token unique (ex: §§§0, §§§1, ...)
+                        x1_temp = x1_fused
+                        for idx, montant in enumerate(montants):
+                            x1_temp = x1_temp.replace(montant, f'§§§{idx}', 1)
+                        # 4. (optionnel) Fusionner les groupes de milliers restants (rare, mais pour robustesse)
+                        x1_temp = re.sub(r'(?<!\d,)(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), x1_temp)
+                        # 5. Remettre les montants extraits à leur place
+                        def replace_token(match):
+                            idx = int(match.group(1))
+                            return montants[idx] if idx < len(montants) else match.group(0)
+                        x1_final = re.sub(r'§§§(\d+)', replace_token, x1_temp)
+                        x2 = x1_final.split()
+                        #print('TEST 3',x1_final,x2,len(x2))
+
+                        # code_pum    = line[0:19].strip()
+                        # designation = line[19:85].strip()
+                        # reste = line[86:].strip()
+                        # x1 = ' '.join(reste.split()) # Supprimer les espaces en double
+                        # x2 = x1.split()
                         if len(x2)==5:
                             quantite = txt2float(x2[0])
                             prix_net = txt2float(x2[3])
@@ -490,10 +515,23 @@ class purchase_order(models.Model):
                                 order_lines.append([quantite, description, prix_net])
                 #**************************************************************
 
+                # #** Eco-contribution ******************************************
+                # if type_pdf=='PUM':
+                #     for line in lines:
+                #         x = re.search("    Eco contribution :(.*)", line) 
+                #         if x:
+                #             v = x.groups()
+                #             if len(v)==1:
+                #                 montant=txt2float(v[0])
+                #                 order_lines.append([1, "Eco-contribution", montant])
+                #                 dict["Eco contribution"] = montant
+                #                 break
+                # #**************************************************************
+
                 #** Eco-contribution ******************************************
                 if type_pdf=='PUM':
                     for line in lines:
-                        x = re.search("    Eco contribution :(.*)", line) 
+                        x = re.search(r"\s*Eco contribution :(.*)", line) 
                         if x:
                             v = x.groups()
                             if len(v)==1:
@@ -502,6 +540,8 @@ class purchase_order(models.Model):
                                 dict["Eco contribution"] = montant
                                 break
                 #**************************************************************
+
+
 
                 #** Transport *************************************************
                 if type_pdf=='PUM':
@@ -648,6 +688,23 @@ class purchase_order(models.Model):
                 #**************************************************************
 
 
+                # #** Total HT du PDF *******************************************
+                # ht_pdf=0
+                # if type_pdf=='PUM':
+                #     debut=False
+                #     for line in lines:
+                #         x = re.findall("TOTAL HT EUR", line) 
+                #         if x:
+                #             debut=True
+                #         if debut:
+                #             x=' '.join(line.split()) # Supprimer les espaces en trop
+                #             x=x.split()              # Mettre dans un talbeau les nombres séparés par un espace
+                #             if len(x)>4:
+                #                 ht_pdf=txt2float(x[0])
+                #     dict["Total HT PDF"] = ht_pdf
+                #  #**************************************************************
+
+
                 #** Total HT du PDF *******************************************
                 ht_pdf=0
                 if type_pdf=='PUM':
@@ -657,13 +714,19 @@ class purchase_order(models.Model):
                         if x:
                             debut=True
                         if debut:
-                            x=' '.join(line.split()) # Supprimer les espaces en trop
-                            x=x.split()              # Mettre dans un talbeau les nombres séparés par un espace
+                            #print('TEST 1',line)
+                            # Fusionner les groupes de milliers (ex: 6 160,12 -> 6160,12)
+                            line_fused = re.sub(r'(?<![\d,])(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), line)
+                            x = ' '.join(line_fused.split()) # Supprimer les espaces en trop
+                            x = x.split()              # Mettre dans un tableau les nombres séparés par un espace
+                            #print('TEST 2',x)
                             if len(x)>4:
                                 ht_pdf=txt2float(x[0])
                     dict["Total HT PDF"] = ht_pdf
                  #**************************************************************
-                           
+
+
+
                 #** Montant total *********************************************
                 ht=0
                 for line in order_lines:
