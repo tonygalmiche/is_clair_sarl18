@@ -17,7 +17,7 @@
         </t>
         <xpath expr="//div[hasclass('page')]" position="replace">
             <div class="page clair_report">
-               <style>
+               <!-- <style>
                     .o_report_layout_boxed .page > table:not(.o_main_table) tr td:last-child {
                         background-color: white;
                     }
@@ -42,17 +42,13 @@
                         padding-left:0.3em;
                         padding-right:0.3em;
                     }
-                </style>
+                </style> -->
 
 
 
                 <div class="oe_structure"/>
 
                 <br />
-                <!-- <h2 t-if="o.is_affaire_id">Affaire : 
-                    <span t-field="o.is_affaire_id.display_name"/>
-                </h2> -->
-
                 <h2 t-if="o.is_affaire_id">Affaire : 
                     <span t-field="o.is_affaire_id.display_name"/> - 
                     <span t-if ="o.is_affaire_id.street"  t-field="o.is_affaire_id.street"/> 
@@ -85,10 +81,10 @@
                     <tbody>
                         <t t-set="current_subtotal" t-value="0"/>
                         <t t-foreach="o.order_line" t-as="line">
-                            <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
-                            <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+                            <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal"/>
 
-                            <tr style="border-top: 1px solid;" t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
+                            <tr style="border-top: 1px solid;" 
+                                t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
                                 <t t-if="not line.display_type">
                                     <td id="product" colspan="7">
                                         <span t-field="line.name"/>
@@ -138,11 +134,7 @@
                                     <td></td>
                                     <td></td>
                                 </tr>
-
-
-
                                 <t t-foreach="colis.line_ids" t-as="l">
-
                                     <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
                                         <td style="width:1mm"></td>
                                         <td><span t-if="lig==1" t-field="colis.name"/></td>
@@ -156,10 +148,7 @@
                                         <td></td>
                                     </tr>
                                     <t t-set="lig" t-value="lig+1"/>
-
-
                                 </t>
-
                                 <tr>
                                     <td style="width:1mm"></td>
                                     <td style="border-bottom: 1px solid;" colspan="4" class="text-end"><b>Total <t t-esc="colis_name"/>: </b></td>
@@ -169,26 +158,17 @@
                                     <td></td>
                                     <td></td>
                                 </tr>
-
-
-
                             </t>
-
                             <tr style="border-bottom: 1px solid; height:0">
                                 <td colspan="7"></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                             </tr>
-
-
-
-
- 
                             <t t-if="current_section and (line_last or o.order_line[line_index+1].display_type == 'line_section')">
                                 <tr class="is-subtotal text-end">
                                     <td colspan="99" id="subtotal">
-                                        <strong class="mr16">Sous-total</strong>
+                                        <strong class="mr16">Sous-total : </strong>
                                         <span
                                             t-esc="current_subtotal"
                                             t-options='{"widget": "monetary", "display_currency": o.currency_id}'
@@ -199,72 +179,7 @@
                         </t>
                     </tbody>
                 </table>
-
-
-<!-- 
-                <table class="table table-sm o_main_table">
-                    <thead>
-                        <tr>
-                            <th name="th_description"><strong>Description</strong></th>
-                            <th name="th_quantity" class="text-end"><strong>Quantité</strong></th>
-                            <th name="th_price_unit" class="text-end"><strong>Prix unitaire</strong></th>
-                            <th name="th_amount" class="text-end"><strong>Montant</strong></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <t t-set="current_subtotal" t-value="0"/>
-                        <t t-foreach="o.order_line" t-as="line">
-                            <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
-                            <t t-set="current_subtotal" t-value="current_subtotal + line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
-
-                            <tr style="border-bottom: 1px solid;" t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
-                                <t t-if="not line.display_type">
-                                    <td id="product">
-                                        <span t-field="line.name"/>
-                                        <div t-if="line.is_colisage" t-raw="line.is_colisage"/>
-                                    </td>
-                                     <td class="text-end">
-                                        <span t-field="line.product_qty"/>
-                                        <span t-field="line.product_uom.name" groups="uom.group_uom"/>
-                                    </td>
-                                    <td class="text-end" style="white-space: nowrap;">
-                                        <span t-field="line.price_unit"/> €
-                                    </td>
-                                    <td class="text-end">
-                                        <span t-field="line.price_subtotal"
-                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                                    </td>
-                                </t>
-                                <t t-if="line.display_type == 'line_section'">
-                                    <td colspan="99" id="section">
-                                        <span t-field="line.name"/>
-                                    </td>
-                                    <t t-set="current_section" t-value="line"/>
-                                    <t t-set="current_subtotal" t-value="0"/>
-                                </t>
-                                <t t-if="line.display_type == 'line_note'">
-                                    <td colspan="99" id="note">
-                                        <span t-field="line.name"/>
-                                    </td>
-                                </t>
-                            </tr>
-                            <t t-if="current_section and (line_last or o.order_line[line_index+1].display_type == 'line_section')">
-                                <tr class="is-subtotal text-end">
-                                    <td colspan="99" id="subtotal">
-                                        <strong class="mr16">Sous-total</strong>
-                                        <span
-                                            t-esc="current_subtotal"
-                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'
-                                        />
-                                    </td>
-                                </tr>
-                            </t>
-                        </t>
-                    </tbody>
-                </table> -->
-
                 <div style="height:3mm"></div>
-
                 <div id="total" class="row justify-content-end mt-n3">
                     <div class="col-4">
                         <table class="o_total_table table table-borderless">
@@ -275,12 +190,7 @@
                         </table>
                     </div>
                 </div>
-
-
-
-
                 <br />
-
                 <div class="row mt32 mb32">
                     <div class="col-7">
                         <t t-if="o.is_contact_chantier_id">
@@ -294,25 +204,11 @@
                         Tél : <span t-field="o.user_id.partner_id.phone"/><br />
                         Courriel : <span t-field="o.user_id.partner_id.email"/>
                     </div>
-
                 </div>
-
-
-
-
-                <!-- <div style="margin-left:13cm">
-                    <b><span t-field="o.user_id.name"/></b><br />
-                    Tél : <span t-field="o.user_id.partner_id.phone"/><br />
-                    Courriel : <span t-field="o.user_id.partner_id.email"/>
-                </div>
- -->
                 <t t-if="o.fiscal_position_id.note"><b><div t-field="o.fiscal_position_id.note"/></b></t>
-
-
                 <p t-field="o.notes"/>
                 <div class="oe_structure"/>
             </div>
-
         </xpath>
     </template>
 

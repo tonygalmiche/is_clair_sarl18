@@ -147,3 +147,29 @@
 .clair_report td{
     font-size:10pt;
 }
+.clair_report h2{
+    font-size:13.5pt;
+    font-weight: bolder;
+}
+
+
+
+//Couleur des sections et sous-totaux
+.o_line_section{
+    background-color: #434445 !important;
+}
+.table .o_line_section td span {
+    color: white !important;
+    font-weight: bolder !important;
+}
+.is-subtotal{
+    background-color: #e7e7e7 !important;
+}
+.table .is-subtotal td {
+    font-weight: bolder !important;
+}
+
+// .o_line_note{
+//     background-color:blueviolet !important;
+//     color:orange !important;
+// }
