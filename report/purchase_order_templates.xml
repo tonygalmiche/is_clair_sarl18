@@ -180,7 +180,9 @@
                     </tbody>
                 </table>
                 <div style="height:3mm"></div>
-                <div id="total" class="row justify-content-end mt-n3">
+                <!-- <div id="total" class="row justify-content-end mt-n3"> -->
+                <div id="total" class="row">
+                    <div class="col-8"/>
                     <div class="col-4">
                         <table class="o_total_table table table-borderless">
                             <t t-call="purchase.document_tax_totals">
