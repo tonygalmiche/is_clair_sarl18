@@ -151,7 +151,10 @@
     font-size:13.5pt;
     font-weight: bolder;
 }
-
+.clair_report td.noborder{
+    // border: 1pt solid green !important;
+    border: none !important;
+}
 
 
 //Couleur des sections et sous-totaux

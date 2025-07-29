@@ -182,8 +182,13 @@
                 <div style="height:3mm"></div>
                 <table style="width:100%">
                     <tr>
-                        <td></td>
-                        <td style="width:40%;padding-right:0;">
+
+<!-- <td style="border: 1pt solid red;">
+    border: none; -->
+
+
+                        <td class="noborder"></td>
+                        <td style="width:40%;padding-right:0" class="noborder">
                             <table class="o_total_table table table-borderless">
                                 <t t-call="purchase.document_tax_totals">
                                     <t t-set="tax_totals" t-value="o.tax_totals"/>
