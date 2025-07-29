@@ -180,13 +180,8 @@
                     </tbody>
                 </table>
                 <div style="height:3mm"></div>
-                <table style="width:100%">
+                <table style="width:100%" class="noborder">
                     <tr>
-
-<!-- <td style="border: 1pt solid red;">
-    border: none; -->
-
-
                         <td class="noborder"></td>
                         <td style="width:40%;padding-right:0" class="noborder">
                             <table class="o_total_table table table-borderless">
