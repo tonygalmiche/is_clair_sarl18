@@ -151,14 +151,34 @@
     font-size:13.5pt;
     font-weight: bolder;
 }
-.clair_report td.noborder{
-    // border: 1pt solid green !important;
+// .clair_report td.noborder{
+//     // border: 1pt solid green !important;
+//     border: none !important;
+// }
+// .clair_report table.noborder{
+//     // border: 1pt solid green !important;
+//     border: none !important;
+// }
+
+// .clair_report td.noborder,
+// .clair_report table.noborder,
+// .clair_report tbody.noborder {
+//     // border: 1pt solid green !important;
+//     border: none !important;
+// }
+
+
+// J'ai du ajouter ces 2 class à cause de foxit-reader qui affiche les bordure à 0pt
+.clair_report table.noborder,
+.clair_report table.noborder tbody,
+.clair_report table.noborder td {
     border: none !important;
 }
-.clair_report table.noborder{
-    // border: 1pt solid green !important;
-    border: none !important;
+.clair_report .table > :not(caption) > * > * {
+    border-top: none;
+    border-bottom: none;
 }
+
 
 
 //Couleur des sections et sous-totaux
