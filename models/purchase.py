@@ -357,7 +357,10 @@ class purchase_order(models.Model):
                                 v = v.split(' : ')
                                 if len(v)==2:
                                     bdc = v[1].strip()
-                                    x = re.findall("[0-9]{2}\.[0-9]{4}", bdc)
+                                    #x = re.findall("[0-9]{2}\.[0-9]{4}", bdc)
+                                    x = re.findall(r"[0-9]{2}\.[0-9]{4}", bdc)
+
+
                                     if x:
                                         bdc=x[0]
 
@@ -557,6 +560,18 @@ class purchase_order(models.Model):
                                 break
                 #**************************************************************
 
+                #** Surcharge énergie ******************************************
+                if type_pdf=='PUM':
+                    for line in lines:
+                        # Recherche du motif "Surcharge énergie : <montant>"
+                        x = re.search(r"Surcharge énergie\s*:\s*([0-9]+,[0-9]{2})", line)
+                        if x:
+                            montant = txt2float(x.group(1))
+                            order_lines.append([1, "Surcharge énergie", montant])
+                            dict["Surcharge énergie"] = montant
+                            break
+                #**************************************************************
+
                 #** Surcharge gasoil ******************************************
                 if type_pdf=='PUM':
                     for line in lines:
@@ -594,7 +609,9 @@ class purchase_order(models.Model):
                                         qte=0
                                 
                                 #** Montant ***************************************
-                                x = re.findall("[0-9]*\.[0-9]{2}$", line.strip())
+                                #x = re.findall("[0-9]*\.[0-9]{2}$", line.strip())
+                                x = re.findall(r"[0-9]*\.[0-9]{2}$", line.strip())
+
                                 if x:
                                     x2 = " ".join(line.split()) # Supprimer les espaces en double
                                     list = x2.split()
@@ -792,6 +809,7 @@ class purchase_order(models.Model):
                 'Eco-contribution'                  : 'ECOCON',
                 'Transport'                         : 'TCHANTIER',
                 'Surcharge gasoil'                  : 'GNR',
+                'Surcharge énergie'                 : 'GNR',
             }
             product = False
             for key in dict:
