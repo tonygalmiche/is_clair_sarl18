@@ -270,8 +270,8 @@
                     <field name="state" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
-                    <widget name="web_ribbon" title="Archivée" bg_color="bg-danger" invisible="active==True"/>
-                    <field name="active" invisible="1"/>
+                    <!-- <widget name="web_ribbon" title="Archivée" bg_color="bg-danger" invisible="active==True"/>
+                    <field name="active" invisible="1"/> -->
                     <div class="oe_button_box" name="button_box">
                         <button class="oe_stat_button" name="liste_commandes_action" type="object" icon="fa-bars">
                             <div class="o_stat_info">

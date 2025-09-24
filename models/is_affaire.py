@@ -252,7 +252,6 @@ class IsAffaire(models.Model):
         ('terminee', 'Terminée'),
     ], 'Etat', index=True, default="offre", required=True, tracking=True)
     rec_name = fields.Char("Nom du document", compute='_compute_rec_name', readonly=True, store=True)
-    active = fields.Boolean("Actif", default=True, copy=False)
 
 
     @api.depends('nom','name')
