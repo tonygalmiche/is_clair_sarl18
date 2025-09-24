@@ -19,7 +19,7 @@ access_is_affaire,access_is_affaire,model_is_affaire,base.group_user,1,0,0,0
 access_is_nature_travaux_manager,access_is_nature_travaux_manager,model_is_nature_travaux,sales_team.group_sale_manager,1,1,1,1
 access_is_type_travaux_manager,access_is_type_travaux_manager,model_is_type_travaux,sales_team.group_sale_manager,1,1,1,1
 access_is_specificite_manager,access_is_specificite_manager,model_is_specificite,sales_team.group_sale_manager,1,1,1,1
-access_is_affaire_manager,access_is_affaire_manager,model_is_affaire,sales_team.group_sale_manager,1,1,1,1
+access_is_affaire_manager,access_is_affaire_manager,model_is_affaire,sales_team.group_sale_manager,1,1,1,0
 access_is_finition,access_is_finition,model_is_finition,base.group_user,1,0,0,0
 access_is_traitement,access_is_traitement,model_is_traitement,base.group_user,1,0,0,0
 access_is_finition_manager,access_is_finition_manager,model_is_finition,sales_team.group_sale_manager,1,1,1,1
