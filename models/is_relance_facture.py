@@ -208,7 +208,7 @@ class IsRelanceFacture(models.Model):
         compose_form = self.env.ref('mail.email_compose_message_wizard_form', False)
         ctx = dict(
             default_model="account.move",
-            default_res_id=invoice.id,
+            default_res_ids=[invoice.id],
             default_composition_mode='comment',
             custom_layout='mail.mail_notification_light', #Permet de définir la mise en page du mail
         )
@@ -220,7 +220,12 @@ class IsRelanceFacture(models.Model):
                 ("res_model","=","account.move"),
                 ("res_id","=",invoice.id),
             ]
-            pdf = request.env.ref('account.account_invoices_without_payment').sudo()._render_qweb_pdf([invoice.id])
+
+
+            report = self.env.ref('account.account_invoices_without_payment')
+            pdf, _ = report.sudo()._render_qweb_pdf(report,[invoice.id])
+
+
             if pdf:
                 attachments = self.env['ir.attachment'].search(filtre,limit=1,order="id desc")
                 if len(attachments)>0:
