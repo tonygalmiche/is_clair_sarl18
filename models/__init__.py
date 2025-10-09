@@ -13,8 +13,8 @@ from . import sale
 from . import account_move
 from . import is_export_compta
 from . import account_payment
+from . import account_payment_term
 from . import is_courrier_expedie
-# from . import ir_attachment => TODO => Voir si cela est toujours necessaire
 from . import is_mem_var
 from . import is_purchase_order_line
 from . import is_chantier

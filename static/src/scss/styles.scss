@@ -70,23 +70,6 @@
 
 
 
-// Permet de forcer la largeur de la colonne article sur les sale_order
-.form_sale_order{
-    th[data-name="product_template_id"] {
-        width: 700px !important;
-    }
-}
-.form_sale_order{
-    th:not([data-name="product_template_id"]) {
-        width: auto !important;
-    }
-}
-.form_sale_order{
-    th[data-name="sequence"] {
-        width: 25px !important;
-    }
-}
-
 
 // Permet de forcer la largeur de la colonne article sur les account_move
 .form_account_move{
@@ -126,3 +109,41 @@
     }
 }
 
+
+// Permet de forcer la largeur de la colonne article sur les sale_order
+.form_sale_order{
+    th[data-name="product_template_id"] {
+        width: 700px !important;
+    }
+}
+.form_sale_order{
+    th:not([data-name="product_template_id"]) {
+        width: auto !important;
+    }
+}
+.form_sale_order{
+    th[data-name="sequence"] {
+        width: 70px !important;
+    }
+}
+
+
+
+
+// <th data-tooltip-delay="1000" 
+//     tabindex="-1" 
+//     data-name="sequence" 
+//     class="align-middle o_column_sortable position-relative cursor-pointer o_list_number_th opacity-trigger-hover w-print-auto" 
+//     style="width: 25px;">
+//     <div class="d-flex" 
+//          data-tooltip-template="web.ListHeaderTooltip" 
+//          data-tooltip-info="{&quot;viewMode&quot;:&quot;list&quot;,&quot;resModel&quot;:&quot;is.sale.order.section&quot;,&quot;debug&quot;:false,&quot;field&quot;:{&quot;name&quot;:&quot;sequence&quot;,&quot;label&quot;:&quot;Sequence&quot;,&quot;type&quot;:&quot;integer&quot;,&quot;widget&quot;:null,&quot;context&quot;:&quot;{}&quot;,&quot;invisible&quot;:null,&quot;column_invisible&quot;:null,&quot;readonly&quot;:null,&quot;required&quot;:null,&quot;changeDefault&quot;:false}}" 
+//          title="">
+//         <span class="d-block min-w-0 text-truncate flex-grow-1 flex-shrink-1 o_list_number_th">
+//             Sequence
+//         </span>
+//         <div class="o_list_header_label_spacer"></div>
+//         <i class="o_list_sortable_caret fa fa-lg fa-angle-down opacity-0 opacity-100-hover"></i>
+//     </div>
+//     <span class="o_resize position-absolute top-0 end-0 bottom-0 ps-1 opacity-0 z-1 bg-black-25 opacity-50-hover"></span>
+// </th>

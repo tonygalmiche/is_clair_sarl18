@@ -21,6 +21,8 @@
                 <br />
                 <div class="page clair_report">
 
+
+
                     <!-- Entête de la facture -->
                     <h2><span>Affaire n°</span><span t-field="o.is_affaire_id.name"/><span> : </span><span t-field="o.is_affaire_id.nom"/></h2>
                     <h2 t-if="o.is_order_id.client_order_ref"><span>Votre commande : </span><span t-field="o.is_order_id.client_order_ref"/></h2>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+
     <!-- purchase.order  -->
     <record model="ir.ui.view" id="is_taches_associees_tree_view">
         <field name="name">is_taches_associees_tree_view</field>
@@ -126,6 +127,9 @@
             <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='product_id']" position="attributes">
                 <attribute name="class">width800px</attribute>
             </xpath>
+
+
+
 
 
             <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='product_id']" position="before">
