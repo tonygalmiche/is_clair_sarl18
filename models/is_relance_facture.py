@@ -210,7 +210,7 @@ class IsRelanceFacture(models.Model):
             default_model="account.move",
             default_res_ids=[invoice.id],
             default_composition_mode='comment',
-            custom_layout='mail.mail_notification_light', #Permet de définir la mise en page du mail
+            custom_layout='mail.mail_notification_light',
         )
          #** Recherche des factures PDF et génération si non trouvée **********
         attachment_ids=[]

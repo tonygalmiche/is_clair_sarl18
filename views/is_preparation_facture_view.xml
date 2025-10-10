@@ -18,7 +18,8 @@
                 <field name="price_unit"        optional="show" readonly="1"/>
                 <field name="price_subtotal"    optional="show" readonly="1" sum="Total" string="Montant Cde"/>
                 <field name="is_montant_a_facturer" optional="show" readonly="1" sum="Total"/>
-                <field name="is_affaire_id"     optional="show" readonly="1" class="white_space_normal"/>
+                <field name="is_affaire_id"         optional="show" readonly="1" class="white_space_normal"/>
+                <field name="currency_id" column_invisible="1"/>
             </list>
         </field>
     </record>

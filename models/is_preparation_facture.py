@@ -52,10 +52,10 @@ class IsPreparationFacture(models.Model):
                     'quantity'  : line.is_qt_a_facturer,
                     'purchase_line_id': line.id,
                     'price_unit'      : line.price_unit,
-                    'tax_ids'         : tax_ids,
+                    'tax_ids'         : [(6, 0, tax_ids)],
                     'is_affaire_id'   : line.order_id.is_affaire_id.id,
                 }
-                invoice_line_ids.append(vals)
+                invoice_line_ids.append((0, 0, vals))
 
 
             #** Création entête facture ***************************************
@@ -66,6 +66,10 @@ class IsPreparationFacture(models.Model):
                 'move_type'         : 'in_invoice',
                 'invoice_line_ids'  : invoice_line_ids,
             }
+
+            print(vals)
+
+
             move=self.env['account.move'].create(vals)
             move.action_post()
             obj.invoice_id=move.id
