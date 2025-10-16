@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models,fields,api                      
+from odoo import models,fields,api,_                      
 from odoo.http import request                           
 from odoo.exceptions import UserError, ValidationError  
 import datetime
@@ -627,6 +627,16 @@ class sale_order(models.Model):
                 "views"    : [[tree_id, "list"]],
                 "limit": 1000,
             }
+
+
+    def action_cancel(self):
+        """Annule la commande sans afficher le wizard et sans envoyer de mail au client"""
+        # Vérification des commandes verrouillées (comme dans la méthode originale)
+        if any(order.locked for order in self):
+            raise UserError(_("You cannot cancel a locked order. Please unlock it first."))
+        
+        # Appel direct de la méthode d'annulation sans passer par le wizard
+        return self._action_cancel()
 
 
 

@@ -176,10 +176,20 @@ class AccountMove(models.Model):
             Chaque facture de réglement est attachée à un réglement (account.payment) contenant le détail du réglement
             cf _get_reconciled_invoices_partials pour plus d'infos 
         """
+
+        print(self)
+
         for obj in self:
+
+
+
             res=[]
             for line in obj.line_ids:
                 internal_type = line.account_type
+
+
+                print(line,line.matched_credit_ids)
+
                 #if internal_type in ('receivable', 'payable'):
                 for partial in line.matched_credit_ids:
                     payment = partial.credit_move_id.payment_id
