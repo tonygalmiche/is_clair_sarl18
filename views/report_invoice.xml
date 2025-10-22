@@ -292,9 +292,9 @@
                                                     </t>
                                                     <!-- TTC -->
                                                     <tr>
-                                                        <td style="background-color:white"><strong style="color:black">TTC</strong></td>
-                                                        <td class="text-end">
-                                                            <span t-field="o.amount_total"/>
+                                                        <td style="background-color:white;border:1px"><strong style="color:black">TTC</strong></td>
+                                                        <td style="background-color:black;border:1px" class="text-end">
+                                                            <strong style="color:white"><span t-field="o.amount_total"/></strong>
                                                         </td>
                                                     </tr>
                                                 </t>
@@ -311,8 +311,8 @@
 
                                                 <tr t-if="o.is_remise_ids">
                                                     <td style="background-color:white"><strong style="color:black">Reste dû TTC</strong></td>
-                                                    <td class="text-end">
-                                                        <span t-field="o.is_reste_du_ttc"/>
+                                                    <td style="background-color:black" class="text-end">
+                                                        <strong style="color:white"><span t-field="o.is_reste_du_ttc"/></strong>
                                                     </td>
                                                 </tr>
 
@@ -328,9 +328,9 @@
                                                         </tr>
                                                     </t>
                                                     <tr>
-                                                        <td style="background-color:white"><strong style="color:black">Reste dû</strong></td>
-                                                        <td class="text-end">
-                                                            <span t-field="o.amount_residual"/>
+                                                        <td style="background-color:white;border-top: 1px solid black"><strong style="color:black">Reste dû</strong></td>
+                                                        <td style="background-color:black;border-top: 1px solid black" class="text-end">
+                                                            <strong style="color:white"><span t-field="o.amount_residual"/></strong>
                                                         </td>
                                                     </tr>
                                                 </t>
