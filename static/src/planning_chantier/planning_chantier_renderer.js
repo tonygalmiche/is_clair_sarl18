@@ -7,21 +7,6 @@
 import { Component, useState, onMounted, onWillUpdateProps, onPatched } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 
-
-//const { useState, onMounted, onPatched, onWillUnmount } = owl.hooks;
-
-
-//import { browser } from "@web/core/browser/browser";
-//import { CheckBox } from "@web/core/checkbox/checkbox";
-//import { Dropdown } from "@web/core/dropdown/dropdown";
-//import { DropdownItem } from "@web/core/dropdown/dropdown_item";
-//import { _t } from "@web/core/l10n/translation";
-
-
-console.log('PlanningChantierRenderer')
-
-
-
 export class PlanningChantierRenderer extends Component {
 
 
@@ -58,8 +43,6 @@ export class PlanningChantierRenderer extends Component {
     static template = "planning_chantier.PlanningChantierRendererTemplate";
 
     setup() {
-        console.log('PlanningChantierRenderer : setup')
-
         this.props.test = "toto";
 
         // Essayer d'utiliser le service ORM au lieu de RPC
@@ -103,14 +86,10 @@ export class PlanningChantierRenderer extends Component {
         // Surveillance plus robuste des changements de domaine
         onWillUpdateProps((nextProps) => {
             const newDomain = JSON.stringify(nextProps.domain || []);
-            console.log('PlanningChantierRenderer onWillUpdateProps - ancien domain:', this.lastDomain);
-            console.log('PlanningChantierRenderer onWillUpdateProps - nouveau domain:', newDomain);
             if (newDomain !== this.lastDomain) {
                 this.lastDomain = newDomain;
-                console.log('PlanningChantierRenderer onWillUpdateProps - domain a changé, rechargement programmé');
                 // Programmer le rechargement avec le nouveau domain
                 Promise.resolve().then(() => {
-                    console.log('PlanningChantierRenderer - exécution du rechargement différé avec domain:', nextProps.domain);
                     this.GetChantiers(nextProps.domain);
                 });
             }
@@ -120,7 +99,6 @@ export class PlanningChantierRenderer extends Component {
         onPatched(() => {
             const currentDomain = JSON.stringify(this.props.domain || []);
             if (currentDomain !== this.lastDomain) {
-                console.log('PlanningChantierRenderer onPatched - domain changé de', this.lastDomain, 'vers', currentDomain);
                 this.lastDomain = currentDomain;
                 this.GetChantiers(this.props.domain);
             }
@@ -134,8 +112,6 @@ export class PlanningChantierRenderer extends Component {
     }
 
     mounted() {
-        console.log('PlanningChantierRenderer : mounted')
-        
         if (this.orm) {
             this.GetChantiers();
         } else {
@@ -205,10 +181,6 @@ export class PlanningChantierRenderer extends Component {
                         if (this.state.dict[chantierid]["jours"][jour]!==undefined) {
                             const cursor = this.state.dict[chantierid]["jours"][jour].cursor;
                             if (cursor=="col-resize" || cursor=="move") {
-
-                                console.log("TEST 4",chantierid,jour,color);
-
-
                                 this.state.action=cursor;
                                 this.state.chantierid=chantierid;
                                 this.state.jour=this.state.dict[chantierid].fin;
@@ -299,7 +271,6 @@ export class PlanningChantierRenderer extends Component {
     tdMouseUp(ev) {
         if (this.state.dict[this.state.chantierid]!==undefined){
             const id = this.state.dict[this.state.chantierid]["id"];
-            console.log("id=",id);
             if (this.state.action=="col-resize"){
                 if (this.state.chantierid!==undefined){
                     const chantier = this.state.dict[this.state.chantierid];
@@ -338,8 +309,6 @@ export class PlanningChantierRenderer extends Component {
     VoirChantierClick(ev) {
         const id=ev.target.attributes.id.value;
 
-        console.log('TEST VoirChantierClick',ev,id);
-
         this.actionService.doAction({
             name:'Chantier',
             type: 'ir.actions.act_window',
@@ -351,7 +320,6 @@ export class PlanningChantierRenderer extends Component {
 
     CreationAlerteClick(ev) {
         const id=ev.target.attributes.id.value;
-        console.log('CreationAlerteClick',id);
         this.actionService.doAction({
             name:'Alerte',
             type: 'ir.actions.act_window',
@@ -441,7 +409,6 @@ export class PlanningChantierRenderer extends Component {
 
         // Utiliser le domain forcé si fourni, sinon celui des props
         const domain = forcedDomain !== null ? forcedDomain : (this.props.domain || []);
-        console.log('PlanningChantierRenderer GetChantiers - domain utilisé:', domain);
 
         try {
             const params = {
@@ -453,8 +420,6 @@ export class PlanningChantierRenderer extends Component {
                 filtre_travaux : this.state.filtre_travaux,
                 chantier_state : this.state.chantier_state,
             };
-            
-            console.log('PlanningChantierRenderer GetChantiers - paramètres envoyés au backend:', params);
             
             const result = await this.orm.call(
                 'is.chantier',
@@ -495,7 +460,6 @@ export class PlanningChantierRenderer extends Component {
                     duree          : duree,
                 }
             );
-            console.log("ModifDureeChantier : result=", result);
         } catch (error) {
             console.error('Erreur lors de la modification de la durée:', error);
         }
@@ -518,7 +482,6 @@ export class PlanningChantierRenderer extends Component {
                     decale_planning: decale_planning,
                 }
             );
-            console.log("moveChantier : result=", result);
         } catch (error) {
             console.error('Erreur lors du déplacement du chantier:', error);
         }
@@ -544,8 +507,6 @@ export class PlanningChantierRenderer extends Component {
                 {}
             );
             
-            console.log('## GetPlanningPDF result:', result);
-
             if (result) {
                 // Option recommandée : utiliser le service d'action
                 this.actionService.doAction({

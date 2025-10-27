@@ -1,4 +1,3 @@
-//TODO : Je suis reparti du type de vue 'activity' "@mail/views/web/activity" qui est le plus simple
 import { _t } from "@web/core/l10n/translation";
 import { Component, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
@@ -9,11 +8,6 @@ import { Layout } from "@web/search/layout";
 import { SearchBar } from "@web/search/search_bar/search_bar";
 import { usePager } from "@web/search/pager_hook";
 import { standardViewProps } from "@web/views/standard_view_props";
-//import { SelectCreateDialog } from "@web/views/view_dialogs/select_create_dialog";
-
-
-console.log('PlanningChantierController')
-
 
 export class PlanningChantierController extends Component {
     static components = { Layout, SearchBar, CogMenu };
@@ -26,10 +20,6 @@ export class PlanningChantierController extends Component {
     static template = "planning_chantier.PlanningChantierControllerTemplate";
 
     setup() {
-
-        console.log('PlanningChantierController : setup')
-
-
         this.model = useState(useModel(this.props.Model, this.modelParams));
 
         //this.dialog = useService("dialog");
@@ -46,8 +36,6 @@ export class PlanningChantierController extends Component {
                     // Ensure that only (active) records with at least one activity, "done" (archived) or not, are fetched.
                     // We don't use active_test=false in the context because otherwise we would also get archived records.
                     //params.domain = [...(this.model.originalDomain || []), ["activity_ids.active", "in", [true, false]]];
-
-                    console.log('PlanningChantierController : usePager',params,params.domain);
 
                     await Promise.all([
                         this.model.root.load(params),
@@ -73,7 +61,6 @@ export class PlanningChantierController extends Component {
 
     getSearchProps() {
         const { comparison, context, domain, groupBy, orderBy } = this.env.searchModel;
-        console.log('PlanningChantierController getSearchProps:', { comparison, context, domain, groupBy, orderBy });
         return { comparison, context, domain, groupBy, orderBy };
     }
 
@@ -135,10 +122,6 @@ export class PlanningChantierController extends Component {
     // }
 
     get rendererProps() {
-
-
-
-
         let res = {
             //activityTypes: this.model.activityData.activity_types,
             //activityResIds: this.model.activityData.activity_res_ids,
@@ -156,11 +139,7 @@ export class PlanningChantierController extends Component {
             //openRecord: this.openRecord.bind(this),
         };
 
-        console.log('PlanningChantierController rendererProps - domain envoyé au renderer:', res.domain);
-
-
         return res;
-
     }
 }
 
