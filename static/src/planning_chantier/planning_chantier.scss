@@ -25,32 +25,8 @@
     border-collapse: collapse;
     border: 1px solid black;
     border-top: 1px solid black;
-    width: 98%;
-    display: block;
-    overflow-y: scroll;
-    background-color:none;
-}
-
-
-
-.planning_chantier thead {
-    position: sticky;
-    top: 0;
-    background-color:none;
-}
-
-
-  
-.planning_chantier tr {
-    background-color:none;
-}
-
-
-
-.planning_chantier td {
-    border:none;
-    border-top: 1px solid gray;
-    padding:0;
+    width: 100%;
+    background-color: white;
 }
 
 .planning_chantier th {
@@ -60,14 +36,28 @@
     border-right: 1px solid white;
     padding: 0;
     margin: 0;
-    color:white;
+    color: white !important;
+    background-color: black !important;
+    font-weight: bold;
 }
 
 .planning_chantier th div {
-    background-color:black;
+    background-color: black !important;
     height: 100%;
-    padding: 0;
+    padding: 2px;
     margin: 0;
+    color: white !important;
+    font-weight: bold;
+}
+
+.planning_chantier td {
+    border: none;
+    border-top: 1px solid gray;
+    padding: 0;
+}
+
+.planning_chantier tr {
+    background-color: white;
 }
 
 
