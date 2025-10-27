@@ -4,7 +4,7 @@
 //import { ActivityCell } from "@mail/views/web/activity/activity_cell";
 //import { ActivityRecord } from "@mail/views/web/activity/activity_record";
 
-import { Component, useState, onMounted, onWillUpdateProps } from "@odoo/owl";
+import { Component, useState, onMounted, onWillUpdateProps, onPatched } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 
 
@@ -100,15 +100,29 @@ export class PlanningChantierRenderer extends Component {
 
         onMounted(() => this.mounted());
 
-        // Surveiller les changements de props (domain des filtres)
+        // Surveillance plus robuste des changements de domaine
         onWillUpdateProps((nextProps) => {
             const newDomain = JSON.stringify(nextProps.domain || []);
             console.log('PlanningChantierRenderer onWillUpdateProps - ancien domain:', this.lastDomain);
             console.log('PlanningChantierRenderer onWillUpdateProps - nouveau domain:', newDomain);
             if (newDomain !== this.lastDomain) {
                 this.lastDomain = newDomain;
-                console.log('PlanningChantierRenderer onWillUpdateProps - domain a changé, rechargement des données');
-                this.GetChantiers();
+                console.log('PlanningChantierRenderer onWillUpdateProps - domain a changé, rechargement programmé');
+                // Programmer le rechargement avec le nouveau domain
+                Promise.resolve().then(() => {
+                    console.log('PlanningChantierRenderer - exécution du rechargement différé avec domain:', nextProps.domain);
+                    this.GetChantiers(nextProps.domain);
+                });
+            }
+        });
+
+        // Alternative: surveiller après le rendu
+        onPatched(() => {
+            const currentDomain = JSON.stringify(this.props.domain || []);
+            if (currentDomain !== this.lastDomain) {
+                console.log('PlanningChantierRenderer onPatched - domain changé de', this.lastDomain, 'vers', currentDomain);
+                this.lastDomain = currentDomain;
+                this.GetChantiers(this.props.domain);
             }
         });
 
@@ -419,17 +433,19 @@ export class PlanningChantierRenderer extends Component {
 
 
 
-    async GetChantiers(){
+    async GetChantiers(forcedDomain = null){
         if (!this.orm) {
             console.error('Service ORM non disponible pour GetChantiers');
             return;
         }
 
-        console.log('PlanningChantierRenderer GetChantiers - domain reçu du contrôleur:', this.props.domain);
+        // Utiliser le domain forcé si fourni, sinon celui des props
+        const domain = forcedDomain !== null ? forcedDomain : (this.props.domain || []);
+        console.log('PlanningChantierRenderer GetChantiers - domain utilisé:', domain);
 
         try {
             const params = {
-                domain         : this.props.domain || [],
+                domain         : domain,
                 decale_planning: this.state.decale_planning,
                 nb_semaines    : this.state.nb_semaines,
                 filtre_chantier: this.state.filtre_chantier,
