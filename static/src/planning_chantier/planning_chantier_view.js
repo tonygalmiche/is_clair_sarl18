@@ -8,7 +8,7 @@ import {PlanningChantierRenderer} from "./planning_chantier_renderer";
 
 export const PlanningChantierView = {
     type: "planning_chantier",
-    // searchMenuTypes: ["filter", "favorite"],
+    searchMenuTypes: ["filter", "favorite"],
     Controller: PlanningChantierController,
     Renderer: PlanningChantierRenderer,
     ArchParser: PlanningChantierParser,

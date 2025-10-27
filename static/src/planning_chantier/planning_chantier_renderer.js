@@ -4,7 +4,7 @@
 //import { ActivityCell } from "@mail/views/web/activity/activity_cell";
 //import { ActivityRecord } from "@mail/views/web/activity/activity_record";
 
-import { Component, useState, onMounted } from "@odoo/owl";
+import { Component, useState, onMounted, onWillUpdateProps } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 
 
@@ -43,6 +43,7 @@ export class PlanningChantierRenderer extends Component {
         archInfo: { type: Object },
 
         data: { type: Array },
+        domain: { type: Array, optional: true },
 
 
         // Ajoutez cette ligne :
@@ -99,8 +100,23 @@ export class PlanningChantierRenderer extends Component {
 
         onMounted(() => this.mounted());
 
+        // Surveiller les changements de props (domain des filtres)
+        onWillUpdateProps((nextProps) => {
+            const newDomain = JSON.stringify(nextProps.domain || []);
+            console.log('PlanningChantierRenderer onWillUpdateProps - ancien domain:', this.lastDomain);
+            console.log('PlanningChantierRenderer onWillUpdateProps - nouveau domain:', newDomain);
+            if (newDomain !== this.lastDomain) {
+                this.lastDomain = newDomain;
+                console.log('PlanningChantierRenderer onWillUpdateProps - domain a changé, rechargement des données');
+                this.GetChantiers();
+            }
+        });
+
         // Ajouter le service d'action
         this.actionService = useService("action");
+        
+        // Surveiller les changements de domaine
+        this.lastDomain = JSON.stringify(this.props.domain || []);
     }
 
     mounted() {
@@ -409,20 +425,26 @@ export class PlanningChantierRenderer extends Component {
             return;
         }
 
+        console.log('PlanningChantierRenderer GetChantiers - domain reçu du contrôleur:', this.props.domain);
+
         try {
+            const params = {
+                domain         : this.props.domain || [],
+                decale_planning: this.state.decale_planning,
+                nb_semaines    : this.state.nb_semaines,
+                filtre_chantier: this.state.filtre_chantier,
+                filtre_equipe  : this.state.filtre_equipe,
+                filtre_travaux : this.state.filtre_travaux,
+                chantier_state : this.state.chantier_state,
+            };
+            
+            console.log('PlanningChantierRenderer GetChantiers - paramètres envoyés au backend:', params);
+            
             const result = await this.orm.call(
                 'is.chantier',
                 'get_chantiers',
                 [],
-                {
-                    domain         : this.props.domain,
-                    decale_planning: this.state.decale_planning,
-                    nb_semaines    : this.state.nb_semaines,
-                    filtre_chantier: this.state.filtre_chantier,
-                    filtre_equipe  : this.state.filtre_equipe,
-                    filtre_travaux : this.state.filtre_travaux,
-                    chantier_state : this.state.chantier_state,
-                }
+                params
             );
             
             this.state.dict            = result.dict;

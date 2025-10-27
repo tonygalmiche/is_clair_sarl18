@@ -169,6 +169,7 @@
         <!-- <field name="view_mode">calendar,list,form</field> -->
         <field name="view_mode">planning_chantier,calendar,list,form</field>
         <field name="domain">[]</field>
+        <field name="search_view_id" ref="is_chantier_search"/>
     </record>
 
 

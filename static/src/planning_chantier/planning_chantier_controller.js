@@ -72,8 +72,9 @@ export class PlanningChantierController extends Component {
     }
 
     getSearchProps() {
-        const { comparision, context, domain, groupBy, orderBy } = this.env.searchModel;
-        return { comparision, context, domain, groupBy, orderBy };
+        const { comparison, context, domain, groupBy, orderBy } = this.env.searchModel;
+        console.log('PlanningChantierController getSearchProps:', { comparison, context, domain, groupBy, orderBy });
+        return { comparison, context, domain, groupBy, orderBy };
     }
 
     // scheduleActivity() {
@@ -146,6 +147,7 @@ export class PlanningChantierController extends Component {
             records: this.model.root.records,
             resModel: this.props.resModel,
             archInfo: this.props.archInfo,
+            domain: this.getSearchProps().domain,
             //groupedActivities: this.model.activityData.grouped_activities,
             //scheduleActivity: this.scheduleActivity.bind(this),
             onReloadData: () => this.model.load(this.getSearchProps()),
@@ -154,7 +156,7 @@ export class PlanningChantierController extends Component {
             //openRecord: this.openRecord.bind(this),
         };
 
-        console.log('rendererProps : res',res);
+        console.log('PlanningChantierController rendererProps - domain envoyé au renderer:', res.domain);
 
 
         return res;

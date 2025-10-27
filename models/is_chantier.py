@@ -128,9 +128,18 @@ class IsChantier(models.Model):
 
     @api.model
     def get_chantiers(self,domain=[],decale_planning="", nb_semaines="", filtre_chantier=False, filtre_equipe=False, filtre_travaux=False, chantier_state=""):
+        import logging
+        _logger = logging.getLogger(__name__)
+        
+        _logger.info('get_chantiers appelé avec domain=%s', domain)
+        _logger.info('get_chantiers autres paramètres: decale_planning=%s, nb_semaines=%s, filtre_chantier=%s, filtre_equipe=%s, filtre_travaux=%s, chantier_state=%s', 
+                    decale_planning, nb_semaines, filtre_chantier, filtre_equipe, filtre_travaux, chantier_state)
+        
         autorise_modif=False
         # Correction : utiliser self.env.user au lieu de self.user_has_groups
-        domain=[]
+        # ATTENTION : Ne pas écraser le domain passé en paramètre !
+        # domain=[]  # Cette ligne écrasait le domain des filtres !
+        base_domain = domain.copy() if domain else []  # Conserver le domain des filtres
 
         if self.env.user.has_group('is_clair_sarl18.is_responsable_planning_chantiers_group'):
             autorise_modif=True
@@ -262,17 +271,32 @@ class IsChantier(models.Model):
         #**********************************************************************
 
         #** Ajout des filtres sur le domain ***********************************
+        # Commencer avec le domain des filtres standard d'Odoo
+        domain = base_domain.copy()
+        _logger.info('get_chantiers domain initial après copie de base_domain: %s', domain)
+        
         if filtre_chantier!='':
             domain.append(['affaire_id', 'ilike', filtre_chantier])
         if filtre_equipe!='':
             domain.append(['equipe_id', 'ilike', filtre_equipe])
         if filtre_travaux!='':
             domain.append(['nature_travaux_id', 'ilike', filtre_travaux])
+        
+        # Ajouter le filtre par état si ce n'est pas "Tous"
+        if chantier_state and chantier_state != "Tous":
+            if chantier_state == "A planifier":
+                domain.append(['state', '=', 'a_planifier'])
+            elif chantier_state == "En cours":
+                domain.append(['state', '=', 'en_cours'])
+            
+        _logger.info('get_chantiers domain final après ajout des filtres: %s', domain)
         #**********************************************************************
 
         #** Recherche de la date de début de chaque affaire pour le tri *******
         date_debut_affaire={}
+        _logger.info('get_chantiers - début recherche avec domain: %s', domain)
         chantiers=self.env['is.chantier'].search(domain)
+        _logger.info('get_chantiers - recherche terminée, %d chantiers trouvés', len(chantiers))
         for chantier in chantiers:
             affaire_id = chantier.affaire_id.id or 0
             if affaire_id not in date_debut_affaire:
