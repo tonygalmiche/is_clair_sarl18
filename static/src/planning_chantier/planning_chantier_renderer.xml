@@ -93,29 +93,50 @@
             <table class="unselectable" style="width:100%">
             <thead style="position:sticky;top:0;background-color:black;z-index:10;">
                 <tr style="height:auto;">
-                    <th colspan="4" style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;border:1px solid white;"><div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;">Planning</div></th>
+                    <th colspan="4" style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;position:relative;">
+                        <div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;">Planning</div>
+                        <div style="position:absolute;top:0;left:0;right:0;bottom:0;border:1px solid white;pointer-events:none;"></div>
+                    </th>
                     <t t-foreach="Object.values(state.mois or {})" t-as="mois" t-key="mois.key">
-                        <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;border:1px solid white;" t-att-colspan="mois.colspan">
+                        <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;position:relative;" t-att-colspan="mois.colspan">
                             <div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;" t-esc="mois.mois"/>
+                            <div style="position:absolute;top:0;left:0;right:0;bottom:0;border:1px solid white;pointer-events:none;"></div>
                         </th>
                     </t>
                 </tr>
                 <tr style="height:auto;">
-                    <th colspan="4" style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;border:1px solid white;"><div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;">mis à jour le</div></th>
+                    <th colspan="4" style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;position:relative;">
+                        <div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;">mis à jour le</div>
+                        <div style="position:absolute;top:0;left:0;right:0;bottom:0;border:1px solid white;pointer-events:none;"></div>
+                    </th>
                     <t t-foreach="Object.values(state.semaines or {})" t-as="semaine" t-key="semaine.key">
-                        <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;border:1px solid white;" t-att-colspan="semaine.colspan">
+                        <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;position:relative;" t-att-colspan="semaine.colspan">
                             <div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;" t-esc="semaine.semaine"/>
+                            <div style="position:absolute;top:0;left:0;right:0;bottom:0;border:1px solid white;pointer-events:none;"></div>
                         </th>
                     </t>
                 </tr>
                 <tr style="height:auto;">
-                    <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;border:1px solid white;"><div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;"></div></th>
-                    <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;border:1px solid white;"><div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;">Chantier</div></th>
-                    <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;border:1px solid white;"><div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;">Equipe</div></th>
-                    <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;border:1px solid white;"><div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;">Travaux</div></th>
+                    <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;position:relative;">
+                        <div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;"></div>
+                        <div style="position:absolute;top:0;left:0;right:0;bottom:0;border:1px solid white;pointer-events:none;"></div>
+                    </th>
+                    <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;position:relative;">
+                        <div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;">Chantier</div>
+                        <div style="position:absolute;top:0;left:0;right:0;bottom:0;border:1px solid white;pointer-events:none;"></div>
+                    </th>
+                    <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;position:relative;">
+                        <div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;">Equipe</div>
+                        <div style="position:absolute;top:0;left:0;right:0;bottom:0;border:1px solid white;pointer-events:none;"></div>
+                    </th>
+                    <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;position:relative;">
+                        <div style="color:white !important;font-weight:bold !important;font-size:9pt !important;padding:1px;margin:0;line-height:1;text-align:center;">Travaux</div>
+                        <div style="position:absolute;top:0;left:0;right:0;bottom:0;border:1px solid white;pointer-events:none;"></div>
+                    </th>
                     <t t-foreach="Object.values(state.semaines or {})" t-as="semaine" t-key="semaine.key">
-                        <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;border:1px solid white;" t-att-colspan="semaine.colspan">
+                        <th style="font-size:9pt !important;color:white !important;font-weight:bold !important;padding:1px;margin:0;line-height:1;text-align:center;position:relative;" t-att-colspan="semaine.colspan">
                             <div style="color:white !important;font-weight:bold !important;font-size:9pt !important;margin:0;line-height:1;text-align:center;" t-esc="semaine.jour"/>
+                            <div style="position:absolute;top:0;left:0;right:0;bottom:0;border:1px solid white;pointer-events:none;"></div>
                         </th>
                     </t>
                 </tr>

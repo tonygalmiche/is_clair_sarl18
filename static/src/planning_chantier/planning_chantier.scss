@@ -23,6 +23,7 @@
 
 .planning_chantier table {
     border-collapse: collapse;
+    border-spacing: 0;
     border: 1px solid black;
     border-top: 1px solid black;
     width: 100%;
@@ -31,14 +32,18 @@
 
 .planning_chantier th {
     text-align: center;
-    border: 1px solid white;
-    border-left: 1px solid white;
-    border-right: 1px solid white;
     padding: 0;
     margin: 0;
     color: white !important;
     background-color: black !important;
     font-weight: bold;
+    box-sizing: border-box;
+}
+
+/* Règle spécifique pour thead */
+.planning_chantier thead th {
+    position: relative;
+    display: table-cell !important;
 }
 
 .planning_chantier th div {
