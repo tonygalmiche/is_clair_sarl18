@@ -100,7 +100,7 @@ export class PlanningChantierRenderer extends Component {
         onMounted(() => this.mounted());
 
         // Ajouter le service d'action
-        this.action = useService("action");
+        this.actionService = useService("action");
     }
 
     mounted() {
@@ -307,33 +307,32 @@ export class PlanningChantierRenderer extends Component {
     }
     VoirChantierClick(ev) {
         const id=ev.target.attributes.id.value;
-        this.env.bus.trigger('do-action', {
-            action: {
-                name:'Chantier',
-                type: 'ir.actions.act_window',
-                res_id: parseInt(id),
-                res_model: 'is.chantier',
-                views: [[false, 'form']],
-            },
+
+        console.log('TEST VoirChantierClick',ev,id);
+
+        this.actionService.doAction({
+            name:'Chantier',
+            type: 'ir.actions.act_window',
+            res_id: parseInt(id),
+            res_model: 'is.chantier',
+            views: [[false, 'form']],
         });
     }
 
     CreationAlerteClick(ev) {
         const id=ev.target.attributes.id.value;
         console.log('CreationAlerteClick',id);
-        this.env.bus.trigger('do-action', {
-            action: {
-                name:'Alerte',
-                type: 'ir.actions.act_window',
-                res_model: 'is.chantier.alerte',
-                views: [[false, 'form']],
-                view_mode: 'form',
-            //    target: 'new',
-                context: {
-                    //'active_id': id,
-                    'default_chantier_id': parseInt(id),
-                }
-            },
+        this.actionService.doAction({
+            name:'Alerte',
+            type: 'ir.actions.act_window',
+            res_model: 'is.chantier.alerte',
+            views: [[false, 'form']],
+            view_mode: 'form',
+        //    target: 'new',
+            context: {
+                //'active_id': id,
+                'default_chantier_id': parseInt(id),
+            }
         });
     }
 
@@ -341,14 +340,12 @@ export class PlanningChantierRenderer extends Component {
 
     alerteClick(ev) {
         const id=ev.target.attributes.id.value;
-        this.env.bus.trigger('do-action', {
-            action: {
-                name:'Alerte',
-                type: 'ir.actions.act_window',
-                res_id: parseInt(id),
-                res_model: 'is.chantier.alerte',
-                views: [[false, 'form']],
-            },
+        this.actionService.doAction({
+            name:'Alerte',
+            type: 'ir.actions.act_window',
+            res_id: parseInt(id),
+            res_model: 'is.chantier.alerte',
+            views: [[false, 'form']],
         });
     }
 
@@ -358,15 +355,13 @@ export class PlanningChantierRenderer extends Component {
 
     ModifierChantierClick(ev) {
         const id=ev.target.attributes.id.value;
-        this.env.bus.trigger('do-action', {
-            action: {
-                name:'Chantier',
-                type: 'ir.actions.act_window',
-                target: 'new',
-                res_id: parseInt(id),
-                res_model: 'is.chantier',
-                views: [[false, 'form']],
-            },
+        this.actionService.doAction({
+            name:'Chantier',
+            type: 'ir.actions.act_window',
+            target: 'new',
+            res_id: parseInt(id),
+            res_model: 'is.chantier',
+            views: [[false, 'form']],
         });
     }
 
@@ -515,7 +510,7 @@ export class PlanningChantierRenderer extends Component {
 
             if (result) {
                 // Option recommandée : utiliser le service d'action
-                this.action.doAction({
+                this.actionService.doAction({
                     type: 'ir.actions.act_url',
                     url: `/web/content/${result}?download=true`,
                     target: 'new',

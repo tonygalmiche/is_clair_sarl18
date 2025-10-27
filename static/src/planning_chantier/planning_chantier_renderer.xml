@@ -89,7 +89,7 @@
             </table> 
         </div>
 
-        <div style="flex:1;overflow-y:auto;">
+        <div style="flex:1;overflow-y:auto;max-height:calc(100vh - 150px);">
             <table class="unselectable" style="width:100%">
             <thead style="position:sticky;top:0;background-color:black;z-index:10;">
                 <tr style="height:auto;">
@@ -157,14 +157,14 @@
                         <span 
                             class="fa fa-search-plus link"
                             title="Voir chantier"
-                            t-on-click="VoirChantierClick" 
+                            t-on-click.stop="VoirChantierClick" 
                             t-att-id="chantier.id"
                             style="cursor: pointer;padding-right:5px"
                         />
                         <span 
                             class="fa fa-exclamation-circle link"
                             title="Création alerte"
-                            t-on-click="CreationAlerteClick" 
+                            t-on-click.stop="CreationAlerteClick" 
                             t-att-id="chantier.id"
                             style="cursor: pointer;padding-right:5px"
                         />
