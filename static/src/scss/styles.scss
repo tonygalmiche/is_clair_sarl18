@@ -38,6 +38,13 @@
     background-color: rgb(250,250,250);
 }
 
+/* Mais il faut annuler ce style pour les descendants de .o_field_monetary sinon le montant n'est plus visible */
+.o_field_monetary .o_input {
+    background-color: inherit !important;  /* ou la couleur souhaitée */
+}
+
+
+
 
 // Permet de mettre un fond gris plus foncé pour les champs obligoaires 
 .o_required_modifier .o_input  {
