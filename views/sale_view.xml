@@ -195,6 +195,9 @@
                                 <field name="facturable"   sum="Total"/>
                                 <field name="deja_facture" sum="Total"/>
                                 <field name="a_facturer"   sum="Total"/>
+
+                                <field name="currency_id" column_invisible="True"/>
+
                                 <button 
                                     name="option_section_action" 
                                     type="object" icon="fa-refresh" 
@@ -236,6 +239,8 @@
                                     decoration-warning="payment_state in ('partial', 'in_payment')" decoration-success="payment_state in ('paid', 'reversed')" 
                                     invisible="payment_state in ('invoicing_legacy')" optional="show"
                                 />
+                                <field name="currency_id" column_invisible="True"/>
+                                <field name="company_currency_id" column_invisible="True"/>
                                 <field name="state" widget="badge" decoration-success="state == 'posted'" decoration-info="state == 'draft'" optional="show"/>
                             </list>
                         </field>
