@@ -113,7 +113,8 @@ class IsAffaireAnalyse(models.Model):
                 "domain": [
                     ("is_affaire_id","=",obj.affaire_id.id),
                     ("is_famille_id","=",obj.famille_id.id),
-                    ("exclude_from_invoice_tab","=",False),
+                    #("exclude_from_invoice_tab","=",False),
+                    ("display_type","=", 'product'),
                     ("journal_id","=",2),
                     ("move_id.state","=","posted"),
                 ],
@@ -133,7 +134,8 @@ class IsAffaireAnalyse(models.Model):
                 "domain": [
                     ("is_affaire_id","=",obj.affaire_id.id),
                     ("move_id.partner_id","=",obj.fournisseur_id.id),
-                    ("exclude_from_invoice_tab","=",False),
+                    #("exclude_from_invoice_tab","=",False),
+                    ("display_type","=", 'product'),
                     ("journal_id","=",2),
                     ("move_id.state","=","posted"),
                 ],
@@ -380,7 +382,10 @@ class IsAffaire(models.Model):
                 SQL="""
                     SELECT sum(aml.price_subtotal)
                     FROM account_move_line aml join account_move am on aml.move_id=am.id
-                    WHERE aml.is_affaire_id=%s and aml.exclude_from_invoice_tab='f' and aml.journal_id=2 and am.state='posted'
+                    WHERE aml.is_affaire_id=%s 
+                        -- and aml.exclude_from_invoice_tab='f' 
+                        and display_type='product'
+                        and aml.journal_id=2 and am.state='posted'
                 """
                 cr.execute(SQL,[obj.id])
                 for row in cr.fetchall():
@@ -462,12 +467,12 @@ class IsAffaire(models.Model):
                     SELECT sum(aml.price_subtotal)
                     FROM account_move_line aml join account_move am on aml.move_id=am.id
                                                join res_partner rp on am.partner_id=rp.id
-                    WHERE 
-                        aml.is_affaire_id=%s and 
-                        aml.exclude_from_invoice_tab='f' and 
-                        aml.journal_id=2 and 
-                        (am.partner_id=%s or rp.parent_id=%s) and
-                        am.state='posted'
+                    WHERE aml.is_affaire_id=%s 
+                        -- and aml.exclude_from_invoice_tab='f'
+                        and display_type='product'
+                        and aml.journal_id=2 
+                        and (am.partner_id=%s or rp.parent_id=%s)
+                        and am.state='posted'
                 """
                 cr.execute(SQL,[obj.id, row[0], row[0]])
                 montant_fac=ecart=ecart_pourcent=0
@@ -544,11 +549,11 @@ class IsAffaire(models.Model):
                     FROM account_move_line aml join account_move am on aml.move_id=am.id
                                                join product_product pp on aml.product_id=pp.id
                                                join product_template pt on pp.product_tmpl_id=pt.id
-                    WHERE 
-                        aml.is_affaire_id=%s and 
-                        aml.exclude_from_invoice_tab='f' and 
-                        aml.journal_id=2 and 
-                        am.state='posted'
+                    WHERE aml.is_affaire_id=%s
+                        -- aml.exclude_from_invoice_tab='f'
+                        and display_type='product'
+                        and aml.journal_id=2 
+                        and am.state='posted'
                 """%obj.id
                 if famille_id:
                     SQL+=" and pt.is_famille_id=%s "%famille_id
@@ -648,7 +653,8 @@ class IsAffaire(models.Model):
                 "res_model": "account.move.line",
                 "domain": [
                     ("is_affaire_id","=",obj.id),
-                    ("exclude_from_invoice_tab","=",False),
+                    #("exclude_from_invoice_tab","=",False),
+                    ("display_type","=", 'product'),
                     ("journal_id","=",2),
                     ("move_id.state","=","posted"),
                 ],
