@@ -71,7 +71,8 @@ class AccountPayment(models.Model):
 
     def enregistre_courrier_action(self):
         for obj in self:
-            objet="Règlement %s %s"%(obj.ref, (obj.is_num_cheque or ''))
+            ref =  obj.move_id.ref
+            objet="Règlement %s %s"%(ref, (obj.is_num_cheque or ''))
             vals={
                 "partner_id": obj.partner_id.id,
                 "payment_id": obj.id,
