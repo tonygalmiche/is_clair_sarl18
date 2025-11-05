@@ -108,7 +108,7 @@
                                         <strong class="mr16">Sous-total : </strong>
                                         <span
                                             t-esc="current_subtotal"
-                                            t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'
+                                            t-options='{"widget": "monetary", "display_currency": doc.currency_id}'
                                         />
                                     </td>
                                 </tr>
@@ -165,7 +165,7 @@
                                                     <td class="text-end" width="10%">
                                                         <span
                                                             t-esc="subtotal"
-                                                            t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'
+                                                            t-options='{"widget": "monetary", "display_currency": doc.currency_id}'
                                                             t-if="doc.is_affichage_pdf=='standard' and subtotal"
                                                         />
                                                     </td>
@@ -187,7 +187,7 @@
                                         <strong class="mr16">Sous-total : </strong>
                                         <span
                                             t-esc="current_subtotal"
-                                            t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'
+                                            t-options='{"widget": "monetary", "display_currency": doc.currency_id}'
                                         />
                                     </td>
                                 </tr>
@@ -272,7 +272,7 @@
                                                         <td class="text-end" width="10%">
                                                             <span
                                                                 t-esc="subtotal"
-                                                                t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'
+                                                                t-options='{"widget": "monetary", "display_currency": doc.currency_id}'
                                                                 t-if="doc.is_affichage_pdf=='standard' and subtotal"
                                                             />
                                                         </td>
@@ -293,7 +293,7 @@
                                             <strong class="mr16">Sous-total : </strong>
                                             <span
                                                 t-esc="current_subtotal"
-                                                t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'
+                                                t-options='{"widget": "monetary", "display_currency": doc.currency_id}'
                                             />
                                         </td>
                                     </tr>
