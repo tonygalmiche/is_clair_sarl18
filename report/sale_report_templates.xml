@@ -137,7 +137,7 @@
                             </thead>
                             <tbody class="sale_tbody" >
                                 <t t-set="current_subtotal" t-value="0"/>
-                                <t t-foreach="l.line_ids" t-as="line">
+                                <t t-foreach="l.all_line_ids.sudo()" t-as="line">
                                     <t t-set="subtotal" t-value="line.price_subtotal"/>
                                     <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal"/>
                                     <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">
@@ -244,7 +244,7 @@
                                 </thead>
                                 <tbody class="sale_tbody" >
                                     <t t-set="current_subtotal" t-value="0"/>
-                                    <t t-foreach="l.line_ids" t-as="line">
+                                    <t t-foreach="l.all_line_ids.sudo()" t-as="line">
                                         <t t-set="subtotal" t-value="line.price_subtotal"/>
                                         <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal"/>
                                         <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else 'font-italic o_line_note' if line.display_type == 'line_note' else ''">

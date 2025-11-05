@@ -73,11 +73,28 @@ class is_sale_order_section(models.Model):
     facturable_pourcent_calcule = fields.Float("% facturable calculé", digits=(14,2), store=True, readonly=True, compute='_compute_facturable_pourcent_calcule')
     option      = fields.Boolean("Option", default=False)
     line_ids    = fields.One2many('sale.order.line', 'is_section_id', 'Lignes')
+    all_line_ids = fields.Many2many('sale.order.line', compute='_compute_all_line_ids', string='Toutes les lignes', compute_sudo=True)
     currency_id = fields.Many2one(related='order_id.currency_id')
     montant     = fields.Monetary("Montant HT"                      , store=True, readonly=True, compute='_compute_facturable', currency_field='currency_id')
     facturable   = fields.Float("Facturable"         , digits=(14,2), store=True, readonly=True, compute='_compute_facturable')
     deja_facture = fields.Float("Déja facturé"       , digits=(14,2), store=True, readonly=True, compute='_compute_facturable')
     a_facturer   = fields.Float("En cours facturable", digits=(14,2), store=True, readonly=True, compute='_compute_facturable')
+
+
+    def _get_all_lines(self):
+        """Retourne toutes les lignes de la section, y compris celles avec order_id=False"""
+        self.ensure_one()
+        cr = self._cr
+        SQL = "SELECT id FROM sale_order_line WHERE is_section_id=%s ORDER BY sequence"
+        cr.execute(SQL, [self.id])
+        line_ids = [row[0] for row in cr.fetchall()]
+        return self.env['sale.order.line'].sudo().browse(line_ids)
+
+
+    def _compute_all_line_ids(self):
+        """Compute method pour exposer _get_all_lines() via un champ"""
+        for obj in self:
+            obj.all_line_ids = obj._get_all_lines()
 
 
     @api.depends('line_ids.is_facturable','line_ids.is_deja_facture','line_ids.is_a_facturer','line_ids.price_subtotal')
@@ -87,7 +104,8 @@ class is_sale_order_section(models.Model):
             deja_facture = 0
             a_facturer   = 0
             montant      = 0
-            for line in obj.line_ids:
+            # Utiliser _get_all_lines() pour obtenir toutes les lignes
+            for line in obj._get_all_lines():
                 facturable   +=line.is_facturable
                 deja_facture +=line.is_deja_facture
                 a_facturer   +=line.is_a_facturer
@@ -116,7 +134,7 @@ class is_sale_order_section(models.Model):
         for obj in self:
             if obj.deja_facture>0:
                 raise ValidationError("Il n'est pas possible de supprimer une section contenant des lignes déjà facturées")
-            obj.line_ids.unlink()
+            obj._get_all_lines().unlink()
         super(is_sale_order_section, self).unlink()
 
 
@@ -124,19 +142,19 @@ class is_sale_order_section(models.Model):
         res = super(is_sale_order_section, self).write(vals)
         if "facturable_pourcent" in vals:
             for obj in self:
-                for line in obj.order_id.order_line:
+                for line in obj._get_all_lines():
                     if line.is_section_id==obj:
                         line.is_facturable_pourcent = vals["facturable_pourcent"]
         if "sequence" in vals:
             for obj in self:
                 x=10
                 for section in obj.order_id.is_section_ids:
-                    for line in section.line_ids:
+                    for line in section._get_all_lines():
                         line.sequence = x
                         x+=10
         if 'section' in vals:
             for obj in self:
-                for line in obj.line_ids:
+                for line in obj._get_all_lines():
                     if line.display_type=='line_section':
                         line.name = obj.section
         return res
@@ -144,12 +162,21 @@ class is_sale_order_section(models.Model):
 
     def option_section_action(self):
         for obj in self:
+            # Récupérer toutes les lignes (y compris celles avec order_id=False)
+            all_lines = obj._get_all_lines()
+            print(f'Nombre de lignes trouvées: {len(all_lines)}')
+            
+            # Active/désactive l'option de la section
             obj.option = not obj.option
-            for line in obj.line_ids:
+            
+            for line in all_lines:
                 if obj.option:
-                    line.order_id=False
+                    # En mode option: détacher la ligne de la commande
+                    line.order_id = False
                 else:
-                    line.order_id=obj.order_id.id
+                    # En mode normal: rattacher la ligne à la commande
+                    line.order_id = obj.order_id.id
+
 
 
     def lignes_section_action(self):
