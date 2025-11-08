@@ -190,14 +190,13 @@
                                 />
                                 <field name="section"/>
                                 <field name="montant" sum="Total"/>
+                                <field name="montant_option" sum="Total"/>
                                 <field name="facturable_pourcent"/>
                                 <field name="facturable_pourcent_calcule"/>
                                 <field name="facturable"   sum="Total"/>
                                 <field name="deja_facture" sum="Total"/>
                                 <field name="a_facturer"   sum="Total"/>
-
                                 <field name="currency_id" column_invisible="True"/>
-
                                 <button 
                                     name="option_section_action" 
                                     type="object" icon="fa-refresh" 

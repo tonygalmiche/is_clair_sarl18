@@ -75,7 +75,8 @@ class is_sale_order_section(models.Model):
     line_ids    = fields.One2many('sale.order.line', 'is_section_id', 'Lignes')
     all_line_ids = fields.Many2many('sale.order.line', compute='_compute_all_line_ids', string='Toutes les lignes', compute_sudo=True)
     currency_id = fields.Many2one(related='order_id.currency_id')
-    montant     = fields.Monetary("Montant HT"                      , store=True, readonly=True, compute='_compute_facturable', currency_field='currency_id')
+    montant        = fields.Monetary("Montant HT hors option", store=True, readonly=True, compute='_compute_facturable', currency_field='currency_id')
+    montant_option = fields.Monetary("Montant HT des options", store=True, readonly=True, compute='_compute_facturable', currency_field='currency_id')
     facturable   = fields.Float("Facturable"         , digits=(14,2), store=True, readonly=True, compute='_compute_facturable')
     deja_facture = fields.Float("Déja facturé"       , digits=(14,2), store=True, readonly=True, compute='_compute_facturable')
     a_facturer   = fields.Float("En cours facturable", digits=(14,2), store=True, readonly=True, compute='_compute_facturable')
@@ -103,20 +104,20 @@ class is_sale_order_section(models.Model):
     @api.depends('line_ids.is_facturable','line_ids.is_deja_facture','line_ids.is_a_facturer','line_ids.price_subtotal')
     def _compute_facturable(self):
         for obj in self:
-            facturable   = 0
-            deja_facture = 0
-            a_facturer   = 0
-            montant      = 0
-            # Utiliser _get_all_lines() pour obtenir toutes les lignes
+            facturable = deja_facture = a_facturer = montant = montant_option = 0
             for line in obj._get_all_lines():
                 facturable   +=line.is_facturable
                 deja_facture +=line.is_deja_facture
                 a_facturer   +=line.is_a_facturer
-                montant      +=line.price_subtotal
-            obj.facturable   = facturable
-            obj.deja_facture = deja_facture
-            obj.a_facturer   = a_facturer
-            obj.montant      = montant
+                if obj.option:
+                    montant_option+=line.price_subtotal
+                else:
+                    montant+=line.price_subtotal
+            obj.facturable     = facturable
+            obj.deja_facture   = deja_facture
+            obj.a_facturer     = a_facturer
+            obj.montant        = montant
+            obj.montant_option = montant_option
 
 
     @api.depends('order_id.order_line.price_subtotal','order_id.order_line.is_facturable')
@@ -166,12 +167,9 @@ class is_sale_order_section(models.Model):
     def option_section_action(self):
         for obj in self:
             # Récupérer toutes les lignes (y compris celles avec order_id=False)
-            all_lines = obj._get_all_lines()
-            print(f'Nombre de lignes trouvées: {len(all_lines)}')
-            
+            all_lines = obj._get_all_lines()            
             # Active/désactive l'option de la section
             obj.option = not obj.option
-            
             for line in all_lines:
                 if obj.option:
                     # En mode option: détacher la ligne de la commande
@@ -179,7 +177,6 @@ class is_sale_order_section(models.Model):
                 else:
                     # En mode normal: rattacher la ligne à la commande
                     line.order_id = obj.order_id.id
-
 
 
     def lignes_section_action(self):
