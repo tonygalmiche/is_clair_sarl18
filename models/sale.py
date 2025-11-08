@@ -84,6 +84,9 @@ class is_sale_order_section(models.Model):
     def _get_all_lines(self):
         """Retourne toutes les lignes de la section, y compris celles avec order_id=False"""
         self.ensure_one()
+        # Si l'enregistrement n'est pas encore sauvegardé, retourner un recordset vide
+        if isinstance(self.id, models.NewId):
+            return self.env['sale.order.line']
         cr = self._cr
         SQL = "SELECT id FROM sale_order_line WHERE is_section_id=%s ORDER BY sequence"
         cr.execute(SQL, [self.id])
