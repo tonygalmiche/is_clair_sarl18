@@ -40,9 +40,15 @@ class sale_order_line(models.Model):
                 """
                 cr.execute(SQL,[obj.id])
                 for row in cr.fetchall():
+
+
                     sens=1
-                    if row[0]=='out_refund':
-                       sens=-1
+
+                    #TODO : Le 14/11/2025, j'ai désactvié ces lignes à cause de l'avoir sur la commande S00642 
+                    # => Mais j'ai un doute sur le fait que cela fonctionnera dans tous les cas
+                    #if row[0]=='out_refund':
+                    #   sens=-1
+
                     is_deja_facture += sens*(row[1] or 0)
             is_facturable = obj.product_uom_qty*obj.price_unit*obj.is_facturable_pourcent/100
             is_a_facturer = round(is_facturable - is_deja_facture,2)
