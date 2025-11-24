@@ -273,9 +273,6 @@ class purchase_order(models.Model):
                 p = Popen(cde, shell=True, stdout=PIPE, stderr=PIPE)
                 stdout, stderr = p.communicate()
 
-                print()
-
-
                 path = "/tmp/%s.txt"%name
                 r = open(path,'rb').read().decode('utf-8')
                 lines = r.split('\n')
@@ -479,10 +476,8 @@ class purchase_order(models.Model):
                     return val
                 if type_pdf=='PUM':
                     for line in lines:
-                        #print('TEST 1',line)
                         code_pum    = line[0:19].strip()
                         designation = line[19:85].strip()
-                        #print('TEST 2',code_pum,designation)
                         reste = line[86:].strip()
                         # Remplacer les espaces multiples par un seul
                         x1 = re.sub(r' +', ' ', reste)
@@ -502,7 +497,6 @@ class purchase_order(models.Model):
                             return montants[idx] if idx < len(montants) else match.group(0)
                         x1_final = re.sub(r'§§§(\d+)', replace_token, x1_temp)
                         x2 = x1_final.split()
-                        #print('TEST 3',x1_final,x2,len(x2))
 
                         # code_pum    = line[0:19].strip()
                         # designation = line[19:85].strip()
@@ -651,11 +645,11 @@ class purchase_order(models.Model):
                                 if montant and x:
                                     l=x[0].strip()
                                     qte = qte or 1
-                                x = re.findall("Forfait transport Aller", line)
+                                x = re.findall("Forfait transport Aller", line, re.IGNORECASE)
                                 if montant and x:
                                     l=x[0].strip()
                                     qte = qte or 1
-                                x = re.findall("Forfait transport Retour", line)
+                                x = re.findall("Forfait transport Retour", line, re.IGNORECASE)
                                 if montant and x:
                                     l=x[0].strip()
                                     qte = qte or 1
@@ -731,12 +725,10 @@ class purchase_order(models.Model):
                         if x:
                             debut=True
                         if debut:
-                            #print('TEST 1',line)
                             # Fusionner les groupes de milliers (ex: 6 160,12 -> 6160,12)
                             line_fused = re.sub(r'(?<![\d,])(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), line)
                             x = ' '.join(line_fused.split()) # Supprimer les espaces en trop
                             x = x.split()              # Mettre dans un tableau les nombres séparés par un espace
-                            #print('TEST 2',x)
                             if len(x)>4:
                                 ht_pdf=txt2float(x[0])
                     dict["Total HT PDF"] = ht_pdf
