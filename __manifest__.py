@@ -45,6 +45,7 @@ Module Odoo 18 pour CLAIR-SARL
         "views/is_chantier.xml",
         "views/is_relance_facture_view.xml",
         "views/is_suivi_tresorerie_view.xml",
+        "views/is_pliage_view.xml",
         "views/menu.xml",
         #"data/account_payment_term_data.xml",
         "report/purchase_quotation_templates.xml",
@@ -53,6 +54,7 @@ Module Odoo 18 pour CLAIR-SARL
         "report/report_templates.xml",
         "report/is_chantier_report_templates.xml",
         "report/retenue_de_garantie_report_template.xml",
+        "report/is_pliage_report_templates.xml",
         "report/report.xml",
     ],
     'assets': {
@@ -65,6 +67,8 @@ Module Odoo 18 pour CLAIR-SARL
             'is_clair_sarl18/static/src/planning_chantier/planning_chantier_renderer.js',
             'is_clair_sarl18/static/src/planning_chantier/planning_chantier_renderer.xml',
             'is_clair_sarl18/static/src/planning_chantier/planning_chantier_view.js',
+            'is_clair_sarl18/static/src/pliage/pliage_svg_widget.js',
+            'is_clair_sarl18/static/src/pliage/pliage_svg_widget.xml',
         ],
         'web.assets_qweb': [
             'is_clair_sarl18/static/src/xml/**/*',

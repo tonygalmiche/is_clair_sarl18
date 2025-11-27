@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue formulaire pour is.pliage -->
+    <record id="is_pliage_form_view" model="ir.ui.view">
+        <field name="name">is.pliage.form</field>
+        <field name="model">is.pliage</field>
+        <field name="arch" type="xml">
+            <form string="Pliage">
+                <sheet>
+                    <group col="2">
+                        <group col="1">
+                            <group string="Paramètres">
+                                <field name="name"/>
+                                <field name="text_size"/>
+                                <field name="graph_size"/>
+                                <field name="position_laquage"/>
+                                <field name="show_legend"/>
+                                <field name="show_lengths"/>
+                                <field name="show_angles"/>
+                                <field name="show_numbers"/>
+                            </group>
+                            <group string="Lignes de pliage">
+                                <field name="ligne_ids" nolabel="1">
+                                    <list editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="numero" readonly="1"/>
+                                        <field name="angle"/>
+                                        <field name="longueur"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </group>
+                        <group string="Aperçu du pliage">
+                            <field name="svg_preview" nolabel="1" widget="pliage_svg"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste pour is.pliage -->
+    <record id="is_pliage_list_view" model="ir.ui.view">
+        <field name="name">is.pliage.list</field>
+        <field name="model">is.pliage</field>
+        <field name="arch" type="xml">
+            <list string="Pliages">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action pour is.pliage -->
+    <record id="is_pliage_action" model="ir.actions.act_window">
+        <field name="name">Pliages</field>
+        <field name="res_model">is.pliage</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer un nouveau pliage
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu dans Achat / Configuration -->
+    <menuitem 
+        id="is_pliage_menu" 
+        sequence="940" 
+        name="Pliages"
+        action="is_pliage_action" 
+        parent="purchase.menu_purchase_config" 
+    />
+
+</odoo>

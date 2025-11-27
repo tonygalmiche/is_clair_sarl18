@@ -40,5 +40,17 @@
             <field name="binding_type">report</field>
             <field name="paperformat_id" ref="base.paperformat_euro"/>
         </record>
+
+        <!-- Fiche de pliage -->
+        <record id="is_pliage_report_action" model="ir.actions.report">
+            <field name="name">Fiche de pliage</field>
+            <field name="model">is.pliage</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">is_clair_sarl18.is_pliage_report</field>
+            <field name="report_file">is_clair_sarl18.is_pliage_report</field>
+            <field name="binding_model_id" ref="model_is_pliage"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="base.paperformat_euro"/>
+        </record>
     </data>
 </odoo>

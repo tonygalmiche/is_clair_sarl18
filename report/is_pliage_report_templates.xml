@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="is_pliage_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Titre -->
+                        <div class="text-center mb-4">
+                            <h1>Fiche de pliage</h1>
+                            <h2 t-field="doc.name"/>
+                        </div>
+
+                        <div class="row">
+                            <!-- Tableau des lignes de pliage -->
+                            <div class="col-4 pe-4">
+                                <h4>Détail des pliages</h4>
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="text-center" style="width:20%;">N°</th>
+                                            <th class="text-center" style="width:40%;">Angle (°)</th>
+                                            <th class="text-center" style="width:40%;">Longueur (mm)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="num" t-value="0"/>
+                                        <t t-foreach="doc.ligne_ids.sorted('sequence')" t-as="ligne">
+                                            <t t-set="num" t-value="num + 1"/>
+                                            <tr>
+                                                <td class="text-center"><t t-esc="num"/></td>
+                                                <td class="text-center"><t t-esc="ligne.angle"/></td>
+                                                <td class="text-center"><t t-esc="ligne.longueur"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Aperçu SVG -->
+                            <div class="col-8">
+                                <h4>Aperçu du pliage</h4>
+                                <div>
+                                    <t t-out="doc._generate_svg_for_report()"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

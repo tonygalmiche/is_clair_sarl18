@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="is_clair_sarl18.PliageSvgField">
+        <div class="o_field_pliage_svg">
+            <t t-out="svgContent"/>
+            <div t-if="hasLines" style="text-align:center;margin-top:8px;">
+                <button class="btn btn-sm btn-primary" t-on-click="onDownload" title="Télécharger le SVG">
+                    <i class="fa fa-download"/> Télécharger
+                </button>
+            </div>
+        </div>
+    </t>
+</templates>
