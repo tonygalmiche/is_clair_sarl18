@@ -64,6 +64,15 @@ export class PliageSvgField extends Component {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     }
+
+    onOpen() {
+        const svg = this.getSvgOnly();
+        if (!svg) return;
+
+        const blob = new Blob([svg], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+    }
 }
 
 export const pliageSvgField = {

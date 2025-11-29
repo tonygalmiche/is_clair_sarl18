@@ -21,6 +21,8 @@ class IsPliage(models.Model):
         ('large', 'Grand'),
     ], string='Taille du texte', default='medium')
     graph_size = fields.Selection([
+        ('300', '300 px'),
+        ('400', '400 px'),
         ('500', '500 px'),
         ('600', '600 px'),
         ('700', '700 px'),

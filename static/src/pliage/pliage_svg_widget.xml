@@ -7,6 +7,9 @@
                 <button class="btn btn-sm btn-primary" t-on-click="onDownload" title="Télécharger le SVG">
                     <i class="fa fa-download"/> Télécharger
                 </button>
+                <button class="btn btn-sm btn-secondary ms-2" t-on-click="onOpen" title="Ouvrir dans un nouvel onglet">
+                    <i class="fa fa-external-link"/> Ouvrir
+                </button>
             </div>
         </div>
     </t>

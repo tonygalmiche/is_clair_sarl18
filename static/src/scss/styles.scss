@@ -78,46 +78,64 @@
 
 
 
+// Pour les en-têtes de tableaux dans les vues one2many et many2many
+.o_form_view .o_field_one2many .o_list_table th,
+.o_form_view .o_field_many2many .o_list_table th {
+    //background-color: #e8e4f3 !important;
+    background-color: #dee2e6 !important; // Gris
+}
+
+
+// Pour éviter que le widget handle prennne trop de place en largeur
+.form_purchase_order .o_handle_cell {
+    width: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+}
+
+
+
 // Permet de forcer la largeur de la colonne article sur les account_move
-.form_account_move{
-    th[data-name="product_id"] {
-        width: 700px !important;
-    }
-}
-.form_account_move{
-    th:not([data-name="product_id"]) {
-        width: auto !important;
-    }
-}
-.form_account_move{
-    th[data-name="sequence"] {
-        width: 25px !important;
-    }
-}
+// .form_account_move{
+//     th[data-name="product_id"] {
+//         width: 700px !important;
+//     }
+// }
+// .form_account_move{
+//     th:not([data-name="product_id"]) {
+//         width: auto !important;
+//     }
+// }
+// .form_account_move{
+//     th[data-name="sequence"] {
+//         width: 25px !important;
+//     }
+// }
 
 
 // Permet de forcer la largeur de la colonne article sur les purchase_order
-.form_purchase_order{
-    th[data-name="product_id"] {
-        width: 600px !important;
-    }
-}
-.form_purchase_order{
-    th[data-name="is_colisage"] {
-        width: 400px !important;
-    }
-}
-.form_purchase_order th:not([data-name="product_id"]):not([data-name="is_colisage"]) {
-    width: auto !important;
-}
-.form_purchase_order{
-    th[data-name="sequence"] {
-        width: 25px !important;
-    }
-}
+// .form_purchase_order{
+//     th[data-name="product_id"] {
+//         width: 600px !important;
+//     }
+// }
+// .form_purchase_order{
+//     th[data-name="is_colisage"] {
+//         width: 400px !important;
+//     }
+// }
+// .form_purchase_order th:not([data-name="product_id"]):not([data-name="is_colisage"]) {
+//     width: auto !important;
+// }
+// .form_purchase_order{
+//     th[data-name="sequence"] {
+//         width: 25px !important;
+//     }
+// }
 
 
 // Permet de forcer la largeur de la colonne article sur les sale_order
+/*
 .form_sale_order{
     th[data-name="product_template_id"] {
         width: 700px !important;
@@ -133,24 +151,5 @@
         width: 70px !important;
     }
 }
+*/
 
-
-
-
-// <th data-tooltip-delay="1000" 
-//     tabindex="-1" 
-//     data-name="sequence" 
-//     class="align-middle o_column_sortable position-relative cursor-pointer o_list_number_th opacity-trigger-hover w-print-auto" 
-//     style="width: 25px;">
-//     <div class="d-flex" 
-//          data-tooltip-template="web.ListHeaderTooltip" 
-//          data-tooltip-info="{&quot;viewMode&quot;:&quot;list&quot;,&quot;resModel&quot;:&quot;is.sale.order.section&quot;,&quot;debug&quot;:false,&quot;field&quot;:{&quot;name&quot;:&quot;sequence&quot;,&quot;label&quot;:&quot;Sequence&quot;,&quot;type&quot;:&quot;integer&quot;,&quot;widget&quot;:null,&quot;context&quot;:&quot;{}&quot;,&quot;invisible&quot;:null,&quot;column_invisible&quot;:null,&quot;readonly&quot;:null,&quot;required&quot;:null,&quot;changeDefault&quot;:false}}" 
-//          title="">
-//         <span class="d-block min-w-0 text-truncate flex-grow-1 flex-shrink-1 o_list_number_th">
-//             Sequence
-//         </span>
-//         <div class="o_list_header_label_spacer"></div>
-//         <i class="o_list_sortable_caret fa fa-lg fa-angle-down opacity-0 opacity-100-hover"></i>
-//     </div>
-//     <span class="o_resize position-absolute top-0 end-0 bottom-0 ps-1 opacity-0 z-1 bg-black-25 opacity-50-hover"></span>
-// </th>

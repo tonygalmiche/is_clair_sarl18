@@ -56,8 +56,20 @@ class purchase_order(models.Model):
     is_num_facture_fournisseur  = fields.Char("N°Facture")
     is_date_facture_fournisseur = fields.Date('Date Facture')
     is_reste_a_facturer         = fields.Float("Reste à facturer", compute='_compute_is_reste_a_facturer', store=True, readonly=True)
+    is_colisage_vsb             = fields.Boolean("Colisage visible", compute='_compute_is_colisage_vsb', store=True)
 
     user_id = fields.Many2one(copy=False) # Ne pas copier le "Responsable achats" lors de la copie de la commande
+
+
+    @api.depends('order_line.product_id', 'order_line.product_id.is_famille_id.colisage')
+    def _compute_is_colisage_vsb(self):
+        for obj in self:
+            vsb = False
+            for line in obj.order_line:
+                if line.product_id and line.product_id.is_famille_id and line.product_id.is_famille_id.colisage:
+                    vsb = True
+                    break
+            obj.is_colisage_vsb = vsb
 
     
     @api.depends('order_line.qty_invoiced','order_line.product_qty','order_line.price_unit')

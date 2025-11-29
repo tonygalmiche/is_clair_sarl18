@@ -124,9 +124,9 @@
                 <attribute name="editable"></attribute>
             </xpath>
 
-            <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='product_id']" position="attributes">
+            <!-- <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='product_id']" position="attributes">
                 <attribute name="class">width800px</attribute>
-            </xpath>
+            </xpath> -->
 
 
 
@@ -187,6 +187,7 @@
                                     name="lignes_section_action" 
                                     type="object" icon="fa-list" 
                                     title="Lignes de la section"
+                                    width="30"
                                 />
                                 <field name="section"/>
                                 <field name="montant" sum="Total"/>
@@ -201,6 +202,7 @@
                                     name="option_section_action" 
                                     type="object" icon="fa-refresh" 
                                     title="Option/Section"
+                                    width="30"
                                 />
                                 <field name="option"  readonly="1"/>
 

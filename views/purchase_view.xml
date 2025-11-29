@@ -17,6 +17,12 @@
                     .modal-lg, .modal-xl {
                         max-width: 1400px;
                     }
+                    .form_purchase_order .o_list_table th.o_list_button,
+                    .form_purchase_order .o_list_table td.o_list_button {
+                        width: 1px !important;
+                        min-width: 0 !important;
+                        max-width: 40px !important;
+                    }
                 </style>
             </xpath>
             <xpath expr="//form" position="attributes">
@@ -83,6 +89,12 @@
                     />
                 </div>
             </notebook>
+            <xpath expr="//page[@name='products']/field[@name='order_line']/list/field[@name='sequence']" position="attributes">
+                <attribute name="width">20</attribute>
+            </xpath>
+            <xpath expr="//page[@name='products']/field[@name='order_line']/list/button[@name='action_purchase_history']" position="attributes">
+                <attribute name="width">20</attribute>
+            </xpath>
             <xpath expr="//page[@name='products']/field[@name='order_line']/list" position="attributes">
                 <attribute name="limit">500</attribute>
             </xpath>
@@ -96,23 +108,28 @@
                 <field name="is_traitement_id"   optional="show"/>
             </xpath>
             <xpath expr="//page[@name='products']/field[@name='order_line']/list/field[@name='product_qty']" position="before">
-                <field name="is_colisage" optional="hide" widget="html"/>
-                <field name="is_nb_colis" optional="hide" sum="Total"/>
-                <field name="is_liste_colis_action_vsb" column_invisible="1"/>
+                <field name="is_colisage" widget="html" optional="hide"/>
+
                 <button 
                     name="liste_colis_action" 
                     type="object" icon="fa-list-ul" 
                     title="Liste des colis"
-                    invisible="is_liste_colis_action_vsb==False"
+                    column_invisible="not parent.is_colisage_vsb"
+                    width="24px"
                 />
+
+                <field name="is_nb_colis" sum="Total" column_invisible="not parent.is_colisage_vsb"/>
+
                 <button 
                     name="liste_lignes_colis_action" 
                     type="object" icon="fa-list" 
                     title="Liste des lignes des colis"
-                    invisible="is_liste_colis_action_vsb==False"
+                    column_invisible="not parent.is_colisage_vsb"
+                    width="24px"
                 />
-            </xpath>
 
+                <field name="is_liste_colis_action_vsb" column_invisible="1"/>
+            </xpath>
             <xpath expr="//page[@name='products']/field[@name='order_line']/list/field[@name='price_subtotal']" position="after">
                 <field name="is_reste_a_facturer"   optional="hide"/>
                 <field name="is_eco_contribution"   optional="hide"/>
