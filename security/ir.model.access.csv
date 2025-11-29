@@ -78,5 +78,5 @@ access_is_relance_facture_ligne,access_is_relance_facture_ligne,model_is_relance
 access_is_fermeture,access_is_fermeture,model_is_fermeture,base.group_user,1,0,0,0
 access_is_fermeture_responsable,access_is_fermeture_responsable,model_is_fermeture,is_responsable_planning_chantiers_group,1,1,1,1
 access_is_suivi_tresorerie,access_is_suivi_tresorerie,model_is_suivi_tresorerie,account.group_account_invoice,1,1,1,1
-access_is_pliage,access_is_pliage,model_is_pliage,base.group_system,1,1,1,1
-access_is_pliage_ligne,access_is_pliage_ligne,model_is_pliage_ligne,base.group_system,1,1,1,1
+access_is_pliage,access_is_pliage,model_is_pliage,purchase.group_purchase_manager,1,1,1,1
+access_is_pliage_ligne,access_is_pliage_ligne,model_is_pliage_ligne,purchase.group_purchase_manager,1,1,1,1
