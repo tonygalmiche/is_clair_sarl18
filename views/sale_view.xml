@@ -293,7 +293,7 @@
                 <field name="is_total_facture"    sum="Total" widget="monetary" decoration-bf="1" optional="show"/>
                 <field name="is_reste_a_facturer" sum="Total" widget="monetary" decoration-bf="1" optional="show"/>
                 <field name="is_a_facturer"               optional="show" sum="Total"/>
-                <field name="is_a_facturer_abs"           invisible="1"/>
+                <field name="is_a_facturer_abs"           column_invisible="True"/>
                 <field name="is_pourcent_a_facturer"      optional="show"/>
                 <field name="is_taux_retenue_de_garantie" optional="hide"/>
                 <field name="is_retenue_de_garantie"      optional="hide" sum="Total"/>
