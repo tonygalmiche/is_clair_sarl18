@@ -318,6 +318,15 @@ class sale_order(models.Model):
         res = super(sale_order, self).write(vals)
         if self.is_commande_soldee and not self.is_date_pv:
             raise ValidationError("Il est obligatoire de renseigner le champ 'Date PV' pour solder une commande")
+        # Mise à jour du res_id des pièces jointes importées pour les droits d'accès
+        if 'is_import_excel_ids' in vals:
+            for order in self:
+                for attachment in order.is_import_excel_ids:
+                    if attachment.res_id != order.id or attachment.res_model != 'sale.order':
+                        attachment.sudo().write({
+                            'res_id': order.id,
+                            'res_model': 'sale.order',
+                        })
         return res
 
 

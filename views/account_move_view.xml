@@ -1,5 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Vue Pivot CA par an -->
+    <record id="is_view_move_pivot_ca" model="ir.ui.view">
+        <field name="name">is.account.move.pivot.ca</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <pivot string="CA par année" sample="1">
+                <field name="invoice_date" type="row" interval="year"/>
+                <field name="amount_untaxed_signed" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vue Graph CA par an -->
+    <record id="is_view_move_graph_ca" model="ir.ui.view">
+        <field name="name">is.account.move.graph.ca</field>
+        <field name="model">account.move</field>
+        <field name="arch" type="xml">
+            <graph string="CA par année" type="bar" sample="1">
+                <field name="invoice_date" interval="year"/>
+                <field name="amount_untaxed_signed" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Ajout des vues graph et pivot à l'action des factures clients -->
+    <record id="account.action_move_out_invoice_type" model="ir.actions.act_window">
+        <field name="view_mode">list,kanban,form,activity,graph,pivot</field>
+    </record>
+    <record id="is_action_move_out_invoice_type_view_list" model="ir.actions.act_window.view">
+        <field name="sequence">1</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="account.view_out_invoice_tree"/>
+        <field name="act_window_id" ref="account.action_move_out_invoice_type"/>
+    </record>
+    <record id="is_action_move_out_invoice_type_view_pivot" model="ir.actions.act_window.view">
+        <field name="sequence">50</field>
+        <field name="view_mode">pivot</field>
+        <field name="view_id" ref="is_view_move_pivot_ca"/>
+        <field name="act_window_id" ref="account.action_move_out_invoice_type"/>
+    </record>
+    <record id="is_action_move_out_invoice_type_view_graph" model="ir.actions.act_window.view">
+        <field name="sequence">60</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="is_view_move_graph_ca"/>
+        <field name="act_window_id" ref="account.action_move_out_invoice_type"/>
+    </record>
+
+    <!-- Ajout des vues graph et pivot à l'action des factures fournisseurs -->
+    <record id="account.action_move_in_invoice_type" model="ir.actions.act_window">
+        <field name="view_mode">list,kanban,form,activity,graph,pivot</field>
+    </record>
+    <record id="is_action_move_in_invoice_type_view_list" model="ir.actions.act_window.view">
+        <field name="sequence">1</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="account.view_in_invoice_tree"/>
+        <field name="act_window_id" ref="account.action_move_in_invoice_type"/>
+    </record>
+    <record id="is_action_move_in_invoice_type_view_pivot" model="ir.actions.act_window.view">
+        <field name="sequence">50</field>
+        <field name="view_mode">pivot</field>
+        <field name="view_id" ref="is_view_move_pivot_ca"/>
+        <field name="act_window_id" ref="account.action_move_in_invoice_type"/>
+    </record>
+    <record id="is_action_move_in_invoice_type_view_graph" model="ir.actions.act_window.view">
+        <field name="sequence">60</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="is_view_move_graph_ca"/>
+        <field name="act_window_id" ref="account.action_move_in_invoice_type"/>
+    </record>
+
     <!-- account.move -->
     <record id="initialiser_affaire_action_server" model="ir.actions.server">
         <field name="name">Initialiser affaire</field>
@@ -44,6 +114,20 @@
                     }
                 </style>
             </xpath>
+
+            <!-- Utilise section_and_note_one2many pour séparer les colonnes articles et description -->
+            <!-- tout en gardant le bon affichage des sections et notes -->
+            <!--
+            <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
+                <attribute name="widget">section_and_note_one2many</attribute>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='product_id']" position="attributes">
+                <attribute name="widget"></attribute>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='name']" position="attributes">
+                <attribute name="widget">section_and_note_text</attribute>
+            </xpath>
+            -->
 
             <xpath expr="//form" position="attributes">
                 <attribute name="class">form_account_move</attribute>

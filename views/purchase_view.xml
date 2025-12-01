@@ -28,6 +28,19 @@
             <xpath expr="//form" position="attributes">
                 <attribute name="class">form_purchase_order</attribute>
             </xpath>
+
+            <!-- Utilise section_and_note_one2many pour séparer les colonnes articles et description -->
+            <!-- tout en gardant le bon affichage des sections et notes -->
+            <xpath expr="//field[@name='order_line']" position="attributes">
+                <attribute name="widget">section_and_note_one2many</attribute>
+            </xpath>
+            <xpath expr="//page[@name='products']/field[@name='order_line']/list/field[@name='product_id']" position="attributes">
+                <attribute name="widget"></attribute>
+            </xpath>
+            <xpath expr="//page[@name='products']/field[@name='order_line']/list/field[@name='name']" position="attributes">
+                <attribute name="widget">section_and_note_text</attribute>
+            </xpath>
+
             <field name="partner_id" position="after">
                 <field name="is_affaire_id"/>
                 <field name="is_contact_chantier_id"/>
