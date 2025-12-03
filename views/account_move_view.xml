@@ -176,7 +176,7 @@
             </field>
             <field name="invoice_vendor_bill_id" position="after">
                 <field name="is_order_id"    invisible="move_type in ['in_invoice','in_refund']"/>
-                <field name="is_affaire_id"  invisible="move_type in ['in_invoice','in_refund']"/>
+                <field name="is_affaire_id"/>
                 <field name="is_situation"   invisible="move_type in ['in_invoice','in_refund']"/>
                 <field name="is_banque_id"   invisible="is_banque_id == False"/>
             </field>
@@ -191,6 +191,7 @@
             <xpath expr="//page[@id='invoice_tab']/field[@name='invoice_line_ids']/list/field[@name='quantity']" position="before">
                 <field name="is_affaire_id" optional="hide" class="white_space_normal"/>
                 <field name="is_sale_line_id"        optional="hide" widget="many2one_clickable"/>
+                <field name="purchase_line_id"       optional="hide" widget="many2one_clickable"/>
                 <field name="is_section_id"          optional="hide" widget="many2one_clickable"/>
                 <field name="is_qt_commande"         optional="hide"/>
                 <field name="is_montant_cde"         optional="hide" sum="Total"/>

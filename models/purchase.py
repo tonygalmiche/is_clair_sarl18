@@ -116,7 +116,26 @@ class purchase_order(models.Model):
         res = super(purchase_order, self).write(vals)
         self.update_reperes()
         self.ajout_eco_contribution()
+        # Propagation de l'affaire aux factures et lignes de facture liées
+        if 'is_affaire_id' in vals:
+            self._update_invoice_affaire()
         return res
+
+    def _update_invoice_affaire(self):
+        """Met à jour l'affaire sur les factures fournisseurs et leurs lignes liées à cette commande"""
+        for obj in self:
+            # Récupérer toutes les lignes de facture liées à cette commande fournisseur
+            invoice_lines = self.env['account.move.line'].search([
+                ('purchase_line_id.order_id', '=', obj.id)
+            ])
+            # Mettre à jour l'affaire sur les lignes de facture
+            if invoice_lines:
+                invoice_lines.write({'is_affaire_id': obj.is_affaire_id.id if obj.is_affaire_id else False})
+            # Récupérer les factures liées et recalculer leur affaire
+            invoices = invoice_lines.mapped('move_id')
+            for invoice in invoices:
+                # Recalculer l'affaire de l'entête de la facture
+                invoice._compute_is_affaire_id()
 
 
     def ajout_eco_contribution(self):

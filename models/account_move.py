@@ -125,7 +125,7 @@ class AccountMove(models.Model):
             obj.initialiser_sections_facture_action()
 
 
-    @api.depends('is_order_id','purchase_id','invoice_line_ids','state')
+    @api.depends('is_order_id','purchase_id','invoice_line_ids','invoice_line_ids.is_affaire_id','invoice_line_ids.purchase_line_id','invoice_line_ids.purchase_line_id.order_id.is_affaire_id','state')
     def _compute_is_affaire_id(self):
         for obj in self:
             affaire_id = False
@@ -135,6 +135,10 @@ class AccountMove(models.Model):
                 affaire_id = obj.is_order_id.is_affaire_id.id
             if not affaire_id:
                 for line in obj.invoice_line_ids:
+                    # Priorité à l'affaire de la commande fournisseur liée
+                    if line.purchase_line_id and line.purchase_line_id.order_id.is_affaire_id:
+                        affaire_id = line.purchase_line_id.order_id.is_affaire_id.id
+                        break
                     if line.is_affaire_id:
                         affaire_id = line.is_affaire_id.id
                         break
