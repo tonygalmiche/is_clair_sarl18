@@ -76,6 +76,16 @@
                             </t>
                         </select>
                     </td>
+                    <td><span style="margin-left:20px;margin-right:5px">Tri :</span></td>
+                    <td>
+                        <select name="chantier_tri" class="form-select" t-on-change="onChangeTri">
+                            <t t-foreach="state.tri_options or []" t-as="o"  t-key="o.id">
+                                <option t-att-value="o.id" t-att-selected="o.selected">
+                                    <t t-esc="o.name" />
+                                </option>
+                            </t>
+                        </select>
+                    </td>
                     <td>
                         <img 
                             src="/is_clair_sarl18/static/src/img/pdf.svg" 

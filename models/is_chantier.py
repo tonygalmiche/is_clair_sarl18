@@ -127,7 +127,7 @@ class IsChantier(models.Model):
         return res
 
     @api.model
-    def get_chantiers(self,domain=[],decale_planning="", nb_semaines="", filtre_chantier=False, filtre_equipe=False, filtre_travaux=False, chantier_state=""):
+    def get_chantiers(self,domain=[],decale_planning="", nb_semaines="", filtre_chantier=False, filtre_equipe=False, filtre_travaux=False, chantier_state="", chantier_tri=""):
         autorise_modif=False
         # Correction : utiliser self.env.user au lieu de self.user_has_groups
         # ATTENTION : Ne pas écraser le domain passé en paramètre !
@@ -164,7 +164,12 @@ class IsChantier(models.Model):
         else:
             self.env['is.mem.var'].set(self._uid, 'chantier_state', chantier_state)
 
-        #** Liste de choix ****************************************************
+        if chantier_tri=="":
+            chantier_tri = self.env['is.mem.var'].get(self._uid, 'chantier_tri') or "Standard"
+        else:
+            self.env['is.mem.var'].set(self._uid, 'chantier_tri', chantier_tri)
+
+        #** Liste de choix Etat ***********************************************
         options = ["A planifier","En cours", "Tous"]
         state_options=[]
         for o in options:
@@ -172,6 +177,20 @@ class IsChantier(models.Model):
             if o==chantier_state:
                 selected=True
             state_options.append({
+                "id": o,
+                "name": o,
+                "selected": selected,
+            })
+        #**********************************************************************
+
+        #** Liste de choix Tri ************************************************
+        tri_options_list = ["Standard", "Par équipe"]
+        tri_options=[]
+        for o in tri_options_list:
+            selected=False
+            if o==chantier_tri:
+                selected=True
+            tri_options.append({
                 "id": o,
                 "name": o,
                 "selected": selected,
@@ -412,7 +431,18 @@ class IsChantier(models.Model):
                 if chantier.state=='a_planifier':
                     prefix=1
                 #******************************************************************
-                key = "%s-%s-%s-%s-%s"%(prefix,date_affaire,chantier.affaire_id.name,chantier.date_debut,chantier.name)
+                
+                #** Génération de la clé de tri selon le mode sélectionné ********
+                if chantier_tri == "Par équipe":
+                    # Tri par équipe, puis par date
+                    # Les chantiers sans équipe vont à la fin (prefix_equipe=1)
+                    equipe_name = chantier.equipe_id.name or ''
+                    prefix_equipe = 0 if equipe_name else 1
+                    key = "%s-%s-%s-%s-%s-%s"%(prefix, prefix_equipe, equipe_name, chantier.date_debut, chantier.affaire_id.name or '', chantier.name)
+                else:
+                    # Tri standard (par affaire)
+                    key = "%s-%s-%s-%s-%s"%(prefix, date_affaire, chantier.affaire_id.name, chantier.date_debut, chantier.name)
+                #******************************************************************
                 vals={
                     "key"       : key,
                     "id"        : chantier.id,
@@ -439,6 +469,8 @@ class IsChantier(models.Model):
             "autorise_modif" : autorise_modif,
             "state_options"  : state_options,
             "chantier_state" : chantier_state,
+            "tri_options"    : tri_options,
+            "chantier_tri"   : chantier_tri,
             "filtre_chantier": filtre_chantier,
             "filtre_equipe"  : filtre_equipe,
             "filtre_travaux" : filtre_travaux,

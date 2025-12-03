@@ -394,6 +394,10 @@ export class PlanningChantierRenderer extends Component {
         this.state.chantier_state = ev.target.value;
         this.GetChantiers();
     }
+    onChangeTri(ev) {
+        this.state.chantier_tri = ev.target.value;
+        this.GetChantiers();
+    }
     OKButtonClick(ev) {
         this.state.decale_planning = 0;
         this.GetChantiers();
@@ -419,6 +423,7 @@ export class PlanningChantierRenderer extends Component {
                 filtre_equipe  : this.state.filtre_equipe,
                 filtre_travaux : this.state.filtre_travaux,
                 chantier_state : this.state.chantier_state,
+                chantier_tri   : this.state.chantier_tri,
             };
             
             const result = await this.orm.call(
@@ -439,6 +444,8 @@ export class PlanningChantierRenderer extends Component {
             this.state.filtre_travaux  = result.filtre_travaux;
             this.state.state_options   = result.state_options;
             this.state.chantier_state  = result.chantier_state;
+            this.state.tri_options     = result.tri_options;
+            this.state.chantier_tri    = result.chantier_tri;
         } catch (error) {
             console.error('Erreur lors du chargement des chantiers:', error);
         }
