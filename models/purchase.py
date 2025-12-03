@@ -57,6 +57,9 @@ class purchase_order(models.Model):
     is_date_facture_fournisseur = fields.Date('Date Facture')
     is_reste_a_facturer         = fields.Float("Reste à facturer", compute='_compute_is_reste_a_facturer', store=True, readonly=True)
     is_colisage_vsb             = fields.Boolean("Colisage visible", compute='_compute_is_colisage_vsb', store=True)
+    
+    is_demande_prix_simplifiee_id = fields.Many2one('is.demande.prix.simplifiee', 'Demande de prix simplifiée', readonly=True, copy=False)
+    is_photo = fields.Binary("Photo du besoin", attachment=True, help="Photo du besoin")
 
     user_id = fields.Many2one(copy=False) # Ne pas copier le "Responsable achats" lors de la copie de la commande
 

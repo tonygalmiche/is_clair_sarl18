@@ -65,6 +65,7 @@
             </field>
             <field name="origin" position="after">
                 <field name="is_sale_order_id"/>
+                <field name="is_demande_prix_simplifiee_id" invisible="is_demande_prix_simplifiee_id == False"/>
             </field>
             <field name="date_order" position="attributes">
                  <attribute name="invisible">1</attribute>
@@ -159,6 +160,13 @@
                 <field name="is_eco_contribution"/>
             </xpath>
             <xpath expr="//page[@name='products']" position="after">
+                <page string="Photo du besoin">
+                    <group>
+                        <div class="col-6">
+                            <field name="is_photo" widget="image" nolabel="1" options="{'size': [0, 500]}"/>
+                        </div>
+                    </group>
+                </page>
                 <page string="Repères de plan">
                     <group>
                         <group>

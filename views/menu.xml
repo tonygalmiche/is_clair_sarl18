@@ -156,6 +156,13 @@
 
     <!-- Achats / Commandes -->
     <menuitem
+        id="is_demande_prix_simplifiee_menu"
+        name="Demandes de prix simplifiées"
+        parent="purchase.menu_procurement_management"
+        sequence="5"
+        action="is_demande_prix_simplifiee_action"
+    />
+    <menuitem
         id="is_purchase_order_line_menu"
         name="Lignes des commandes"
         parent="purchase.menu_procurement_management"

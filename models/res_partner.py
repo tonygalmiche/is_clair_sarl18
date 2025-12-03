@@ -51,6 +51,8 @@ class ResPartner(models.Model):
     is_sale_order_ids           = fields.One2many('sale.order', 'partner_id', 'Commandes client')
     is_type_paiement            = fields.Selection(_TYPE_PAIEMENT, 'Type de paiement')
     is_contact_relance_facture_id = fields.Many2one('res.partner', 'Contact facture')
+    is_contact_demande_prix_id  = fields.Many2one('res.partner', 'Contact demande de prix', help="Contact utilisé pour l'envoi des demandes de prix simplifiées")
+    is_article_demande_prix_ids = fields.Many2many('product.product', 'res_partner_product_demande_prix_rel', 'partner_id', 'product_id', string="Articles demande de prix", help="Liste des articles disponibles pour les demandes de prix simplifiées")
     
 
     @api.depends('name', 'street','street2','city','zip')

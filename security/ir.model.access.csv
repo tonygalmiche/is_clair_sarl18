@@ -80,3 +80,4 @@ access_is_fermeture_responsable,access_is_fermeture_responsable,model_is_fermetu
 access_is_suivi_tresorerie,access_is_suivi_tresorerie,model_is_suivi_tresorerie,account.group_account_invoice,1,1,1,1
 access_is_pliage,access_is_pliage,model_is_pliage,purchase.group_purchase_manager,1,1,1,1
 access_is_pliage_ligne,access_is_pliage_ligne,model_is_pliage_ligne,purchase.group_purchase_manager,1,1,1,1
+access_is_demande_prix_simplifiee,access_is_demande_prix_simplifiee,model_is_demande_prix_simplifiee,base.group_user,1,1,1,0

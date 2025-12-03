@@ -46,6 +46,7 @@ Module Odoo 18 pour CLAIR-SARL
         "views/is_relance_facture_view.xml",
         "views/is_suivi_tresorerie_view.xml",
         "views/is_pliage_view.xml",
+        "views/is_demande_prix_simplifiee_view.xml",
         "views/menu.xml",
         "report/purchase_quotation_templates.xml",
         "report/purchase_order_templates.xml",
