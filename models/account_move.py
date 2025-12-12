@@ -44,6 +44,7 @@ class AccountMove(models.Model):
     is_traite_id         = fields.Many2one('is.traite', 'Traite',tracking=True)
     is_situation         = fields.Char("Situation (Titre)",tracking=True)
     is_a_facturer        = fields.Monetary("Total à facturer",tracking=True, currency_field='currency_id', store=True, readonly=True, compute='_compute_is_a_facturer')
+    is_a_facturer_signe  = fields.Monetary("Total à facturer signé",tracking=True, currency_field='currency_id', store=True, readonly=True, compute='_compute_is_a_facturer')
     is_facture           = fields.Monetary("Total facturé"   ,tracking=True, currency_field='currency_id', store=True, readonly=True, compute='_compute_is_a_facturer', help="Montant total facturé hors remises")
     is_attente_avoir     = fields.Char("Attente avoir",tracking=True, help="Motif de l'attente de l'avoir")
     active               = fields.Boolean("Active", store=True, readonly=True, compute='_compute_active',tracking=True)
@@ -154,7 +155,12 @@ class AccountMove(models.Model):
                 is_a_facturer+=line.is_a_facturer
                 if line.is_facturable_pourcent!=0:
                     is_facture+=line.price_subtotal
+            # Gestion du signe selon le type de document
+            sens = 1
+            if obj.move_type == 'out_refund':
+                sens = -1
             obj.is_a_facturer = is_a_facturer
+            obj.is_a_facturer_signe = sens * is_a_facturer
             obj.is_facture    = is_facture
 
 

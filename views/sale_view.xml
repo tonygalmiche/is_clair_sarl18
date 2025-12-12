@@ -142,10 +142,10 @@
             </xpath>
             <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='price_subtotal']" position="after">
                 <field name="is_facturable_pourcent" readonly="1" optional="hide" force-save="1"/>
-                <field name="is_facturable"    optional="hide" sum="Total"/>
-                <field name="is_deja_facture"  optional="hide" sum="Total"/>
-                <field name="is_a_facturer"    optional="hide" sum="Total"/>
-                <field name="is_masquer_ligne" optional="hide" widget="boolean_toggle"/>
+                <field name="is_facturable"       optional="hide" sum="Total"/>
+                <field name="is_deja_facture"     optional="hide" sum="Total"/>
+                <field name="is_a_facturer"       optional="hide" sum="Total"/>
+                <field name="is_masquer_ligne"    optional="hide" widget="boolean_toggle"/>
             </xpath>
             <xpath expr="//page[@name='order_lines']" position="after">
                 <page string="Import devis xlsx">
@@ -229,7 +229,7 @@
                                 <field name="move_type"/>
                                 <field name="invoice_date"/>
                                 <field name="invoice_date_due"/>
-                                <field name="is_a_facturer" sum="Total"/>
+                                <field name="is_a_facturer_signe"   sum="Total"/>
                                 <field name="amount_untaxed_signed" sum="Total" string="Montant HT"/>
                                 <field name="is_taux_retenue_de_garantie" optional="hide"/>
                                 <field name="is_retenue_de_garantie"      optional="hide"/>
