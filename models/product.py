@@ -62,6 +62,7 @@ class product_template(models.Model):
     _inherit = "product.template"
     _order="name"
 
+    purchase_method         = fields.Selection(default='purchase')
     is_tache                = fields.Boolean("Tache")
     is_famille_id           = fields.Many2one('is.famille', 'Famille')
     is_sous_famille_id      = fields.Many2one('is.sous.famille', 'Sous-famille')
