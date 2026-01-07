@@ -119,6 +119,16 @@ class purchase_order(models.Model):
         # Propagation de l'affaire aux factures et lignes de facture liées
         if 'is_affaire_id' in vals:
             self._update_invoice_affaire()
+        # Mise à jour du res_id des pièces jointes importées pour les droits d'accès
+        if 'is_import_pdf_ids' in vals:
+            for order in self:
+                for attachment in order.is_import_pdf_ids:
+                    if attachment.res_id != order.id or attachment.res_model != 'purchase.order' or not attachment.res_field:
+                        attachment.sudo().write({
+                            'res_id': order.id,
+                            'res_model': 'purchase.order',
+                            'res_field': 'is_import_pdf_ids',
+                        })
         return res
 
     def _update_invoice_affaire(self):
