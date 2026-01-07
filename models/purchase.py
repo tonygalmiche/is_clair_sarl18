@@ -112,8 +112,8 @@ class purchase_order(models.Model):
                 obj.is_contact_chantier_id = obj.is_affaire_id.contact_chantier_id.id
 
 
-    def write(self, vals):
-        res = super(purchase_order, self).write(vals)
+    def _post_create_write_operations(self, vals):
+        """Opérations communes à exécuter après create et write"""
         self.update_reperes()
         self.ajout_eco_contribution()
         # Propagation de l'affaire aux factures et lignes de facture liées
@@ -129,6 +129,19 @@ class purchase_order(models.Model):
                             'res_model': 'purchase.order',
                             'res_field': 'is_import_pdf_ids',
                         })
+
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        orders = super(purchase_order, self).create(vals_list)
+        for order, vals in zip(orders, vals_list):
+            order._post_create_write_operations(vals)
+        return orders
+
+
+    def write(self, vals):
+        res = super(purchase_order, self).write(vals)
+        self._post_create_write_operations(vals)
         return res
 
     def _update_invoice_affaire(self):
