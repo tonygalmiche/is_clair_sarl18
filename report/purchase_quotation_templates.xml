@@ -36,10 +36,10 @@
                 <br />
                 <h2 t-if="o.is_affaire_id">Affaire : 
                     <span t-field="o.is_affaire_id.display_name"/> - 
-                    <span t-if ="o.is_affaire_id.street"  t-field="o.is_affaire_id.street"/> 
-                    <span t-if ="o.is_affaire_id.street2" t-field="o.is_affaire_id.street2"/> 
-                    <span t-if ="o.is_affaire_id.zip"     t-field="o.is_affaire_id.zip"/> 
-                    <span t-if ="o.is_affaire_id.city"    t-field="o.is_affaire_id.city"/> 
+                    <t t-if="o.is_affaire_id.street"><span t-field="o.is_affaire_id.street"/> </t>
+                    <t t-if="o.is_affaire_id.street2"><span t-field="o.is_affaire_id.street2"/> </t>
+                    <t t-if="o.is_affaire_id.zip">-<span t-field="o.is_affaire_id.zip"/> </t>
+                    <t t-if="o.is_affaire_id.city"><span t-field="o.is_affaire_id.city"/></t>
                 </h2>
                 <div style="height:3mm"/>
                 <h3>Demande de prix <span t-field="o.name"/> du <span t-field="o.is_date"/></h3>
