@@ -44,10 +44,12 @@ class sale_order_line(models.Model):
 
                     sens=1
 
-                    #TODO : Le 14/11/2025, j'ai désactvié ces lignes à cause de l'avoir sur la commande S00642 
+                    #TODO : 
+                    # Le 14/11/2025, j'ai désactvié ces lignes à cause de l'avoir sur la commande S00642 
                     # => Mais j'ai un doute sur le fait que cela fonctionnera dans tous les cas
-                    #if row[0]=='out_refund':
-                    #   sens=-1
+                    # Le 04/02/2026, j'ai réactivé cette ligne car cela ne fonctionnait pas avec la commande S00599 
+                    if row[0]=='out_refund':
+                      sens=-1
 
                     is_deja_facture += sens*(row[1] or 0)
             is_facturable = obj.product_uom_qty*obj.price_unit*obj.is_facturable_pourcent/100

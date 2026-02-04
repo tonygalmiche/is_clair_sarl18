@@ -16,7 +16,10 @@ class is_account_move_section(models.Model):
     sequence         = fields.Integer("Sequence")
     currency_id      = fields.Many2one(related='move_id.currency_id')
     facture          = fields.Monetary("Montant Facturé", currency_field='currency_id')
-    facture_pourcent = fields.Float("% Facturé", digits=(14,2))
+    facture_pourcent = fields.Float("% Facturé", digits=(14,2)) 
+    currency_id      = fields.Many2one(related='move_id.currency_id')
+
+
 
 
 class is_account_move_remise(models.Model):
