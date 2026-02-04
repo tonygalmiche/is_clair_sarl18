@@ -497,11 +497,18 @@ class purchase_order(models.Model):
                         date_facture = False
                     return date_facture
                 if test:
+
+                    print('TEST 1 OK')
+
+
                     num_facture  = False
                     date_facture = False
                     if type_pdf=='LOXAM':
                         for line in lines:
-                            x = re.search("Facture N° :(.*) du (.*)", line) 
+                            # Regex pour gérer les deux formats :
+                            # - Facture N° :           154432682-0001                 du     15/10/25
+                            # - Facture N°                        153159352-0001                 du    15/11/25
+                            x = re.search(r"Facture N°\s*:?\s*(\S+)\s+du\s+(\S+)", line)
                             if x:
                                 v = x.groups()
                                 if len(v)==2:
