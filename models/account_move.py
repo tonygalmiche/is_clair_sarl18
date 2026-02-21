@@ -158,10 +158,14 @@ class AccountMove(models.Model):
                 is_a_facturer+=line.is_a_facturer
                 if line.is_facturable_pourcent!=0:
                     is_facture+=line.price_subtotal
+            
             # Gestion du signe selon le type de document
             sens = 1
-            if obj.move_type == 'out_refund':
-                sens = -1
+            # J'ai désactivé cela le 21/02/2026 car is_a_facturer est déja signé
+            #if obj.move_type == 'out_refund':
+            #    sens = -1
+            #print(obj.name,is_a_facturer,sens)
+
             obj.is_a_facturer = is_a_facturer
             obj.is_a_facturer_signe = sens * is_a_facturer
             obj.is_facture    = is_facture
@@ -275,6 +279,15 @@ class AccountMove(models.Model):
                         'facture_pourcent': facture_pourcent,
                     }
                     self.env['is.account.move.section'].create(vals)
+
+
+    def correction_signe_a_facturer_avoir_action(self):
+        "Le signe n'est pas bon si l'avoir est créé depuis la facture et non pas depuis la commande"
+        for obj in self:
+            if obj.move_type == 'out_refund':
+                for line in obj.invoice_line_ids:
+                    if line.is_a_facturer>0:
+                        line.is_a_facturer = - line.is_a_facturer
 
 
 class AccountMoveLine(models.Model):

@@ -40,16 +40,15 @@ class sale_order_line(models.Model):
                 """
                 cr.execute(SQL,[obj.id])
                 for row in cr.fetchall():
-
-
                     sens=1
-
                     #TODO : 
                     # Le 14/11/2025, j'ai désactvié ces lignes à cause de l'avoir sur la commande S00642 
                     # => Mais j'ai un doute sur le fait que cela fonctionnera dans tous les cas
                     # Le 04/02/2026, j'ai réactivé cette ligne car cela ne fonctionnait pas avec la commande S00599 
-                    if row[0]=='out_refund':
-                      sens=-1
+                    # Le 21/02/2025, j'ai désactivé ces lignes car cela ne fonctionnait pas avec la commande S00730 
+                    # => Il faut créer les avoirs depuis la commande, sinon le signe dans la colonne 'is_a_facturer' des lignes de la facture n'est pas bon
+                    #if row[0]=='out_refund':
+                    # sens=-1
 
                     is_deja_facture += sens*(row[1] or 0)
             is_facturable = obj.product_uom_qty*obj.price_unit*obj.is_facturable_pourcent/100
@@ -227,6 +226,10 @@ class sale_order(models.Model):
             is_total_facture = 0
             for invoice in obj.is_invoice_ids:
                 if invoice.state=='posted':
+
+                    invoice._compute_is_a_facturer()
+
+
                     is_total_facture+=invoice.amount_untaxed_signed
             is_reste_a_facturer = obj.amount_untaxed - is_total_facture
             obj.is_total_facture    = is_total_facture

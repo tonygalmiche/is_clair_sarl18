@@ -497,10 +497,6 @@ class purchase_order(models.Model):
                         date_facture = False
                     return date_facture
                 if test:
-
-                    print('TEST 1 OK')
-
-
                     num_facture  = False
                     date_facture = False
                     if type_pdf=='LOXAM':

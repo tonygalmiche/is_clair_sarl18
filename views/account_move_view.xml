@@ -71,14 +71,14 @@
     </record>
 
     <!-- account.move -->
-    <record id="initialiser_affaire_action_server" model="ir.actions.server">
+    <!-- <record id="initialiser_affaire_action_server" model="ir.actions.server">
         <field name="name">Initialiser affaire</field>
         <field name="model_id" ref="account.model_account_move"/>
         <field name="binding_model_id" ref="account.model_account_move"/>
         <field name="state">code</field>
         <field name="code">records.initialiser_affaire_action()</field>
-    </record>
-    <record id="initialiser_compte_vente_action_server" model="ir.actions.server">
+    </record> -->
+    <!-- <record id="initialiser_compte_vente_action_server" model="ir.actions.server">
         <field name="name">Initialiser compte de vente</field>
         <field name="model_id" ref="account.model_account_move"/>
         <field name="binding_model_id" ref="account.model_account_move"/>
@@ -98,7 +98,20 @@
         <field name="binding_model_id" ref="account.model_account_move"/>
         <field name="state">code</field>
         <field name="code">records.initialiser_sections_facture_action()</field>
+    </record> -->
+
+    <record id="correction_signe_a_facturer_avoir_action_server" model="ir.actions.server">
+        <field name="name">Correction du signe 'A Facturer' pour les avoirs</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="state">code</field>
+        <field name="code">records.correction_signe_a_facturer_avoir_action()</field>
     </record>
+
+
+
+
+
     <record id="is_view_move_form" model="ir.ui.view">
         <field name="name">is_view_move_form</field>
         <field name="model">account.move</field>
