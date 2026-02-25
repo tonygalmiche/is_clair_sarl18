@@ -17,7 +17,7 @@ class IsRelanceFactureLigne(models.Model):
     @api.depends('invoice_id')
     def _compute(self):
         for obj in self:
-            obj.amount_residual  = obj.invoice_id.amount_residual
+            obj.amount_residual  = obj.invoice_id.amount_residual_signed
             obj.partner_id       = obj.invoice_id.partner_id.id
             obj.contact_id       = obj.partner_id.is_contact_relance_facture_id.id or obj.partner_id.id
             obj.invoice_date     = obj.invoice_id.invoice_date
@@ -242,8 +242,11 @@ class IsRelanceFacture(models.Model):
 
             total=0
             for invoice in invoices:
-                total+=invoice.amount_residual
-                body+="- Facture N°%s à l'échéance du %s pour un montant de %0.2f€ (Affaire : [%s] %s) <br>"%(invoice.name, invoice.invoice_date_due.strftime('%d/%m/%Y'), invoice.amount_residual,invoice.is_affaire_id.name,invoice.is_affaire_id.nom)
+                total+=invoice.amount_residual_signed
+                move_type = 'Facture'
+                if invoice.move_type=='out_refund':
+                    move_type='Avoir'
+                body+="- %s N°%s à l'échéance du %s pour un montant de %0.2f€ (Affaire : [%s] %s) <br>"%(move_type,invoice.name, invoice.invoice_date_due.strftime('%d/%m/%Y'), invoice.amount_residual,invoice.is_affaire_id.name,invoice.is_affaire_id.nom)
             body+="""
                 <p>Total à devoir : %0.2f€</p> 
                 <br>

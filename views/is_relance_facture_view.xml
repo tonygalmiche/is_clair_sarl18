@@ -69,7 +69,7 @@
                             <field name="is_date_releve"  column_invisible="parent.type_document not in ('releve_facture')"/>
                             <field name="is_date_envoi"   column_invisible="parent.type_document not in ('envoi_facture')"/>
                             <field name="is_remarque_paiement" optional="show"/>
-                            <field name="amount_residual"             optional="show" sum="Total"/>
+                            <field name="amount_residual"      optional="show" sum="Total"/>
                             <field name="payment_state"        optional="show" widget="badge" 
                                 decoration-danger="payment_state == 'not_paid'" 
                                 decoration-warning="payment_state in ('partial', 'in_payment')" 

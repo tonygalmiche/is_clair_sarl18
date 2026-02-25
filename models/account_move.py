@@ -195,20 +195,39 @@ class AccountMove(models.Model):
         """
         for obj in self:
             res=[]
-            for line in obj.line_ids:
-                internal_type = line.account_type
-                #if internal_type in ('receivable', 'payable'):
-                for partial in line.matched_credit_ids:
-                    payment = partial.credit_move_id.payment_id
-                    type_paiement_value = dict(payment._fields['is_type_paiement'].selection).get(payment.is_type_paiement)
-                    type_paiement = type_paiement_value.lower() if type_paiement_value else ''
-                    num_cheque=''
-                    if payment.is_num_cheque:
-                        num_cheque = " %s"%payment.is_num_cheque
-                    montant = '{:,.2f} €'.format(payment.amount).replace(',',' ').replace('.',',')
-                    txt="Votre %s%s du %s"%(type_paiement,num_cheque,payment.date.strftime('%d/%m/%Y'))
-                    res.append([montant,txt])
+            pay_term_lines = obj.line_ids.filtered(
+                lambda line: line.account_id.account_type in ('asset_receivable', 'liability_payable')
+            )
+            for partial in pay_term_lines.matched_debit_ids:
+                counterpart_line = partial.debit_move_id
+                amount = partial.credit_amount_currency
+                payment = counterpart_line.move_id.origin_payment_id
+                self._format_paiement(res, payment, counterpart_line, amount)
+            for partial in pay_term_lines.matched_credit_ids:
+                counterpart_line = partial.credit_move_id
+                amount = partial.debit_amount_currency
+                payment = counterpart_line.move_id.origin_payment_id
+                self._format_paiement(res, payment, counterpart_line, amount)
             return res
+
+    def _format_paiement(self, res, payment, counterpart_line, amount):
+        """Formate une ligne de paiement pour get_detail_paiements"""
+        montant = '{:,.2f} €'.format(amount).replace(',',' ').replace('.',',')
+        if payment:
+            type_paiement_value = dict(payment._fields['is_type_paiement'].selection).get(payment.is_type_paiement)
+            type_paiement = type_paiement_value.lower() if type_paiement_value else ''
+            num_cheque=''
+            if payment.is_num_cheque:
+                num_cheque = " %s"%payment.is_num_cheque
+            if payment.date:
+                txt="Votre %s%s du %s"%(type_paiement,num_cheque,payment.date.strftime('%d/%m/%Y'))
+                res.append([montant,txt])
+        else:
+            # Paiement sans account.payment (écriture manuelle, relevé bancaire, etc.)
+            date = counterpart_line.date
+            if date:
+                txt="Payé le %s"%date.strftime('%d/%m/%Y')
+                res.append([montant,txt])
 
 
     def enregistre_courrier_action(self):

@@ -262,7 +262,10 @@
                                                     </t>
                                                 </t>
                                                 <tr class="border-black">
-                                                    <td style="background-color:white"><strong style="color:black">Reste dû HT</strong></td>
+                                                    <td style="background-color:white">
+                                                        <strong  t-if="o.move_type == 'out_invoice'" style="color:black">Reste dû HT</strong>
+                                                        <strong  t-if="o.move_type == 'out_refund'"  style="color:black">HT</strong>
+                                                    </td>
                                                     <td class="text-end">
                                                         <span t-field="o.amount_untaxed"/>
                                                     </td>
@@ -292,7 +295,10 @@
                                                     </t>
                                                     <!-- TTC -->
                                                     <tr>
-                                                        <td style="background-color:white;border:1px"><strong style="color:black">TTC</strong></td>
+                                                        <td style="background-color:white;border:1px">
+                                                            <strong t-if="o.move_type == 'out_invoice'" style="color:black">TTC</strong>
+                                                            <strong t-if="o.move_type == 'out_refund'" style="color:black">TTC en votre faveur</strong>
+                                                        </td>
                                                         <td style="background-color:black;border:1px" class="text-end">
                                                             <strong style="color:white"><span t-field="o.amount_total"/></strong>
                                                         </td>
