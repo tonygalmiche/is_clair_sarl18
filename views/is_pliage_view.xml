@@ -19,6 +19,7 @@
                                 <field name="show_lengths"/>
                                 <field name="show_angles"/>
                                 <field name="show_numbers"/>
+                                <field name="show_cut_lines"/>
                             </group>
                             <group string="Lignes de pliage">
                                 <field name="ligne_ids" nolabel="1">
@@ -47,6 +48,14 @@
         <field name="arch" type="xml">
             <list string="Pliages">
                 <field name="name"/>
+                <field name="text_size" optional="show"/>
+                <field name="graph_size" optional="show"/>
+                <field name="position_laquage" optional="show"/>
+                <field name="show_legend" optional="show"/>
+                <field name="show_lengths" optional="show"/>
+                <field name="show_angles" optional="show"/>
+                <field name="show_numbers" optional="show"/>
+                <field name="show_cut_lines" optional="show"/>
             </list>
         </field>
     </record>
