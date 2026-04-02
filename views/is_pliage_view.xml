@@ -8,34 +8,65 @@
         <field name="arch" type="xml">
             <form string="Pliage">
                 <sheet>
-                    <group col="2">
-                        <group col="1">
-                            <group string="Paramètres">
-                                <field name="name"/>
-                                <field name="text_size"/>
-                                <field name="graph_size"/>
-                                <field name="position_laquage"/>
-                                <field name="show_legend"/>
-                                <field name="show_lengths"/>
-                                <field name="show_angles"/>
-                                <field name="show_numbers"/>
-                                <field name="show_cut_lines"/>
-                            </group>
-                            <group string="Lignes de pliage">
-                                <field name="ligne_ids" nolabel="1">
-                                    <list editable="bottom">
-                                        <field name="sequence" widget="handle"/>
-                                        <field name="numero" readonly="1"/>
-                                        <field name="angle"/>
-                                        <field name="longueur"/>
-                                    </list>
-                                </field>
-                            </group>
+                    <group>
+                        <group col="1" string="Configuration">
+                            <field name="name" nolabel="1" placeholder="Nom du pliage"/>
+                            <field name="ligne_ids" nolabel="1">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="numero" readonly="1"/>
+                                    <field name="angle"/>
+                                    <field name="longueur"/>
+                                </list>
+                            </field>
                         </group>
                         <group string="Aperçu du pliage">
                             <field name="svg_preview" nolabel="1" widget="pliage_svg"/>
                         </group>
                     </group>
+                    <notebook>
+                         <page string="Paramètres avancés">
+                            <group>
+                                <group string="Affichage">
+                                    <field name="text_size"/>
+                                    <field name="graph_size"/>
+                                    <field name="position_laquage"/>
+                                </group>
+                                <group string="Options">
+                                    <field name="show_legend"/>
+                                    <field name="show_lengths"/>
+                                    <field name="show_angles"/>
+                                    <field name="show_numbers"/>
+                                    <field name="show_cut_lines"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Analyse IA" groups="is_llm2odoo.group_ia_admin">
+                            <group col="3">
+                                <group string="Création par IA" col="1">
+                                    <field name="dessin_pliage" widget="image" nolabel="1"/>
+                                    <field name="dessin_description" nolabel="1" placeholder="Ex: 3 segments en forme de Z, 4 segments en escalier..."/>
+                                    <button name="action_create_pliage_ia" type="object" string="Créer le pliage par IA" class="btn-primary" icon="fa-magic"/>
+                                </group>
+                                <group string="Image brute envoyée à l'IA" col="1">
+                                    <field name="dessin_pliage_ia" widget="image" nolabel="1" invisible="not dessin_pliage_ia"/>
+                                </group>
+                                <group string="Points détectés (SVG debug)" col="1">
+                                    <field name="ia_debug_svg" nolabel="1" invisible="not ia_debug_svg"/>
+                                </group>
+                            </group>
+                            <group string="Statistiques" invisible="not ia_duree">
+                                <field name="ia_duree" readonly="1"/>
+                            </group>
+                            <group string="Réflexion de l'IA" invisible="not ia_thinking">
+                                <field name="ia_thinking" nolabel="1" widget="char" readonly="1"
+                                    style="white-space:pre-wrap;font-family:monospace;font-size:11px;background:#f8f8f8;border:1px solid #ddd;padding:8px;border-radius:4px;"/>
+                            </group>
+                        </page>
+
+
+
+                    </notebook>
                 </sheet>
             </form>
         </field>

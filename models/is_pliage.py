@@ -1,7 +1,15 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 from markupsafe import Markup
 import math
+import json
+import base64
+import io
+import logging
+import re
+
+_logger = logging.getLogger(__name__)
 
 
 class IsPliage(models.Model):
@@ -30,7 +38,7 @@ class IsPliage(models.Model):
         ('700', '700 px'),
         ('800', '800 px'),
         ('1000', '1000 px'),
-    ], string='Taille du graphique', default='700')
+    ], string='Taille du graphique', default='500')
     position_laquage = fields.Selection([
         ('none', 'Aucune'),
         ('top_left', 'En haut à gauche'),
@@ -39,6 +47,12 @@ class IsPliage(models.Model):
         ('bottom_right', 'En bas à droite'),
     ], string='Position du laquage', default='none')
     svg_preview = fields.Html(string='Aperçu SVG', compute='_compute_svg_preview', sanitize=False)
+    ia_debug_svg = fields.Html(string='Debug IA', sanitize=False)
+    ia_thinking = fields.Text(string='Réflexion IA', readonly=True)
+    ia_duree = fields.Float(string='Durée traitement IA (s)', readonly=True, digits=(10, 2))
+    dessin_pliage = fields.Image(string='Dessin du pliage', max_width=0, max_height=0)
+    dessin_pliage_ia = fields.Image(string='Image envoyée à l\'IA', max_width=0, max_height=0, readonly=True)
+    dessin_description = fields.Text(string='Description du dessin', help='Décrivez le dessin pour aider l\'IA, ex: "3 segments en forme de Z" ou "4 segments en escalier"')
 
     @api.depends('ligne_ids', 'ligne_ids.angle', 'ligne_ids.longueur', 'ligne_ids.sequence', 'show_legend', 'show_lengths', 'show_angles', 'show_numbers', 'show_cut_lines', 'text_size', 'graph_size', 'position_laquage')
     def _compute_svg_preview(self):
@@ -59,8 +73,9 @@ class IsPliage(models.Model):
         longueurs = [l.longueur for l in lignes]
         display_longueurs = list(longueurs)
         shortened_segments = set()
-        if self.show_cut_lines and len(longueurs) >= 2:
-            min_l = min(l for l in longueurs if l > 0)
+        longueurs_positives = [l for l in longueurs if l > 0]
+        if self.show_cut_lines and len(longueurs) >= 2 and longueurs_positives:
+            min_l = min(longueurs_positives)
             display_max = min_l * 5
             for idx, l in enumerate(longueurs):
                 if l > display_max:
@@ -94,7 +109,8 @@ class IsPliage(models.Model):
         max_y = max(p[1] for p in points)
 
         # Taille du texte selon l'option
-        min_longueur = min(l.longueur for l in lignes if l.longueur > 0) if lignes else 100
+        lignes_positives = [l.longueur for l in lignes if l.longueur > 0]
+        min_longueur = min(lignes_positives) if lignes_positives else 100
         if self.text_size == 'auto':
             font_size = max(4, min(14, min_longueur * 0.12))
         else:
@@ -243,13 +259,21 @@ class IsPliage(models.Model):
                 ay2 = cy + dy2 * arc_r
                 cross = dx1 * dy2 - dy1 * dx2
                 sweep = 1 if cross > 0 else 0
+                # Si l'angle est > 180°, afficher l'angle complémentaire et inverser l'arc
+                a = abs(angle)
+                if a > 180:
+                    display_angle = 360 - a
+                    sweep = 1 - sweep
+                    ax1, ay1, ax2, ay2 = ax2, ay2, ax1, ay1
+                else:
+                    display_angle = a
                 angle_annotations += f'<path d="M {ax1} {ay1} A {arc_r} {arc_r} 0 0 {sweep} {ax2} {ay2}" stroke="#ff0000" stroke-width="0.4" stroke-dasharray="2,1" fill="none"/>'
                 # Texte après l'arc
                 text_off = arc_r + angle_font_size * 0.8
                 tx = cx + bx * text_off
                 ty = cy + by * text_off
                 angle_centers.append((tx, ty))
-                angle_annotations += f'<text x="{tx}" y="{ty}" dy="0.35em" font-family="Arial, sans-serif" font-size="{angle_font_size}" font-weight="bold" fill="#ff0000" text-anchor="middle">{abs(angle)}°</text>'
+                angle_annotations += f'<text x="{tx}" y="{ty}" dy="0.35em" font-family="Arial, sans-serif" font-size="{angle_font_size}" font-weight="bold" fill="#ff0000" text-anchor="middle">{display_angle}°</text>'
 
         # 2. Placer les longueurs : choisir le côté le plus éloigné des angles et autres longueurs
         length_annotations = ""
@@ -408,6 +432,305 @@ class IsPliage(models.Model):
             {legend}
         </div>'''
         return Markup(svg)
+
+    def _prepare_image_for_ia(self, img_b64):
+        """Prétraite l'image pour l'IA : haut contraste N&B, redimensionnée à 200x200 max, format BMP non compressé."""
+        try:
+            from PIL import Image, ImageEnhance
+        except ImportError:
+            _logger.warning("Pillow non installé, envoi de l'image brute")
+            return None
+
+        try:
+            img_data = base64.b64decode(img_b64)
+            img = Image.open(io.BytesIO(img_data))
+
+            # Convertir en niveaux de gris
+            img = img.convert('L')
+
+            # Augmenter le contraste
+            enhancer = ImageEnhance.Contrast(img)
+            img = enhancer.enhance(3.0)
+
+            # Seuillage pour obtenir du noir et blanc pur
+            img = img.point(lambda x: 0 if x < 128 else 255, '1')
+
+            # Reconvertir en RGB
+            img = img.convert('RGB')
+
+            # Redimensionner à 200x200 max en conservant les proportions
+            img.thumbnail((200, 200), Image.LANCZOS)
+
+            # Sauvegarder en BMP (non compressé) pour l'envoi à l'IA
+            buf = io.BytesIO()
+            img.save(buf, format='BMP')
+            processed_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+
+            # Sauvegarder aussi en PNG pour l'affichage dans le champ Odoo
+            buf_png = io.BytesIO()
+            img.save(buf_png, format='PNG')
+            self.dessin_pliage_ia = base64.b64encode(buf_png.getvalue()).decode('utf-8')
+
+            return processed_b64
+        except Exception as e:
+            _logger.warning("Erreur prétraitement image : %s", str(e))
+            return None
+
+    def action_create_pliage_ia(self):
+        """Envoie l'image du dessin à l'IA pour créer les lignes de pliage."""
+        import time
+        t_total = time.time()
+        self.ensure_one()
+        if not self.dessin_pliage:
+            raise UserError("Veuillez d'abord ajouter une image dans le champ « Dessin du pliage ».")
+
+        # Préparer l'image en base64
+        img_b64 = self.dessin_pliage.decode('utf-8') if isinstance(self.dessin_pliage, bytes) else self.dessin_pliage
+
+        # Prétraiter l'image (haut contraste noir et blanc)
+        processed_b64 = self._prepare_image_for_ia(img_b64)
+        if processed_b64:
+            images_b64 = [(processed_b64, 'image/png')]
+            _logger.info("IA pliage - Image prétraitée envoyée (N&B haut contraste)")
+        else:
+            # Fallback : image originale
+            mime_type = 'image/png'
+            try:
+                raw = base64.b64decode(img_b64[:32])
+                if raw[:3] == b'\xff\xd8\xff':
+                    mime_type = 'image/jpeg'
+            except Exception:
+                pass
+            images_b64 = [(img_b64, mime_type)]
+
+        # Ajouter la description utilisateur si présente
+        description_text = ""
+        if self.dessin_description:
+            description_text = "\n\nINFORMATION IMPORTANTE DE L'UTILISATEUR : %s\nCette information est FIABLE, utilise-la en priorité pour ton analyse." % self.dessin_description
+
+        prompt = """
+Tu es un expert en analyse d'images.
+Tu vois une image d'un dessin à main levée montrant une ligne brisée formée de plusieurs segments droits reliés entre eux.%s
+
+TA MISSION : 
+- Identifier les segments de la ligne brisée
+- Si tu vois 3 segments, tu dois retourner 4 coordonées x et y en pixels pour les 4 points des 3 segments
+
+
+INSTRUCTIONS :
+- Recherche le début de la ligne en haut à gauche
+- Repère visuellement TOUS les points des segments y compris le premier et le dernier
+- Pour chaque point, donne ses coordonnées (x, y) en pixels
+- SYSTÈME DE COORDONNÉES : origine (0,0) en HAUT à GAUCHE, x vers la DROITE, y vers le BAS
+- Liste les points dans l'ORDRE du tracé (du début à la fin de la ligne)
+- La ligne peux former des U ou des zig zag et donc revenir en arrière au niveaux des coordonées x et y
+- Les coordonées x et y doivent toujours partir du point en haut à gauche de l'image
+- Plus le point est à droite de l'image, plus x doit être important
+- Il est possible que le x du point 3 soit plus petit que le x du point 2
+
+ATTENTION CRITIQUE : La ligne peut revenir en arrière sur l'axe X.
+Un point peut avoir un X INFÉRIEUR au point précédent. 
+Ne suppose JAMAIS que X augmente toujours. Mesure chaque point RÉELLEMENT.
+
+
+Réponds UNIQUEMENT en JSON valide :
+{
+    "points": [
+        {"numero":1, "x": 50, "y": 150}, 
+        {"numero":2, "x": 600, "y": 150}, 
+        {"numero":3, "x": 850, "y": 400}
+    ],
+    "nb_points": xx,
+    "nb_segemnts": yy,
+    "largeur": Largeur de l'images en pixels,
+    "hauteur: Hauteur de l'image en pixels,
+}""" % description_text
+
+
+        company = self.env.company
+        ia_model = company.is_vllm_model # or 'google/gemini-2.5-flash'
+        ia_temperature = company.is_vllm_temperature
+        ia_max_tokens = company.is_vllm_max_tokens or 8192
+        vllm = self.env['is.vllm']
+        t0 = time.time()
+        result = vllm.vllm_send_prompt(prompt, images_b64=images_b64, model=ia_model, temperature=ia_temperature, max_tokens=ia_max_tokens)
+        t_ia = round(time.time() - t0, 2)
+        _logger.info("IA pliage - Durée appel IA : %.2f s", t_ia)
+
+        if not result.get('success'):
+            raise UserError("Erreur IA : %s" % result.get('error', 'Erreur inconnue'))
+
+        response = result.get('response', '').strip()
+        _logger.info("IA pliage - Réponse brute : %s", response)
+
+        # Nettoyer la réponse : supprimer les blocs de "thinking" et le markdown
+        clean = response
+        # Si un bloc </think> est présent, extraire le thinking et ne garder que ce qui vient après
+        think_match = re.search(r'<think(?:ing)?>(.*?)</think(?:ing)?\s*>', clean, re.DOTALL | re.IGNORECASE)
+        if think_match:
+            self.ia_thinking = think_match.group(1).strip()
+            clean = clean[clean.index(think_match.group(0)) + len(think_match.group(0)):]
+        else:
+            think_end = re.search(r'</think(?:ing)?\s*>', clean, re.IGNORECASE)
+            if think_end:
+                self.ia_thinking = clean[:think_end.start()].strip()
+                clean = clean[think_end.end():]
+            else:
+                self.ia_thinking = False
+        clean = re.sub(r'^.*?(?:Thinking Process|Chain of Thought|Reasoning|Réflexion)\s*:?\s*.*?(?=\{)', '', clean, flags=re.DOTALL | re.IGNORECASE)
+        code_block = re.search(r'```(?:json)?\s*(.*?)\s*```', clean, re.DOTALL)
+        if code_block:
+            clean = code_block.group(1)
+
+        # Chercher le JSON qui contient "points"
+        json_match = re.search(r'\{[^{}]*"points"\s*:\s*\[.*?\]\s*\}', clean, re.DOTALL)
+        if not json_match:
+            # Essayer "segments" pour rétrocompatibilité
+            json_match = re.search(r'\{[^{}]*"segments"\s*:\s*\[.*?\]\s*\}', clean, re.DOTALL)
+        if not json_match:
+            json_match = re.search(r'\{[^{}]*\[.*?\][^{}]*\}', clean, re.DOTALL)
+        if not json_match:
+            raise UserError("L'IA n'a pas retourné un JSON valide.\n\nRéponse :\n%s" % response[:1000])
+
+        try:
+            data = json.loads(json_match.group())
+        except json.JSONDecodeError as e:
+            raise UserError("Erreur de parsing JSON : %s\n\nRéponse :\n%s" % (str(e), response))
+
+        # Convertir les points en segments
+        points = data.get('points', [])
+        if not points:
+            raise UserError("L'IA n'a retourné aucun point.\n\nRéponse :\n%s" % response)
+        
+        if len(points) < 2:
+            raise UserError("L'IA doit retourner au moins 2 points.\n\nRéponse :\n%s" % response)
+
+        _logger.info("IA pliage - %d points détectés : %s", len(points), points)
+        
+        # Convertir les points en segments pour le traitement
+        segments = []
+        for i in range(len(points) - 1):
+            segments.append({
+                'x1': float(points[i].get('x', 0)),
+                'y1': float(points[i].get('y', 0)),
+                'x2': float(points[i+1].get('x', 0)),
+                'y2': float(points[i+1].get('y', 0))
+            })
+        
+        _logger.info("IA pliage - %d segments construits à partir des points", len(segments))
+        
+        # Générer un SVG de debug pour visualiser les points bruts de l'IA
+        debug_svg = self._generate_debug_svg_from_ia_points(points)
+        self.ia_debug_svg = Markup(debug_svg)
+
+        # Calculer longueurs et angles à partir des segments
+        lignes_data = []
+        for idx, seg in enumerate(segments):
+            x1 = seg['x1']
+            y1 = seg['y1']
+            x2 = seg['x2']
+            y2 = seg['y2']
+            
+            # Longueur du segment
+            longueur = int(math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2))
+            
+            if idx == 0:
+                # Premier segment : angle = 0
+                angle_pliage = 0
+            else:
+                # Calculer l'angle entre ce segment et le précédent
+                prev_seg = segments[idx - 1]
+                
+                # Vecteurs directeurs (système image standard : Y vers le bas)
+                v1_x = prev_seg['x2'] - prev_seg['x1']
+                v1_y = prev_seg['y2'] - prev_seg['y1']
+                v2_x = x2 - x1
+                v2_y = y2 - y1
+                
+                # Angles absolus de chaque vecteur (en degrés)
+                angle1 = math.degrees(math.atan2(v1_y, v1_x))
+                angle2 = math.degrees(math.atan2(v2_y, v2_x))
+                
+                # Différence d'angle (rotation de v1 vers v2)
+                delta = angle2 - angle1
+                
+                # Normaliser entre 0 et 360
+                if delta < 0:
+                    delta += 360
+                
+                # Conversion en angle de pliage physique
+                # Formule SVG : current_angle += (180 - angle_pliage)
+                # Donc : angle_pliage = 180 - delta, normalisé entre -180 et 180
+                angle_pliage = (180 - delta) % 360
+                if angle_pliage > 180:
+                    angle_pliage -= 360
+                
+                # Arrondir au multiple de 5
+                angle_pliage = int(round(angle_pliage / 5) * 5)
+            
+            lignes_data.append({'angle': angle_pliage, 'longueur': longueur})
+
+        _logger.info("IA pliage - Lignes converties : %s", lignes_data)
+
+        # Supprimer les lignes existantes
+        self.ligne_ids.unlink()
+
+        # Créer les nouvelles lignes
+        for idx, ligne in enumerate(lignes_data):
+            angle = int(ligne.get('angle', 0))
+            longueur = int(ligne.get('longueur', 100))
+            self.env['is.pliage.ligne'].create({
+                'pliage_id': self.id,
+                'sequence': (idx + 1) * 10,
+                'angle': angle,
+                'longueur': longueur,
+            })
+        self.ia_duree = round(time.time() - t_total, 2)
+        _logger.info("IA pliage - Durée totale : %.2f s", self.ia_duree)
+    
+    def _generate_debug_svg_from_ia_points(self, points):
+        """Génère un SVG de debug affichant uniquement les points bruts retournés par l'IA."""
+        if not points or len(points) < 2:
+            return "<svg></svg>"
+        
+        all_x = [float(p.get('x', 0)) for p in points]
+        all_y = [float(p.get('y', 0)) for p in points]
+        
+        min_x = min(all_x)
+        max_x = max(all_x)
+        min_y = min(all_y)
+        max_y = max(all_y)
+        
+        margin_left = 40
+        margin_right = 120  # Marge plus large pour les labels à droite
+        margin_top = 40
+        margin_bottom = 40
+        width = max_x - min_x + margin_left + margin_right
+        height = max_y - min_y + margin_top + margin_bottom
+        
+        svg_lines = []
+        svg_lines.append(f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg" style="background: white;">')
+        
+        # Tracer les segments entre points consécutifs
+        for i in range(len(points) - 1):
+            x1 = float(points[i].get('x', 0)) - min_x + margin_left
+            y1 = float(points[i].get('y', 0)) - min_y + margin_top
+            x2 = float(points[i+1].get('x', 0)) - min_x + margin_left
+            y2 = float(points[i+1].get('y', 0)) - min_y + margin_top
+            svg_lines.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="black" stroke-width="3"/>')
+        
+        # Afficher chaque point avec son numéro et ses coordonnées
+        for i, p in enumerate(points):
+            px = float(p.get('x', 0)) - min_x + margin_left
+            py = float(p.get('y', 0)) - min_y + margin_top
+            cx = int(p.get('x', 0))
+            cy = int(p.get('y', 0))
+            svg_lines.append(f'<circle cx="{px}" cy="{py}" r="6" fill="blue"/>')
+            svg_lines.append(f'<text x="{px+8}" y="{py-8}" font-size="12" fill="blue">P{i+1} ({cx},{cy})</text>')
+        
+        svg_lines.append('</svg>')
+        _logger.info("IA - SVG debug généré")
+        return '\n'.join(svg_lines)
 
 
 class IsPliageLigne(models.Model):
