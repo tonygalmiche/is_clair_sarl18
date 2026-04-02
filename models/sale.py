@@ -319,20 +319,29 @@ class sale_order(models.Model):
     is_note_facturation         = fields.Char("Note facturation", tracking=True, copy=False)
 
 
-    def write(self, vals):
-        res = super(sale_order, self).write(vals)
-        if self.is_commande_soldee and not self.is_date_pv:
-            raise ValidationError("Il est obligatoire de renseigner le champ 'Date PV' pour solder une commande")
-        # Mise à jour du res_id des pièces jointes importées pour les droits d'accès
-        if 'is_import_excel_ids' in vals:
-            for order in self:
-                for attachment in order.is_import_excel_ids:
+    def _fix_attachment_res_id(self):
+        for order in self:
+            for field_name in ['is_import_excel_ids', 'is_pv_ids']:
+                for attachment in order[field_name]:
                     if attachment.res_id != order.id or attachment.res_model != 'sale.order' or not attachment.res_field:
                         attachment.sudo().write({
                             'res_id': order.id,
                             'res_model': 'sale.order',
-                            'res_field': 'is_import_excel_ids',
+                            'res_field': field_name,
                         })
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        orders = super(sale_order, self).create(vals_list)
+        orders._fix_attachment_res_id()
+        return orders
+
+    def write(self, vals):
+        res = super(sale_order, self).write(vals)
+        if self.is_commande_soldee and not self.is_date_pv:
+            raise ValidationError("Il est obligatoire de renseigner le champ 'Date PV' pour solder une commande")
+        if any(f in vals for f in ['is_import_excel_ids', 'is_pv_ids']):
+            self._fix_attachment_res_id()
         return res
 
 
