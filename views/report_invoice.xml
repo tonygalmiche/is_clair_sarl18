@@ -316,7 +316,7 @@
                                                 </t>
 
                                                 <tr t-if="o.is_remise_ids">
-                                                    <td style="background-color:white"><strong style="color:black">Reste dû TTC</strong></td>
+                                                    <td style="background-color:white"><strong style="color:black">Reste dû</strong></td>
                                                     <td style="background-color:black" class="text-end">
                                                         <strong style="color:white"><span t-field="o.is_reste_du_ttc"/></strong>
                                                     </td>
