@@ -215,8 +215,9 @@ class AccountMove(models.Model):
         montant = '{:,.2f} €'.format(amount).replace(',',' ').replace('.',',')
         if payment:
             type_paiement_value = dict(payment._fields['is_type_paiement'].selection).get(payment.is_type_paiement)
-            type_paiement = type_paiement_value.lower() if type_paiement_value else ''
+            type_paiement = type_paiement_value.lower() if type_paiement_value else 'règlement'
             num_cheque=''
+            #print("is_num_cheque=%s : date=%s"%(payment.is_num_cheque, payment.date))
             if payment.is_num_cheque:
                 num_cheque = " %s"%payment.is_num_cheque
             if payment.date:
