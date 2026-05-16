@@ -19,7 +19,11 @@ class IsRelanceFactureLigne(models.Model):
         for obj in self:
             obj.amount_residual  = obj.invoice_id.amount_residual_signed
             obj.partner_id       = obj.invoice_id.partner_id.id
-            obj.contact_id       = obj.partner_id.is_contact_relance_facture_id.id or obj.partner_id.id
+            order = obj.invoice_id.is_order_id
+            if order and order.is_contact_facture_id:
+                obj.contact_id = order.is_contact_facture_id.id
+            else:
+                obj.contact_id = obj.partner_id.is_contact_relance_facture_id.id or obj.partner_id.id
             obj.invoice_date     = obj.invoice_id.invoice_date
             obj.invoice_date_due = obj.invoice_id.invoice_date_due
 
@@ -188,12 +192,12 @@ class IsRelanceFacture(models.Model):
             mails={}
             for line in obj.ligne_ids:
                 if line.email:
-                    partner=line.invoice_id.partner_id
-                    if partner not in mails:
-                        mails[partner]=[]
-                    mails[partner].append(line.invoice_id)
-            for partner in mails:
-                obj.send_mail(partner,mails[partner])
+                    contact = line.contact_id
+                    if contact not in mails:
+                        mails[contact]=[]
+                    mails[contact].append(line.invoice_id)
+            for contact in mails:
+                obj.send_mail(contact, mails[contact])
             obj.state="envoye"
         
 
@@ -306,7 +310,7 @@ class IsRelanceFacture(models.Model):
             subject="Relevé de factures %s (%s)"%(partner.parent_id.name or partner.name, ", ".join(invoice_name))
 
         #**********************************************************************
-        destinataire = invoice.partner_id.is_contact_relance_facture_id or invoice.partner_id
+        destinataire = partner
         if destinataire.email:
             vals={
                 "model"         : "account.move",

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models  
+from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 from random import randint
 from datetime import datetime, date, timedelta
 import re
@@ -115,7 +116,7 @@ class IsAffaireAnalyse(models.Model):
                     ("is_famille_id","=",obj.famille_id.id),
                     #("exclude_from_invoice_tab","=",False),
                     ("display_type","=", 'product'),
-                    ("journal_id","=",2),
+                    ("move_id.move_type","in",["in_invoice","in_refund"]),
                     ("move_id.state","=","posted"),
                 ],
                 "type": "ir.actions.act_window",
@@ -136,7 +137,7 @@ class IsAffaireAnalyse(models.Model):
                     ("move_id.partner_id","=",obj.fournisseur_id.id),
                     #("exclude_from_invoice_tab","=",False),
                     ("display_type","=", 'product'),
-                    ("journal_id","=",2),
+                    ("move_id.move_type","in",["in_invoice","in_refund"]),
                     ("move_id.state","=","posted"),
                 ],
                 "type": "ir.actions.act_window",
@@ -198,7 +199,8 @@ class IsAffaireRemise(models.Model):
     _name='is.affaire.remise'
     _description = "IsAffaireRemise"
 
-    affaire_id = fields.Many2one('is.affaire', 'Affaire', required=True, ondelete='cascade')
+    affaire_id = fields.Many2one('is.affaire', 'Affaire', required=False, ondelete='cascade')
+    sale_id    = fields.Many2one('sale.order', 'Commande', required=False, ondelete='cascade')
     product_id = fields.Many2one('product.product', 'Remise facturation', required=True, domain=[('is_famille_id.name','=','Facturation')])
     remise     = fields.Float("Remise (%)", digits=(14,2), required=True)
     apres_ttc  = fields.Boolean("Après TTC", default=False, help="Appliquer cette remise après le montant TTC de la facture")
@@ -329,6 +331,10 @@ class IsAffaire(models.Model):
     def write(self, vals):
         state=self.state
         res = super(IsAffaire, self).write(vals)
+        if 'state' in vals and vals['state']=='commande':
+            for obj in self:
+                if not obj.nature_travaux_ids:
+                    raise ValidationError("L'affaire '%s' doit avoir au moins une 'Nature des travaux' avant de passer en commande." % obj.name)
         if 'state' in vals:
             if vals['state']=='commande' and state=='offre':
                 self.creer_chantier_affaire_action()
@@ -385,18 +391,18 @@ class IsAffaire(models.Model):
                     WHERE aml.is_affaire_id=%s 
                         -- and aml.exclude_from_invoice_tab='f' 
                         and display_type='product'
-                        and aml.journal_id=2 and am.state='posted'
+                        and am.move_type IN ('in_invoice','in_refund') and am.state='posted'
                 """
                 cr.execute(SQL,[obj.id])
                 for row in cr.fetchall():
-                    val = row[0]
+                    val = row[0] or 0
             obj.achat_facture = val
 
 
     def _update_vente_facture(self):
         for obj in self:
             val=0
-            filtre=[('state','=','posted'), ('is_affaire_id','=',obj.id),('journal_id','=', 1)]
+            filtre=[('state','=','posted'), ('is_affaire_id','=',obj.id),('move_type','in',['out_invoice','out_refund'])]
             invoices = self.env['account.move'].search(filtre)
             for invoice in invoices:
                 val+=invoice.amount_untaxed_signed
@@ -470,7 +476,7 @@ class IsAffaire(models.Model):
                     WHERE aml.is_affaire_id=%s 
                         -- and aml.exclude_from_invoice_tab='f'
                         and display_type='product'
-                        and aml.journal_id=2 
+                        and am.move_type IN ('in_invoice','in_refund')
                         and (am.partner_id=%s or rp.parent_id=%s)
                         and am.state='posted'
                 """
@@ -524,42 +530,60 @@ class IsAffaire(models.Model):
 
                 #** Montant Cde ***********************************************
                 montant_cde=0
-                SQL="""
-                    SELECT pt.is_famille_id,sum(pol.price_subtotal)
-                    FROM purchase_order po join purchase_order_line pol on po.id=pol.order_id
-                                        join product_product pp on pol.product_id=pp.id
-                                        join product_template pt on pp.product_tmpl_id=pt.id
-                    WHERE po.is_affaire_id=%s and  po.state='purchase'
-                """%obj.id
                 if famille_id:
-                    SQL+=" and pt.is_famille_id=%s "%famille_id
+                    cr.execute("""
+                        SELECT pt.is_famille_id, sum(pol.price_subtotal)
+                        FROM purchase_order po
+                        JOIN purchase_order_line pol ON po.id=pol.order_id
+                        JOIN product_product pp ON pol.product_id=pp.id
+                        JOIN product_template pt ON pp.product_tmpl_id=pt.id
+                        WHERE po.is_affaire_id=%s AND po.state='purchase'
+                          AND pt.is_famille_id=%s
+                        GROUP BY pt.is_famille_id
+                    """, [obj.id, famille_id])
                 else:
-                    SQL+=" and pt.is_famille_id is null " 
-                SQL+="GROUP BY pt.is_famille_id"
-                cr.execute(SQL)
-                #cr.execute(SQL,[obj.id, famille_id])
+                    cr.execute("""
+                        SELECT pt.is_famille_id, sum(pol.price_subtotal)
+                        FROM purchase_order po
+                        JOIN purchase_order_line pol ON po.id=pol.order_id
+                        JOIN product_product pp ON pol.product_id=pp.id
+                        JOIN product_template pt ON pp.product_tmpl_id=pt.id
+                        WHERE po.is_affaire_id=%s AND po.state='purchase'
+                          AND pt.is_famille_id IS NULL
+                        GROUP BY pt.is_famille_id
+                    """, [obj.id])
                 for row in cr.fetchall():
                     montant_cde = row[1] or 0
                 ecart_budget_cde = budget-montant_cde
                 #**************************************************************
 
                 #** Montant Fac ***********************************************
-                SQL="""
-                    SELECT sum(aml.price_subtotal)
-                    FROM account_move_line aml join account_move am on aml.move_id=am.id
-                                               join product_product pp on aml.product_id=pp.id
-                                               join product_template pt on pp.product_tmpl_id=pt.id
-                    WHERE aml.is_affaire_id=%s
-                        -- aml.exclude_from_invoice_tab='f'
-                        and display_type='product'
-                        and aml.journal_id=2 
-                        and am.state='posted'
-                """%obj.id
                 if famille_id:
-                    SQL+=" and pt.is_famille_id=%s "%famille_id
+                    cr.execute("""
+                        SELECT sum(aml.price_subtotal)
+                        FROM account_move_line aml
+                        JOIN account_move am ON aml.move_id=am.id
+                        JOIN product_product pp ON aml.product_id=pp.id
+                        JOIN product_template pt ON pp.product_tmpl_id=pt.id
+                        WHERE aml.is_affaire_id=%s
+                          AND aml.display_type='product'
+                          AND am.move_type IN ('in_invoice','in_refund')
+                          AND am.state='posted'
+                          AND pt.is_famille_id=%s
+                    """, [obj.id, famille_id])
                 else:
-                    SQL+=" and pt.is_famille_id is null " 
-                cr.execute(SQL)
+                    cr.execute("""
+                        SELECT sum(aml.price_subtotal)
+                        FROM account_move_line aml
+                        JOIN account_move am ON aml.move_id=am.id
+                        JOIN product_product pp ON aml.product_id=pp.id
+                        JOIN product_template pt ON pp.product_tmpl_id=pt.id
+                        WHERE aml.is_affaire_id=%s
+                          AND aml.display_type='product'
+                          AND am.move_type IN ('in_invoice','in_refund')
+                          AND am.state='posted'
+                          AND pt.is_famille_id IS NULL
+                    """, [obj.id])
                 montant_fac=ecart=ecart_pourcent=0
                 for row2 in cr.fetchall():
                     montant_fac = row2[0] or 0
@@ -655,7 +679,7 @@ class IsAffaire(models.Model):
                     ("is_affaire_id","=",obj.id),
                     #("exclude_from_invoice_tab","=",False),
                     ("display_type","=", 'product'),
-                    ("journal_id","=",2),
+                    ("move_id.move_type","in",["in_invoice","in_refund"]),
                     ("move_id.state","=","posted"),
                 ],
                 "type": "ir.actions.act_window",
@@ -671,7 +695,7 @@ class IsAffaire(models.Model):
                 "res_model": "account.move",
                 "domain": [
                     ("is_affaire_id","=",obj.id),
-                    ("journal_id","=",1),
+                    ("move_type","in",["out_invoice","out_refund"]),
                 ],
                 "type": "ir.actions.act_window",
             }
@@ -687,6 +711,10 @@ class IsAffaire(models.Model):
                     ("is_affaire_id","=",obj.id),
                 ],
                 "type": "ir.actions.act_window",
+                "context": {
+                    "default_is_affaire_id": obj.id,
+                    "default_partner_id": obj.client_id.id,
+                },
             }
 
 

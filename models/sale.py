@@ -254,11 +254,13 @@ class sale_order(models.Model):
             obj.is_echeance_1an = echeance
 
 
-    @api.depends('is_affaire_id','amount_untaxed')
+    @api.depends('is_affaire_id','is_remise_ids','is_remise_ids.remise','is_remise_ids.product_id','amount_untaxed')
     def _compute_is_retenue_de_garantie(self):
         for obj in self:
             retenue = taux = compte_prorata = taux_compte_prorata = 0
-            for line in obj.is_affaire_id.remise_ids:
+            # Utiliser les remises de la commande en priorité, sinon celles de l'affaire
+            remise_lines = obj.is_remise_ids if obj.is_remise_ids else obj.is_affaire_id.remise_ids
+            for line in remise_lines:
                 if line.product_id.default_code=='RETENUE_GARANTIE':
                     retenue = round(obj.amount_untaxed*line.remise/100,2)
                     taux = line.remise
@@ -287,6 +289,7 @@ class sale_order(models.Model):
     is_import_alerte        = fields.Text('Alertes importation')
     is_taches_associees_ids = fields.One2many('purchase.order', 'is_sale_order_id', 'Tâches associées')
     is_affaire_id           = fields.Many2one('is.affaire', 'Affaire')
+    is_remise_ids           = fields.One2many('is.affaire.remise', 'sale_id', 'Remises')
     is_contact_facture_id   = fields.Many2one('res.partner', 'Contact facture')
     is_section_ids          = fields.One2many('is.sale.order.section', 'order_id', 'Sections')
     is_invoice_ids          = fields.One2many('account.move', 'is_order_id', 'Factures', readonly=True) #, domain=[('state','=','posted')])
@@ -344,6 +347,43 @@ class sale_order(models.Model):
             self._fix_attachment_res_id()
         return res
 
+
+    @api.onchange('is_affaire_id')
+    def onchange_is_affaire_id_remises(self):
+        for obj in self:
+            if obj.is_affaire_id and not obj.is_remise_ids:
+                lines = []
+                for line in obj.is_affaire_id.remise_ids:
+                    lines.append((0, 0, {
+                        'product_id': line.product_id.id,
+                        'remise'    : line.remise,
+                        'apres_ttc' : line.apres_ttc,
+                        'caution'   : line.caution,
+                    }))
+                obj.is_remise_ids = lines
+
+    def copier_remises_affaire_action(self):
+        """Action serveur : recopier les remises de l'affaire dans la commande (écrase les remises existantes)"""
+        for obj in self:
+            if obj.is_affaire_id:
+                obj.is_remise_ids.unlink()
+                for line in obj.is_affaire_id.remise_ids:
+                    self.env['is.affaire.remise'].create({
+                        'sale_id'   : obj.id,
+                        'product_id': line.product_id.id,
+                        'remise'    : line.remise,
+                        'apres_ttc' : line.apres_ttc,
+                        'caution'   : line.caution,
+                    })
+
+    @api.onchange('fiscal_position_id')
+    def onchange_fiscal_position_id_taxes(self):
+        for obj in self:
+            for line in obj.order_line:
+                if line.product_id:
+                    taxes = line.product_id.taxes_id
+                    taxes = obj.fiscal_position_id.map_tax(taxes)
+                    line.tax_id = taxes
 
     @api.onchange('partner_id')
     def onchange_for_is_contact_facture_id(self):
@@ -594,7 +634,7 @@ class sale_order(models.Model):
                 invoice_line_ids.append((0, 0, vals))  # Format correct pour One2many
 
             #** Ajout des remises *********************************************
-            for line in obj.is_affaire_id.remise_ids:
+            for line in obj.is_remise_ids:
                 if line.remise>0:
                     product=line.product_id
                     account_id = self._get_product_account_id(product, obj.fiscal_position_id)
@@ -631,14 +671,16 @@ class sale_order(models.Model):
 
             #** Création entête facture ***************************************
             vals={
-                'name'               : obj.is_numero_facture,
-                'is_situation'       : obj.is_situation,
-                'invoice_date'       : obj.is_date_facture or datetime.date.today(),
-                'partner_id'         : obj.partner_id.id,
-                'is_order_id'        : obj.id,
-                'move_type'          : move_type,
-                'invoice_line_ids'   : invoice_line_ids,  # Maintenant au bon format
-                'is_remise_ids'      : remise_ids,        # Maintenant au bon format
+                'name'                  : obj.is_numero_facture,
+                'is_situation'          : obj.is_situation,
+                'invoice_date'          : obj.is_date_facture or datetime.date.today(),
+                'partner_id'            : obj.partner_id.id,
+                'is_order_id'           : obj.id,
+                'move_type'             : move_type,
+                'invoice_line_ids'      : invoice_line_ids,  # Maintenant au bon format
+                'is_remise_ids'         : remise_ids,        # Maintenant au bon format
+                'invoice_payment_term_id': obj.payment_term_id.id or False,
+                'fiscal_position_id'    : obj.fiscal_position_id.id or False,
             }
 
             move=self.env['account.move'].create(vals)
@@ -684,6 +726,13 @@ class sale_order(models.Model):
                 "views"    : [[tree_id, "list"]],
                 "limit": 1000,
             }
+
+
+    def action_confirm(self):
+        for obj in self:
+            if obj.is_affaire_id and not obj.is_affaire_id.nature_travaux_ids:
+                raise ValidationError("L'affaire '%s' doit avoir au moins une 'Nature des travaux' avant de confirmer la commande." % obj.is_affaire_id.name)
+        return super(sale_order, self).action_confirm()
 
 
     def action_cancel(self):

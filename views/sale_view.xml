@@ -16,6 +16,13 @@
 
 
     <!-- sale.order  -->   
+    <record id="copier_remises_affaire_action_server" model="ir.actions.server">
+        <field name="name">Recopier les remises depuis l'affaire</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">records.copier_remises_affaire_action()</field>
+    </record>
     <record id="actualiser_total_facture_action_server" model="ir.actions.server">
         <field name="name">Actualiser total facturé</field>
         <field name="model_id" ref="sale.model_sale_order"/>
@@ -172,6 +179,16 @@
                     </div>
                 </page>
                 <page string="Facturation">
+                    <group string="Remises">
+                        <field name="is_remise_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="product_id"/>
+                                <field name="remise"/>
+                                <field name="apres_ttc"/>
+                                <field name="caution"/>
+                            </list>
+                        </field>
+                    </group>
                     <group string="Sections">
                         <field name="is_section_ids" nolabel="1">
                             <list editable="bottom">
