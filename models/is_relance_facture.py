@@ -225,6 +225,8 @@ class IsRelanceFacture(models.Model):
                 ("res_id","=",invoice.id),
             ]
 
+            # Suppression du cache PDF pour forcer la régénération avec les données actuelles
+            self.env['ir.attachment'].search(filtre).unlink()
 
             report = self.env.ref('account.account_invoices_without_payment')
             pdf, _ = report.sudo()._render_qweb_pdf(report,[invoice.id])
