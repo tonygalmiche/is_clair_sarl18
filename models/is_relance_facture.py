@@ -218,25 +218,20 @@ class IsRelanceFacture(models.Model):
         )
          #** Recherche des factures PDF et génération si non trouvée **********
         attachment_ids=[]
-
         for invoice in invoices:
-            filtre=[
-                ("res_model","=","account.move"),
-                ("res_id","=",invoice.id),
-            ]
-
-            # Suppression du cache PDF pour forcer la régénération avec les données actuelles
-            self.env['ir.attachment'].search(filtre).unlink()
-
             report = self.env.ref('account.account_invoices_without_payment')
             pdf, _ = report.sudo()._render_qweb_pdf(report,[invoice.id])
-
-
             if pdf:
-                attachments = self.env['ir.attachment'].search(filtre,limit=1,order="id desc")
-                if len(attachments)>0:
-                    attachment=attachments[0]
-                    attachment_ids.append(attachment.id)
+                filename = (invoice.name or 'INV').replace('/', '_') + '.pdf'
+                attachment = self.env['ir.attachment'].create({
+                    'name'     : filename,
+                    'type'     : 'binary',
+                    'datas'    : base64.b64encode(pdf),
+                    'res_model': 'account.move',
+                    'res_id'   : invoice.id,
+                    'mimetype' : 'application/pdf',
+                })
+                attachment_ids.append(attachment.id)
         #**********************************************************************
 
         #** body **************************************************************
