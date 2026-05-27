@@ -268,6 +268,7 @@ class AccountMove(models.Model):
                 if obj.payment_state=='not_paid' and obj.is_traite_id.id:
                     obj.sudo().payment_state='paid'
                     obj.sudo().amount_residual=0
+                    obj.sudo().amount_residual_signed=0
                 if obj.payment_state=='paid' and obj.is_traite_id.id==False and obj.invoice_payments_widget=='false':
                     obj.sudo().payment_state='not_paid'
                     obj.sudo()._compute_amount()

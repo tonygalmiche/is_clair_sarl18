@@ -69,37 +69,6 @@
         <field name="view_id" ref="is_view_move_graph_ca"/>
         <field name="act_window_id" ref="account.action_move_in_invoice_type"/>
     </record>
-
-    <!-- account.move -->
-    <!-- <record id="initialiser_affaire_action_server" model="ir.actions.server">
-        <field name="name">Initialiser affaire</field>
-        <field name="model_id" ref="account.model_account_move"/>
-        <field name="binding_model_id" ref="account.model_account_move"/>
-        <field name="state">code</field>
-        <field name="code">records.initialiser_affaire_action()</field>
-    </record> -->
-    <!-- <record id="initialiser_compte_vente_action_server" model="ir.actions.server">
-        <field name="name">Initialiser compte de vente</field>
-        <field name="model_id" ref="account.model_account_move"/>
-        <field name="binding_model_id" ref="account.model_account_move"/>
-        <field name="state">code</field>
-        <field name="code">records.initialiser_compte_vente_action()</field>
-    </record>
-    <record id="initialiser_paiement_traite_action_server" model="ir.actions.server">
-        <field name="name">Initialiser paiement traite</field>
-        <field name="model_id" ref="account.model_account_move"/>
-        <field name="binding_model_id" ref="account.model_account_move"/>
-        <field name="state">code</field>
-        <field name="code">records.initialiser_paiement_traite_action()</field>
-    </record>
-    <record id="initialiser_sections_facture_action_server" model="ir.actions.server">
-        <field name="name">Initialiser les sections</field>
-        <field name="model_id" ref="account.model_account_move"/>
-        <field name="binding_model_id" ref="account.model_account_move"/>
-        <field name="state">code</field>
-        <field name="code">records.initialiser_sections_facture_action()</field>
-    </record> -->
-
     <record id="correction_signe_a_facturer_avoir_action_server" model="ir.actions.server">
         <field name="name">Correction du signe 'A Facturer' pour les avoirs</field>
         <field name="model_id" ref="account.model_account_move"/>
@@ -107,9 +76,6 @@
         <field name="state">code</field>
         <field name="code">records.correction_signe_a_facturer_avoir_action()</field>
     </record>
-
-
-
 
 
     <record id="is_view_move_form" model="ir.ui.view">
@@ -127,26 +93,9 @@
                     }
                 </style>
             </xpath>
-
-            <!-- Utilise section_and_note_one2many pour séparer les colonnes articles et description -->
-            <!-- tout en gardant le bon affichage des sections et notes -->
-            <!--
-            <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
-                <attribute name="widget">section_and_note_one2many</attribute>
-            </xpath>
-            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='product_id']" position="attributes">
-                <attribute name="widget"></attribute>
-            </xpath>
-            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='name']" position="attributes">
-                <attribute name="widget">section_and_note_text</attribute>
-            </xpath>
-            -->
-
             <xpath expr="//form" position="attributes">
                 <attribute name="class">form_account_move</attribute>
             </xpath>
-
-
             <xpath expr="//widget[@name='web_ribbon'][1]" position="after">
                 <widget name="web_ribbon" title="Archivée" bg_color="bg-danger" invisible="active == True"/>
                 <field name="active" invisible="1"/> 
@@ -168,9 +117,6 @@
                     readonly="1"
                 />
             </button>
-
-
-          
             <field name="partner_bank_id" position="after">
                 <field name="is_attente_avoir" invisible="move_type in ['out_invoice','out_refund']"/>
             </field>
@@ -193,14 +139,7 @@
                 <field name="is_situation"   invisible="move_type in ['in_invoice','in_refund']"/>
                 <field name="is_banque_id"   invisible="is_banque_id == False"/>
             </field>
-            <!-- <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
-                <attribute name="widget"></attribute>
-            </xpath> -->
-
-            <xpath expr="//div[hasclass('o_attachment_preview')]" position="replace"/>
-
-
-
+             <xpath expr="//div[hasclass('o_attachment_preview')]" position="replace"/>
             <xpath expr="//page[@id='invoice_tab']/field[@name='invoice_line_ids']/list/field[@name='quantity']" position="before">
                 <field name="is_affaire_id" optional="hide" class="white_space_normal"/>
                 <field name="is_sale_line_id"        optional="hide" widget="many2one_clickable"/>
