@@ -315,526 +315,1015 @@ class purchase_order(models.Model):
                 sequence+=10
 
 
+    #========================================================================
+    # ANCIENNE VERSION de import_pdf_action, conservee pour reference.
+    # Remplacee par la nouvelle implementation modulaire ci-dessous :
+    # import_pdf_action / _is_pdf_to_lines / _is_detect_type_pdf /
+    # _is_parse_pdf_loxam / _is_parse_pdf_pum / _is_match_affaire / _is_apply_pdf_result
+    #========================================================================
+    #     def import_pdf_action(self):
+    #         for obj in self:
+    #             for attachment in obj.is_import_pdf_ids:
+    #
+    #                 #** Lecture du PDF ********************************************
+    #                 pdf=base64.b64decode(attachment.datas)
+    #                 name = 'purchase_order-%s'%obj.id
+    #                 path = "/tmp/%s.pdf"%name
+    #                 f = open(path,'wb')
+    #                 f.write(pdf)
+    #                 f.close()
+    #                 cde = "cd /tmp && pdftotext -layout %s.pdf"%name
+    #                 p = Popen(cde, shell=True, stdout=PIPE, stderr=PIPE)
+    #                 stdout, stderr = p.communicate()
+    #
+    #                 path = "/tmp/%s.txt"%name
+    #                 r = open(path,'rb').read().decode('utf-8')
+    #                 lines = r.split('\n')
+    #                 order_lines=[]
+    #                 dict={}
+    #                 res=[]
+    #                 chantier_zip=False
+    #                 affaire=False
+    #                 #**************************************************************
+    #
+    #                 #** Recherche du type de PDF (LOXAM ou PUM) *******************
+    #                 def get_type_pdf(lines,txt,name_type):
+    #                     type_pdf=False
+    #                     for line in lines:
+    #                         x = re.findall(txt, line) 
+    #                         if x:
+    #                             test = True
+    #                             type_pdf=name_type
+    #                             break
+    #                     return type_pdf
+    #                 type_pdf = get_type_pdf(lines,'LOXAM','LOXAM')
+    #                 if not type_pdf:
+    #                     type_pdf = get_type_pdf(lines,'   PUM','PUM')
+    #                 if type_pdf==False:
+    #                     obj.is_import_pdf_resultat = "Ce PDF n'est pas de LOXAM ou de PUM => Importation impossible"
+    #                     return
+    #                 dict["Type de PDF"] = type_pdf
+    #                 test=True
+    #                 #**************************************************************
+    #
+    #
+    #
+    #                 #** Recherche de l'adresse du chantier ************************
+    #                 dict["Chantier"] = ''
+    #                 if type_pdf=="PUM":
+    #                     chantier=[]
+    #                     if test:
+    #                         lig=0
+    #                         for line in lines:
+    #                             x = re.findall("Réf/Cli", line) 
+    #                             if x:
+    #                                 v = line.split(' : ')
+    #                                 if len(v)==2:
+    #                                     dict["Chantier"] = v[1].strip()
+    #
+    #                 if type_pdf=='LOXAM':
+    #                     chantier=[]
+    #                     if test:
+    #                         lig=0
+    #                         for line in lines:
+    #                             x = re.findall("Adresse de chantier", line) 
+    #                             if x:
+    #                                 lig=1
+    #                             if lig>1 and lig<=6:
+    #                                 v = line[0:160].strip()
+    #                                 chantier.append(v)
+    #                             if lig>=6:
+    #                                 break
+    #                             if lig:
+    #                                 lig+=1
+    #                     if chantier:
+    #                         dict["Chantier"] = ' '.join(chantier)
+    #                     #**************************************************************
+    #
+    #                     #** Code postal du chantier ***********************************
+    #                     if chantier:
+    #                         adresse = dict["Chantier"]
+    #                         x = re.findall("[0-9]{5}", adresse)
+    #                         if x:
+    #                             chantier_zip = x[0]
+    #                     #**************************************************************
+    #
+    #                     #** N°BDC (Code Affaire) ***************************************
+    #                     if test:
+    #                         for line in lines:
+    #                             x = re.findall("N°BDC", line) 
+    #                             if x:
+    #                                 v = line.strip()[0:30].strip()
+    #                                 v = v.split(' : ')
+    #                                 if len(v)==2:
+    #                                     bdc = v[1].strip()
+    #                                     #x = re.findall("[0-9]{2}\.[0-9]{4}", bdc)
+    #                                     x = re.findall(r"[0-9]{2}\.[0-9]{4}", bdc)
+    #
+    #
+    #                                     if x:
+    #                                         bdc=x[0]
+    #
+    #                                         affaires = self.env['is.affaire'].search([('name','=',bdc)])
+    #                                         if affaires:
+    #                                             affaire=affaires[0]
+    #                                     dict["N°BDC"] = bdc
+    #                                 break
+    #                     #**************************************************************
+    #
+    #                 #** Recherche de l'affaire ************************************
+    #                 def supprime_petit_mots(phrase,taille=4):
+    #                     "Supprime tous les mots de phrase <= taille"
+    #                     mots=phrase.split(' ')
+    #                     k=0
+    #                     for mot in mots:
+    #                         if len(mot)<taille:
+    #                             mots[k]=""
+    #                         k+=1
+    #                     phrase=' '.join(mots).strip()
+    #                     return phrase
+    #                 if test and not affaire:
+    #                     chantier = dict["Chantier"].upper()
+    #                     filtre=[]
+    #                     if chantier_zip:
+    #                         filtre=[('zip','=',chantier_zip)]
+    #                     #** Recherche dans l'adresse ******************************
+    #                     affaire_dict={}
+    #                     affaires = self.env['is.affaire'].search(filtre,order="adresse_chantier")
+    #                     for line in affaires:
+    #                         adresse = line.adresse_chantier.replace('\n',' ').strip().upper()
+    #                         if adresse!='':
+    #                             ratio = fuzz.ratio(chantier, adresse)
+    #                             affaire_dict[ratio] = (line, line.name)
+    #                     #** Recherche dans le nom *********************************
+    #                     affaires = self.env['is.affaire'].search(filtre,order="nom")
+    #                     for line in affaires:
+    #                         if line.nom:
+    #                             nom = line.nom.replace('\n',' ').strip().upper()
+    #                             nom_sans_petit_mot  = supprime_petit_mots(nom)
+    #                             chantier_sans_petit_mot = supprime_petit_mots(chantier)
+    #                             if nom_sans_petit_mot!='' and chantier_sans_petit_mot!='':
+    #                                 ratio = fuzz.partial_ratio(chantier_sans_petit_mot, nom_sans_petit_mot)
+    #                                 affaire_dict[ratio] = (line, line.name)
+    #                     #** Tri par ratio *****************************************
+    #                     key_sorted = sorted(affaire_dict, reverse=True)
+    #                     for key in key_sorted:
+    #                         if key>50:
+    #                             affaire = affaire_dict[key][0]
+    #                         break
+    #                 #**************************************************************
+    #
+    #                 #** Affaire ***************************************************
+    #                 if affaire:
+    #                     obj.is_affaire_id = affaire.id
+    #                     dict["Affaire"] = affaire.name
+    #                 else:
+    #                     dict["Affaire"] = "Affaire non trouvée"
+    #                 #**************************************************************
+    #
+    #                 #** Recherche Acheteur ****************************************
+    #                 if type_pdf=='LOXAM':
+    #                     if test:
+    #                         for line in lines:
+    #                             x = re.findall("Acheteur", line) 
+    #                             if x:
+    #                                 v = line.strip()[0:30].strip()
+    #                                 v = v.split(' : ')
+    #                                 if len(v)==2:
+    #                                     dict["Acheteur"] = v[1]
+    #                                 break
+    #                 #**************************************************************
+    #
+    #                 #** N°Facture *************************************************
+    #                 def txt2date(txt,format='%d/%m/%y'):
+    #                     txt=txt.replace(' ','')
+    #                     try:
+    #                         date_facture = datetime.strptime(txt, format)
+    #                     except ValueError:
+    #                         date_facture = False
+    #                     return date_facture
+    #                 if test:
+    #                     num_facture  = False
+    #                     date_facture = False
+    #                     if type_pdf=='LOXAM':
+    #                         for line in lines:
+    #                             # Regex pour gérer les deux formats :
+    #                             # - Facture N° :           154432682-0001                 du     15/10/25
+    #                             # - Facture N°                        153159352-0001                 du    15/11/25
+    #                             x = re.search(r"Facture N°\s*:?\s*(\S+)\s+du\s+(\S+)", line)
+    #                             if x:
+    #                                 v = x.groups()
+    #                                 if len(v)==2:
+    #                                     num_facture  = v[0].strip()
+    #                                     date_facture = txt2date(v[1])
+    #                                     break
+    #                     if type_pdf=='PUM':
+    #                         for line in lines:
+    #                             num_facture = line.strip() #Numéro de facture sur la première ligne toute seule
+    #                             break
+    #                         for line in lines:
+    #                             x = re.search("F A C T U R E(.*)", line)
+    #                             if x:
+    #                                 v = x.groups()
+    #                                 date_facture = txt2date(v[0],'%d-%m-%Y')
+    #                                 break
+    #                     dict["N°Facture"]               = num_facture
+    #                     dict["Date Facture"]            = date_facture 
+    #                     obj.is_num_facture_fournisseur  = num_facture
+    #                     obj.is_date_facture_fournisseur = date_facture
+    #                 #**************************************************************
+    #
+    #                 #** Lignes avec des Quantités ou des montants *****************
+    #                 def txt2float(txt):
+    #                     try:
+    #                         val=float(txt.strip().replace(',','.'))
+    #                     except:
+    #                         val=0
+    #                     return val
+    #                 if type_pdf=='PUM':
+    #                     for line in lines:
+    #                         code_pum    = line[0:19].strip()
+    #                         designation = line[19:85].strip()
+    #                         reste = line[86:].strip()
+    #                         # Remplacer les espaces multiples par un seul
+    #                         x1 = re.sub(r' +', ' ', reste)
+    #                         # 1. Fusionner d'abord les groupes de milliers (ex: 2 164,80 -> 2164,80), mais uniquement si l'espace est précédé d'un entier (pas de décimal)
+    #                         x1_fused = re.sub(r'(?<![\d,])(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), x1)
+    #                         # 2. Extraire tous les montants décimaux (ex: 13,73 ou 2164,80 ou 686,50)
+    #                         montants = re.findall(r'\d+,\d{2}', x1_fused)
+    #                         # 3. Remplacer chaque montant par un token unique (ex: §§§0, §§§1, ...)
+    #                         x1_temp = x1_fused
+    #                         for idx, montant in enumerate(montants):
+    #                             x1_temp = x1_temp.replace(montant, f'§§§{idx}', 1)
+    #                         # 4. (optionnel) Fusionner les groupes de milliers restants (rare, mais pour robustesse)
+    #                         x1_temp = re.sub(r'(?<!\d,)(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), x1_temp)
+    #                         # 5. Remettre les montants extraits à leur place
+    #                         def replace_token(match):
+    #                             idx = int(match.group(1))
+    #                             return montants[idx] if idx < len(montants) else match.group(0)
+    #                         x1_final = re.sub(r'§§§(\d+)', replace_token, x1_temp)
+    #                         x2 = x1_final.split()
+    #
+    #                         # code_pum    = line[0:19].strip()
+    #                         # designation = line[19:85].strip()
+    #                         # reste = line[86:].strip()
+    #                         # x1 = ' '.join(reste.split()) # Supprimer les espaces en double
+    #                         # x2 = x1.split()
+    #                         if len(x2)==5:
+    #                             quantite = txt2float(x2[0])
+    #                             prix_net = txt2float(x2[3])
+    #                             montant  = txt2float(x2[4])
+    #                             if round(quantite*prix_net,2)==round(montant,2) and montant>0:
+    #                                 description="%s (%s)"%(designation,code_pum)
+    #                                 order_lines.append([quantite, description, prix_net])
+    #                 #**************************************************************
+    #
+    #                 # #** Eco-contribution ******************************************
+    #                 # if type_pdf=='PUM':
+    #                 #     for line in lines:
+    #                 #         x = re.search("    Eco contribution :(.*)", line) 
+    #                 #         if x:
+    #                 #             v = x.groups()
+    #                 #             if len(v)==1:
+    #                 #                 montant=txt2float(v[0])
+    #                 #                 order_lines.append([1, "Eco-contribution", montant])
+    #                 #                 dict["Eco contribution"] = montant
+    #                 #                 break
+    #                 # #**************************************************************
+    #
+    #                 #** Eco-contribution ******************************************
+    #                 if type_pdf=='PUM':
+    #                     for line in lines:
+    #                         x = re.search(r"\s*Eco contribution :(.*)", line) 
+    #                         if x:
+    #                             v = x.groups()
+    #                             if len(v)==1:
+    #                                 montant=txt2float(v[0])
+    #                                 order_lines.append([1, "Eco-contribution", montant])
+    #                                 dict["Eco contribution"] = montant
+    #                                 break
+    #                 #**************************************************************
+    #
+    #
+    #
+    #                 #** Transport *************************************************
+    #                 if type_pdf=='PUM':
+    #                     for line in lines:
+    #                         x = re.search("Transport : (.*)", line) 
+    #                         if x:
+    #                             v = x.groups()
+    #                             if len(v)==1:
+    #                                 t = v[0].split(' ')
+    #                                 montant=txt2float(t[0])
+    #                                 order_lines.append([1, "Transport", montant])
+    #                                 dict["Transport"] = montant
+    #                                 break
+    #                 #**************************************************************
+    #
+    #                 #** Surcharge énergie ******************************************
+    #                 if type_pdf=='PUM':
+    #                     for line in lines:
+    #                         # Recherche du motif "Surcharge énergie : <montant>"
+    #                         x = re.search(r"Surcharge énergie\s*:\s*([0-9]+,[0-9]{2})", line)
+    #                         if x:
+    #                             montant = txt2float(x.group(1))
+    #                             order_lines.append([1, "Surcharge énergie", montant])
+    #                             dict["Surcharge énergie"] = montant
+    #                             break
+    #                 #**************************************************************
+    #
+    #                 #** Surcharge gasoil ******************************************
+    #                 if type_pdf=='PUM':
+    #                     for line in lines:
+    #                         x = re.search("Surcharge gasoil : (.*)", line) 
+    #                         if x:
+    #                             v = x.groups()
+    #                             if len(v)==1:
+    #                                 t = v[0].split(' ')
+    #                                 montant=txt2float(t[0])
+    #                                 order_lines.append([1, "Surcharge gasoil", montant])
+    #                                 dict["Surcharge gasoil"] = montant
+    #                                 break
+    #                 #**************************************************************
+    #
+    #                 #** Lignes avec des Quantités ou des montants *****************
+    #                 if type_pdf=='LOXAM':
+    #                     if test:
+    #                         debut=fin=False
+    #                         debut_libelle = fin_libelle = False
+    #                         libelles = []
+    #                         qte = 0
+    #                         montant_total = 0
+    #                         new=False
+    #                         for line in lines:
+    #                             if debut and not fin:
+    #                                 #** Quantité **************************************
+    #                                 qte = 0
+    #                                 libelle = False
+    #                                 montant = 0
+    #                                 tab = line.strip().split(' ')
+    #                                 if len(tab)>1:
+    #                                     try:
+    #                                         qte=float(tab[0].strip())
+    #                                     except:
+    #                                         qte=0
+    #
+    #                                 #** Montant ***************************************
+    #                                 #x = re.findall("[0-9]*\.[0-9]{2}$", line.strip())
+    #                                 x = re.findall(r"[0-9]*\.[0-9]{2}$", line.strip())
+    #
+    #                                 if x:
+    #                                     x2 = " ".join(line.split()) # Supprimer les espaces en double
+    #                                     list = x2.split()
+    #                                     if len(list)>1:
+    #                                         try:
+    #                                             montant=float(x[0].strip())
+    #                                         except:
+    #                                             montant=0
+    #
+    #                                 #** Libellé sans Qté et sans Montant **************
+    #                                 l = False
+    #                                 if not qte and not montant:
+    #                                     x = " ".join(line.split()) # Supprimer les espaces en double
+    #                                     list = x.split()
+    #                                     l = ' '.join(list)
+    #
+    #                                 #** Libellé avec Qté et Montant *******************
+    #                                 if qte and montant:
+    #                                     x = " ".join(line.split()) # Supprimer les espaces en double
+    #                                     list = x.split()
+    #                                     list.pop(0) # Supprime le premier element (la quantité)
+    #                                     list.pop()  # Supprime le dernier element (le montant)
+    #                                     l = ' '.join(list)
+    #
+    #                                 #** Libellé avec Qté et sans Montant **************
+    #                                 if qte and not montant:
+    #                                     x = " ".join(line.split()) # Supprimer les espaces en double
+    #                                     list = x.split()
+    #                                     list.pop(0) # Supprime le premier element (la quantité)
+    #                                     l = ' '.join(list)
+    #
+    #                                 #** Autres libellés *******************************
+    #                                 x = re.findall("Total période", line)
+    #                                 if montant and x:
+    #                                     l=x[0].strip()
+    #                                 x = re.findall("Contribution verte", line)
+    #                                 if montant and x:
+    #                                     l=x[0].strip()
+    #                                     qte = qte or 1
+    #                                 x = re.findall("Forfait transport Aller", line, re.IGNORECASE)
+    #                                 if montant and x:
+    #                                     l=x[0].strip()
+    #                                     qte = qte or 1
+    #                                 x = re.findall("Forfait transport Retour", line, re.IGNORECASE)
+    #                                 if montant and x:
+    #                                     l=x[0].strip()
+    #                                     qte = qte or 1
+    #
+    #                                 #** Elimination des intitulés indésirables ********
+    #                                 indesirable=False
+    #                                 if l:
+    #                                     l=l.strip()
+    #                                     if l=='' or l=='Total période':
+    #                                         indesirable=True
+    #                                     x = re.findall("Ventes Prix Unitaire", l)
+    #                                     if x:
+    #                                         indesirable=True
+    #                                     x = re.findall("Étude BVA - Viséo CI", l)
+    #                                     if x:
+    #                                         indesirable=True
+    #                                 if l and not indesirable:
+    #                                     libelles.append(l.strip())
+    #
+    #                                 #** Test si nouvelle ligne ************************
+    #                                 new = False
+    #                                 if qte and montant:
+    #                                     new=True
+    #                                 if l=="Total période":
+    #                                     new=True
+    #                                 if new:
+    #                                     libelle = '\n'.join(libelles)
+    #                                     libelles=[]
+    #                                     montant_total+=montant
+    #                                     order_lines.append([1, libelle, montant])
+    #                                     #order_lines.append([qte, libelle, montant])
+    #
+    #                             x = re.findall("Qté.*Libellé.*Montant", line)
+    #                             if x:
+    #                                 debut = True
+    #                             x = re.findall("Total HT", line)
+    #                             if x:
+    #                                 fin=True
+    #                                 #x = re.findall("[0-9]*\.[0-9]{2}$", line.strip())
+    #                                 x = re.findall(r"\d+\.\d{2}$", line.strip())
+    #                                 if x:
+    #                                     try:
+    #                                         ht=float(x[0].strip())
+    #                                     except:
+    #                                         ht=0
+    #                                     dict["Total HT"] = ht
+    #                 #**************************************************************
+    #
+    #
+    #                 # #** Total HT du PDF *******************************************
+    #                 # ht_pdf=0
+    #                 # if type_pdf=='PUM':
+    #                 #     debut=False
+    #                 #     for line in lines:
+    #                 #         x = re.findall("TOTAL HT EUR", line) 
+    #                 #         if x:
+    #                 #             debut=True
+    #                 #         if debut:
+    #                 #             x=' '.join(line.split()) # Supprimer les espaces en trop
+    #                 #             x=x.split()              # Mettre dans un talbeau les nombres séparés par un espace
+    #                 #             if len(x)>4:
+    #                 #                 ht_pdf=txt2float(x[0])
+    #                 #     dict["Total HT PDF"] = ht_pdf
+    #                 #  #**************************************************************
+    #
+    #
+    #                 #** Total HT du PDF *******************************************
+    #                 ht_pdf=0
+    #                 if type_pdf=='PUM':
+    #                     debut=False
+    #                     for line in lines:
+    #                         x = re.findall("TOTAL HT EUR", line) 
+    #                         if x:
+    #                             debut=True
+    #                         if debut:
+    #                             # Fusionner les groupes de milliers (ex: 6 160,12 -> 6160,12)
+    #                             line_fused = re.sub(r'(?<![\d,])(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), line)
+    #                             x = ' '.join(line_fused.split()) # Supprimer les espaces en trop
+    #                             x = x.split()              # Mettre dans un tableau les nombres séparés par un espace
+    #                             if len(x)>4:
+    #                                 ht_pdf=txt2float(x[0])
+    #                     dict["Total HT PDF"] = ht_pdf
+    #                  #**************************************************************
+    #
+    #
+    #
+    #                 #** Montant total *********************************************
+    #                 ht=0
+    #                 for line in order_lines:
+    #
+    #
+    #                     ht+=(line[0] * line[2])
+    #                 ht=round(ht,2)
+    #                 dict["Total HT calculé"] = ht
+    #                 #**************************************************************
+    #
+    #                 #** Résultat du traitement ************************************
+    #                 if test:
+    #                     for key in dict:
+    #                         x = "%s : %s"%(key.ljust(20), dict[key])
+    #                         res.append(x)
+    #                     obj.is_import_pdf_resultat = '\n'.join(res)
+    #                 #**************************************************************
+    #
+    #                 #** Ajout des lignes de la commande ***************************
+    #                 if test:
+    #                     obj.order_line.unlink()
+    #                     sequence = 0
+    #                     for line in order_lines:
+    #                         libelle = line[1]
+    #                         sequence+=10
+    #                         product = obj.get_product(libelle, type_pdf)
+    #                         if product:
+    #                             vals={
+    #                                 "order_id"       : obj.id,
+    #                                 "product_id"     : product.id,
+    #                                 "sequence"       : sequence,
+    #                                 "name"           : line[1],
+    #                                 "product_qty"    : line[0],
+    #                                 "price_unit"     : line[2],
+    #                                 "product_uom"    : product.uom_id.id,
+    #                             }
+    #                             order_line = self.env['purchase.order.line'].create(vals)
+    #                     #**********************************************************
+    #
+    #
+
+    #========================================================================
+    # NOUVELLE VERSION - Import de bons de commande depuis un PDF
+    #
+    # Pour ajouter un nouveau type de document a analyser :
+    #   1. Ajouter sa signature de detection dans _IS_PDF_TYPE_SIGNATURES
+    #   2. Ecrire une methode _is_parse_pdf_<type>(self, lines) qui retourne un dict :
+    #        {'affaire': recordset|False, 'num_facture': str|False,
+    #         'date_facture': date|False, 'order_lines': [[qte, libelle, prix_unitaire], ...],
+    #         'info': {...}}  (contenu affiche dans is_import_pdf_resultat)
+    #   3. Referencer cette methode dans _IS_PDF_TYPE_PARSERS
+    #========================================================================
+
+    # Ordre de detection : (nom_type, motif recherche dans les lignes du PDF)
+    # LOXAM2 doit etre teste avant LOXAM car ses factures contiennent aussi le mot "LOXAM"
+    _IS_PDF_TYPE_SIGNATURES = [
+        ('LOXAM2', "Numéro d'ordre de vente"),
+        ('LOXAM', 'LOXAM'),
+        ('PUM', '   PUM'),
+    ]
+
+    _IS_PDF_TYPE_PARSERS = {
+        'LOXAM2': '_is_parse_pdf_loxam2',
+        'LOXAM': '_is_parse_pdf_loxam',
+        'PUM': '_is_parse_pdf_pum',
+    }
+
     def import_pdf_action(self):
         for obj in self:
             for attachment in obj.is_import_pdf_ids:
-
-                #** Lecture du PDF ********************************************
-                pdf=base64.b64decode(attachment.datas)
-                name = 'purchase_order-%s'%obj.id
-                path = "/tmp/%s.pdf"%name
-                f = open(path,'wb')
-                f.write(pdf)
-                f.close()
-                cde = "cd /tmp && pdftotext -layout %s.pdf"%name
-                p = Popen(cde, shell=True, stdout=PIPE, stderr=PIPE)
-                stdout, stderr = p.communicate()
-
-                path = "/tmp/%s.txt"%name
-                r = open(path,'rb').read().decode('utf-8')
-                lines = r.split('\n')
-                order_lines=[]
-                dict={}
-                res=[]
-                chantier_zip=False
-                affaire=False
-                #**************************************************************
-
-                #** Recherche du type de PDF (LOXAM ou PUM) *******************
-                def get_type_pdf(lines,txt,name_type):
-                    type_pdf=False
-                    for line in lines:
-                        x = re.findall(txt, line) 
-                        if x:
-                            test = True
-                            type_pdf=name_type
-                            break
-                    return type_pdf
-                type_pdf = get_type_pdf(lines,'LOXAM','LOXAM')
+                lines = obj._is_pdf_to_lines(attachment)
+                type_pdf = obj._is_detect_type_pdf(lines)
                 if not type_pdf:
-                    type_pdf = get_type_pdf(lines,'   PUM','PUM')
-                if type_pdf==False:
-                    obj.is_import_pdf_resultat = "Ce PDF n'est pas de LOXAM ou de PUM => Importation impossible"
-                    return
-                dict["Type de PDF"] = type_pdf
-                test=True
-                #**************************************************************
+                    obj.is_import_pdf_resultat = "Ce PDF n'est pas de LOXAM, LOXAM2 ou PUM => Importation impossible"
+                    continue
+                parser = getattr(obj, obj._IS_PDF_TYPE_PARSERS[type_pdf])
+                data = parser(lines)
+                obj._is_apply_pdf_result(type_pdf, data)
 
+    def _is_pdf_to_lines(self, attachment):
+        "Convertit la piece jointe PDF en liste de lignes de texte (via pdftotext)"
+        pdf = base64.b64decode(attachment.datas)
+        name = 'purchase_order-%s' % self.id
+        pdf_path = "/tmp/%s.pdf" % name
+        with open(pdf_path, 'wb') as f:
+            f.write(pdf)
+        cde = "cd /tmp && pdftotext -layout %s.pdf" % name
+        p = Popen(cde, shell=True, stdout=PIPE, stderr=PIPE)
+        p.communicate()
+        txt_path = "/tmp/%s.txt" % name
+        with open(txt_path, 'rb') as f:
+            content = f.read().decode('utf-8')
+        return content.split('\n')
 
+    def _is_detect_type_pdf(self, lines):
+        "Recherche la signature d'un type de PDF connu (LOXAM, PUM, ...) dans les lignes"
+        for type_name, pattern in self._IS_PDF_TYPE_SIGNATURES:
+            for line in lines:
+                if re.findall(pattern, line):
+                    return type_name
+        return False
 
-                #** Recherche de l'adresse du chantier ************************
-                dict["Chantier"] = ''
-                if type_pdf=="PUM":
-                    chantier=[]
-                    if test:
-                        lig=0
-                        for line in lines:
-                            x = re.findall("Réf/Cli", line) 
-                            if x:
-                                v = line.split(' : ')
-                                if len(v)==2:
-                                    dict["Chantier"] = v[1].strip()
-             
-                if type_pdf=='LOXAM':
-                    chantier=[]
-                    if test:
-                        lig=0
-                        for line in lines:
-                            x = re.findall("Adresse de chantier", line) 
-                            if x:
-                                lig=1
-                            if lig>1 and lig<=6:
-                                v = line[0:160].strip()
-                                chantier.append(v)
-                            if lig>=6:
-                                break
-                            if lig:
-                                lig+=1
-                    if chantier:
-                        dict["Chantier"] = ' '.join(chantier)
-                    #**************************************************************
+    @staticmethod
+    def _is_txt2float(txt):
+        try:
+            return float(txt.strip().replace(',', '.'))
+        except (ValueError, AttributeError):
+            return 0
 
-                    #** Code postal du chantier ***********************************
-                    if chantier:
-                        adresse = dict["Chantier"]
-                        x = re.findall("[0-9]{5}", adresse)
-                        if x:
-                            chantier_zip = x[0]
-                    #**************************************************************
+    @staticmethod
+    def _is_txt2date(txt, format='%d/%m/%y'):
+        txt = txt.replace(' ', '')
+        try:
+            return datetime.strptime(txt, format)
+        except ValueError:
+            return False
 
-                    #** N°BDC (Code Affaire) ***************************************
-                    if test:
-                        for line in lines:
-                            x = re.findall("N°BDC", line) 
-                            if x:
-                                v = line.strip()[0:30].strip()
-                                v = v.split(' : ')
-                                if len(v)==2:
-                                    bdc = v[1].strip()
-                                    #x = re.findall("[0-9]{2}\.[0-9]{4}", bdc)
-                                    x = re.findall(r"[0-9]{2}\.[0-9]{4}", bdc)
+    @staticmethod
+    def _is_supprime_petits_mots(phrase, taille=4):
+        "Supprime tous les mots de phrase de longueur < taille"
+        mots = [mot if len(mot) >= taille else '' for mot in phrase.split(' ')]
+        return ' '.join(mots).strip()
 
+    def _is_match_affaire(self, chantier, chantier_zip=False):
+        "Recherche l'affaire dont l'adresse ou le nom se rapproche le plus du chantier (comparaison floue)"
+        if not chantier:
+            return False
+        chantier = chantier.upper()
+        domaine = [('zip', '=', chantier_zip)] if chantier_zip else []
+        affaire_dict = {}
 
-                                    if x:
-                                        bdc=x[0]
+        for aff in self.env['is.affaire'].search(domaine, order="adresse_chantier"):
+            adresse = (aff.adresse_chantier or '').replace('\n', ' ').strip().upper()
+            if adresse:
+                affaire_dict[fuzz.ratio(chantier, adresse)] = aff
 
-                                        affaires = self.env['is.affaire'].search([('name','=',bdc)])
-                                        if affaires:
-                                            affaire=affaires[0]
-                                    dict["N°BDC"] = bdc
-                                break
-                    #**************************************************************
+        chantier_sans_petits_mots = self._is_supprime_petits_mots(chantier)
+        for aff in self.env['is.affaire'].search(domaine, order="nom"):
+            if aff.nom:
+                nom_sans_petits_mots = self._is_supprime_petits_mots(aff.nom.replace('\n', ' ').strip().upper())
+                if nom_sans_petits_mots and chantier_sans_petits_mots:
+                    affaire_dict[fuzz.partial_ratio(chantier_sans_petits_mots, nom_sans_petits_mots)] = aff
 
-                #** Recherche de l'affaire ************************************
-                def supprime_petit_mots(phrase,taille=4):
-                    "Supprime tous les mots de phrase <= taille"
-                    mots=phrase.split(' ')
-                    k=0
-                    for mot in mots:
-                        if len(mot)<taille:
-                            mots[k]=""
-                        k+=1
-                    phrase=' '.join(mots).strip()
-                    return phrase
-                if test and not affaire:
-                    chantier = dict["Chantier"].upper()
-                    filtre=[]
-                    if chantier_zip:
-                        filtre=[('zip','=',chantier_zip)]
-                    #** Recherche dans l'adresse ******************************
-                    affaire_dict={}
-                    affaires = self.env['is.affaire'].search(filtre,order="adresse_chantier")
-                    for line in affaires:
-                        adresse = line.adresse_chantier.replace('\n',' ').strip().upper()
-                        if adresse!='':
-                            ratio = fuzz.ratio(chantier, adresse)
-                            affaire_dict[ratio] = (line, line.name)
-                    #** Recherche dans le nom *********************************
-                    affaires = self.env['is.affaire'].search(filtre,order="nom")
-                    for line in affaires:
-                        if line.nom:
-                            nom = line.nom.replace('\n',' ').strip().upper()
-                            nom_sans_petit_mot  = supprime_petit_mots(nom)
-                            chantier_sans_petit_mot = supprime_petit_mots(chantier)
-                            if nom_sans_petit_mot!='' and chantier_sans_petit_mot!='':
-                                ratio = fuzz.partial_ratio(chantier_sans_petit_mot, nom_sans_petit_mot)
-                                affaire_dict[ratio] = (line, line.name)
-                    #** Tri par ratio *****************************************
-                    key_sorted = sorted(affaire_dict, reverse=True)
-                    for key in key_sorted:
-                        if key>50:
-                            affaire = affaire_dict[key][0]
-                        break
-                #**************************************************************
+        for score in sorted(affaire_dict, reverse=True):
+            return affaire_dict[score] if score > 50 else False
+        return False
 
-                #** Affaire ***************************************************
-                if affaire:
-                    obj.is_affaire_id = affaire.id
-                    dict["Affaire"] = affaire.name
-                else:
-                    dict["Affaire"] = "Affaire non trouvée"
-                #**************************************************************
+    def _is_parse_pdf_loxam(self, lines):
+        "Analyse un PDF de type LOXAM et retourne les donnees extraites"
+        info = {}
+        order_lines = []
 
-                #** Recherche Acheteur ****************************************
-                if type_pdf=='LOXAM':
-                    if test:
-                        for line in lines:
-                            x = re.findall("Acheteur", line) 
-                            if x:
-                                v = line.strip()[0:30].strip()
-                                v = v.split(' : ')
-                                if len(v)==2:
-                                    dict["Acheteur"] = v[1]
-                                break
-                #**************************************************************
+        #** Adresse du chantier *****************************************
+        chantier_lines = []
+        lig = 0
+        for line in lines:
+            if re.findall("Adresse de chantier", line):
+                lig = 1
+            if lig > 1 and lig <= 6:
+                chantier_lines.append(line[0:160].strip())
+            if lig >= 6:
+                break
+            if lig:
+                lig += 1
+        chantier = ' '.join(chantier_lines) if chantier_lines else ''
+        info["Chantier"] = chantier
 
-                #** N°Facture *************************************************
-                def txt2date(txt,format='%d/%m/%y'):
-                    txt=txt.replace(' ','')
+        chantier_zip = False
+        if chantier:
+            x = re.findall("[0-9]{5}", chantier)
+            if x:
+                chantier_zip = x[0]
+
+        #** N°BDC (Code Affaire) ******************************************
+        affaire = False
+        for line in lines:
+            if re.findall("N°BDC", line):
+                v = line.strip()[0:30].strip().split(' : ')
+                if len(v) == 2:
+                    bdc = v[1].strip()
+                    x = re.findall(r"[0-9]{2}\.[0-9]{4}", bdc)
+                    if x:
+                        bdc = x[0]
+                        affaires = self.env['is.affaire'].search([('name', '=', bdc)])
+                        if affaires:
+                            affaire = affaires[0]
+                    info["N°BDC"] = bdc
+                break
+
+        if not affaire:
+            affaire = self._is_match_affaire(chantier, chantier_zip)
+        info["Affaire"] = affaire.name if affaire else "Affaire non trouvée"
+
+        #** Acheteur *******************************************************
+        for line in lines:
+            if re.findall("Acheteur", line):
+                v = line.strip()[0:30].strip().split(' : ')
+                if len(v) == 2:
+                    info["Acheteur"] = v[1]
+                break
+
+        #** N°Facture / Date Facture *****************************************
+        num_facture = date_facture = False
+        for line in lines:
+            x = re.search(r"Facture N°\s*:?\s*(\S+)\s+du\s+(\S+)", line)
+            if x:
+                num_facture = x.group(1).strip()
+                date_facture = self._is_txt2date(x.group(2))
+                break
+        info["N°Facture"] = num_facture
+        info["Date Facture"] = date_facture
+
+        #** Lignes de commande (quantite / libelle / montant) ***************
+        debut = fin = False
+        libelles = []
+        for line in lines:
+            if debut and not fin:
+                qte = 0
+                montant = 0
+                tab = line.strip().split(' ')
+                if len(tab) > 1:
                     try:
-                        date_facture = datetime.strptime(txt, format)
+                        qte = float(tab[0].strip())
                     except ValueError:
-                        date_facture = False
-                    return date_facture
-                if test:
-                    num_facture  = False
-                    date_facture = False
-                    if type_pdf=='LOXAM':
-                        for line in lines:
-                            # Regex pour gérer les deux formats :
-                            # - Facture N° :           154432682-0001                 du     15/10/25
-                            # - Facture N°                        153159352-0001                 du    15/11/25
-                            x = re.search(r"Facture N°\s*:?\s*(\S+)\s+du\s+(\S+)", line)
-                            if x:
-                                v = x.groups()
-                                if len(v)==2:
-                                    num_facture  = v[0].strip()
-                                    date_facture = txt2date(v[1])
-                                    break
-                    if type_pdf=='PUM':
-                        for line in lines:
-                            num_facture = line.strip() #Numéro de facture sur la première ligne toute seule
-                            break
-                        for line in lines:
-                            x = re.search("F A C T U R E(.*)", line)
-                            if x:
-                                v = x.groups()
-                                date_facture = txt2date(v[0],'%d-%m-%Y')
-                                break
-                    dict["N°Facture"]               = num_facture
-                    dict["Date Facture"]            = date_facture 
-                    obj.is_num_facture_fournisseur  = num_facture
-                    obj.is_date_facture_fournisseur = date_facture
-                #**************************************************************
-
-                #** Lignes avec des Quantités ou des montants *****************
-                def txt2float(txt):
-                    try:
-                        val=float(txt.strip().replace(',','.'))
-                    except:
-                        val=0
-                    return val
-                if type_pdf=='PUM':
-                    for line in lines:
-                        code_pum    = line[0:19].strip()
-                        designation = line[19:85].strip()
-                        reste = line[86:].strip()
-                        # Remplacer les espaces multiples par un seul
-                        x1 = re.sub(r' +', ' ', reste)
-                        # 1. Fusionner d'abord les groupes de milliers (ex: 2 164,80 -> 2164,80), mais uniquement si l'espace est précédé d'un entier (pas de décimal)
-                        x1_fused = re.sub(r'(?<![\d,])(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), x1)
-                        # 2. Extraire tous les montants décimaux (ex: 13,73 ou 2164,80 ou 686,50)
-                        montants = re.findall(r'\d+,\d{2}', x1_fused)
-                        # 3. Remplacer chaque montant par un token unique (ex: §§§0, §§§1, ...)
-                        x1_temp = x1_fused
-                        for idx, montant in enumerate(montants):
-                            x1_temp = x1_temp.replace(montant, f'§§§{idx}', 1)
-                        # 4. (optionnel) Fusionner les groupes de milliers restants (rare, mais pour robustesse)
-                        x1_temp = re.sub(r'(?<!\d,)(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), x1_temp)
-                        # 5. Remettre les montants extraits à leur place
-                        def replace_token(match):
-                            idx = int(match.group(1))
-                            return montants[idx] if idx < len(montants) else match.group(0)
-                        x1_final = re.sub(r'§§§(\d+)', replace_token, x1_temp)
-                        x2 = x1_final.split()
-
-                        # code_pum    = line[0:19].strip()
-                        # designation = line[19:85].strip()
-                        # reste = line[86:].strip()
-                        # x1 = ' '.join(reste.split()) # Supprimer les espaces en double
-                        # x2 = x1.split()
-                        if len(x2)==5:
-                            quantite = txt2float(x2[0])
-                            prix_net = txt2float(x2[3])
-                            montant  = txt2float(x2[4])
-                            if round(quantite*prix_net,2)==round(montant,2) and montant>0:
-                                description="%s (%s)"%(designation,code_pum)
-                                order_lines.append([quantite, description, prix_net])
-                #**************************************************************
-
-                # #** Eco-contribution ******************************************
-                # if type_pdf=='PUM':
-                #     for line in lines:
-                #         x = re.search("    Eco contribution :(.*)", line) 
-                #         if x:
-                #             v = x.groups()
-                #             if len(v)==1:
-                #                 montant=txt2float(v[0])
-                #                 order_lines.append([1, "Eco-contribution", montant])
-                #                 dict["Eco contribution"] = montant
-                #                 break
-                # #**************************************************************
-
-                #** Eco-contribution ******************************************
-                if type_pdf=='PUM':
-                    for line in lines:
-                        x = re.search(r"\s*Eco contribution :(.*)", line) 
-                        if x:
-                            v = x.groups()
-                            if len(v)==1:
-                                montant=txt2float(v[0])
-                                order_lines.append([1, "Eco-contribution", montant])
-                                dict["Eco contribution"] = montant
-                                break
-                #**************************************************************
-
-
-
-                #** Transport *************************************************
-                if type_pdf=='PUM':
-                    for line in lines:
-                        x = re.search("Transport : (.*)", line) 
-                        if x:
-                            v = x.groups()
-                            if len(v)==1:
-                                t = v[0].split(' ')
-                                montant=txt2float(t[0])
-                                order_lines.append([1, "Transport", montant])
-                                dict["Transport"] = montant
-                                break
-                #**************************************************************
-
-                #** Surcharge énergie ******************************************
-                if type_pdf=='PUM':
-                    for line in lines:
-                        # Recherche du motif "Surcharge énergie : <montant>"
-                        x = re.search(r"Surcharge énergie\s*:\s*([0-9]+,[0-9]{2})", line)
-                        if x:
-                            montant = txt2float(x.group(1))
-                            order_lines.append([1, "Surcharge énergie", montant])
-                            dict["Surcharge énergie"] = montant
-                            break
-                #**************************************************************
-
-                #** Surcharge gasoil ******************************************
-                if type_pdf=='PUM':
-                    for line in lines:
-                        x = re.search("Surcharge gasoil : (.*)", line) 
-                        if x:
-                            v = x.groups()
-                            if len(v)==1:
-                                t = v[0].split(' ')
-                                montant=txt2float(t[0])
-                                order_lines.append([1, "Surcharge gasoil", montant])
-                                dict["Surcharge gasoil"] = montant
-                                break
-                #**************************************************************
-
-                #** Lignes avec des Quantités ou des montants *****************
-                if type_pdf=='LOXAM':
-                    if test:
-                        debut=fin=False
-                        debut_libelle = fin_libelle = False
-                        libelles = []
                         qte = 0
-                        montant_total = 0
-                        new=False
-                        for line in lines:
-                            if debut and not fin:
-                                #** Quantité **************************************
-                                qte = 0
-                                libelle = False
-                                montant = 0
-                                tab = line.strip().split(' ')
-                                if len(tab)>1:
-                                    try:
-                                        qte=float(tab[0].strip())
-                                    except:
-                                        qte=0
-                                
-                                #** Montant ***************************************
-                                #x = re.findall("[0-9]*\.[0-9]{2}$", line.strip())
-                                x = re.findall(r"[0-9]*\.[0-9]{2}$", line.strip())
 
-                                if x:
-                                    x2 = " ".join(line.split()) # Supprimer les espaces en double
-                                    list = x2.split()
-                                    if len(list)>1:
-                                        try:
-                                            montant=float(x[0].strip())
-                                        except:
-                                            montant=0
+                x = re.findall(r"[0-9]*\.[0-9]{2}$", line.strip())
+                if x and len(" ".join(line.split()).split()) > 1:
+                    try:
+                        montant = float(x[0].strip())
+                    except ValueError:
+                        montant = 0
 
-                                #** Libellé sans Qté et sans Montant **************
-                                l = False
-                                if not qte and not montant:
-                                    x = " ".join(line.split()) # Supprimer les espaces en double
-                                    list = x.split()
-                                    l = ' '.join(list)
+                l = False
+                tokens = " ".join(line.split()).split()
+                if not qte and not montant:
+                    l = ' '.join(tokens)
+                if qte and montant:
+                    tokens_ligne = tokens[1:-1]
+                    l = ' '.join(tokens_ligne)
+                if qte and not montant:
+                    tokens_ligne = tokens[1:]
+                    l = ' '.join(tokens_ligne)
 
-                                #** Libellé avec Qté et Montant *******************
-                                if qte and montant:
-                                    x = " ".join(line.split()) # Supprimer les espaces en double
-                                    list = x.split()
-                                    list.pop(0) # Supprime le premier element (la quantité)
-                                    list.pop()  # Supprime le dernier element (le montant)
-                                    l = ' '.join(list)
+                if montant and re.findall("Total période", line):
+                    l = "Total période"
+                if montant and re.findall("Contribution verte", line):
+                    l = "Contribution verte"
+                    qte = qte or 1
+                if montant and re.findall("Forfait transport Aller", line, re.IGNORECASE):
+                    l = "Forfait transport Aller"
+                    qte = qte or 1
+                if montant and re.findall("Forfait transport Retour", line, re.IGNORECASE):
+                    l = "Forfait transport Retour"
+                    qte = qte or 1
 
-                                #** Libellé avec Qté et sans Montant **************
-                                if qte and not montant:
-                                    x = " ".join(line.split()) # Supprimer les espaces en double
-                                    list = x.split()
-                                    list.pop(0) # Supprime le premier element (la quantité)
-                                    l = ' '.join(list)
+                indesirable = False
+                if l:
+                    l = l.strip()
+                    if l in ('', 'Total période'):
+                        indesirable = True
+                    if re.findall("Ventes Prix Unitaire", l):
+                        indesirable = True
+                    if re.findall("Étude BVA - Viséo CI", l):
+                        indesirable = True
+                if l and not indesirable:
+                    libelles.append(l.strip())
 
-                                #** Autres libellés *******************************
-                                x = re.findall("Total période", line)
-                                if montant and x:
-                                    l=x[0].strip()
-                                x = re.findall("Contribution verte", line)
-                                if montant and x:
-                                    l=x[0].strip()
-                                    qte = qte or 1
-                                x = re.findall("Forfait transport Aller", line, re.IGNORECASE)
-                                if montant and x:
-                                    l=x[0].strip()
-                                    qte = qte or 1
-                                x = re.findall("Forfait transport Retour", line, re.IGNORECASE)
-                                if montant and x:
-                                    l=x[0].strip()
-                                    qte = qte or 1
+                new = bool(qte and montant) or (l == "Total période")
+                if new:
+                    libelle = '\n'.join(libelles)
+                    libelles = []
+                    order_lines.append([1, libelle, montant])
 
-                                #** Elimination des intitulés indésirables ********
-                                indesirable=False
-                                if l:
-                                    l=l.strip()
-                                    if l=='' or l=='Total période':
-                                        indesirable=True
-                                    x = re.findall("Ventes Prix Unitaire", l)
-                                    if x:
-                                        indesirable=True
-                                    x = re.findall("Étude BVA - Viséo CI", l)
-                                    if x:
-                                        indesirable=True
-                                if l and not indesirable:
-                                    libelles.append(l.strip())
+            if re.findall("Qté.*Libellé.*Montant", line):
+                debut = True
+            if re.findall("Total HT", line):
+                fin = True
+                x = re.findall(r"\d+\.\d{2}$", line.strip())
+                if x:
+                    info["Total HT"] = self._is_txt2float(x[0])
 
-                                #** Test si nouvelle ligne ************************
-                                new = False
-                                if qte and montant:
-                                    new=True
-                                if l=="Total période":
-                                    new=True
-                                if new:
-                                    libelle = '\n'.join(libelles)
-                                    libelles=[]
-                                    montant_total+=montant
-                                    order_lines.append([1, libelle, montant])
-                                    #order_lines.append([qte, libelle, montant])
+        return {
+            'affaire': affaire,
+            'num_facture': num_facture,
+            'date_facture': date_facture,
+            'order_lines': order_lines,
+            'info': info,
+        }
 
-                            x = re.findall("Qté.*Libellé.*Montant", line)
-                            if x:
-                                debut = True
-                            x = re.findall("Total HT", line)
-                            if x:
-                                fin=True
-                                #x = re.findall("[0-9]*\.[0-9]{2}$", line.strip())
-                                x = re.findall(r"\d+\.\d{2}$", line.strip())
-                                if x:
-                                    try:
-                                        ht=float(x[0].strip())
-                                    except:
-                                        ht=0
-                                    dict["Total HT"] = ht
-                #**************************************************************
+    def _is_parse_pdf_loxam2(self, lines):
+        "Analyse un PDF LOXAM (nouveau modele de facture) et retourne les donnees extraites"
+        info = {}
+        order_lines = []
 
+        #** Adresse de livraison (colonne centrale du bloc Donneur d'ordre / Livraison / Facturé à) ***
+        chantier = ''
+        for i, line in enumerate(lines):
+            if "Donneur d'ordre" in line and 'Livraison' in line:
+                col_debut = line.index('Livraison')
+                col_fin = line.index('Facturé') if 'Facturé' in line else len(line)
+                chantier_lines = []
+                for j in range(i + 1, min(i + 6, len(lines))):
+                    segment = lines[j][col_debut:col_fin].strip()
+                    if not segment:
+                        break
+                    chantier_lines.append(segment)
+                chantier = ' '.join(chantier_lines)
+                break
+        info["Chantier"] = chantier
 
-                # #** Total HT du PDF *******************************************
-                # ht_pdf=0
-                # if type_pdf=='PUM':
-                #     debut=False
-                #     for line in lines:
-                #         x = re.findall("TOTAL HT EUR", line) 
-                #         if x:
-                #             debut=True
-                #         if debut:
-                #             x=' '.join(line.split()) # Supprimer les espaces en trop
-                #             x=x.split()              # Mettre dans un talbeau les nombres séparés par un espace
-                #             if len(x)>4:
-                #                 ht_pdf=txt2float(x[0])
-                #     dict["Total HT PDF"] = ht_pdf
-                #  #**************************************************************
+        chantier_zip = False
+        if chantier:
+            x = re.findall("[0-9]{5}", chantier)
+            if x:
+                chantier_zip = x[0]
 
+        #** N° commande (Code Affaire) ****************************************
+        affaire = False
+        for line in lines:
+            x = re.search(r"N°\s*commande\s+(\S.*)$", line)
+            if x:
+                commande = x.group(1).strip()
+                info["N° commande"] = commande
+                code = re.findall(r"[0-9]{2}\.[0-9]{4}", commande)
+                if code:
+                    affaires = self.env['is.affaire'].search([('name', '=', code[0])])
+                    if affaires:
+                        affaire = affaires[0]
+                break
 
-                #** Total HT du PDF *******************************************
-                ht_pdf=0
-                if type_pdf=='PUM':
-                    debut=False
-                    for line in lines:
-                        x = re.findall("TOTAL HT EUR", line) 
-                        if x:
-                            debut=True
-                        if debut:
-                            # Fusionner les groupes de milliers (ex: 6 160,12 -> 6160,12)
-                            line_fused = re.sub(r'(?<![\d,])(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), line)
-                            x = ' '.join(line_fused.split()) # Supprimer les espaces en trop
-                            x = x.split()              # Mettre dans un tableau les nombres séparés par un espace
-                            if len(x)>4:
-                                ht_pdf=txt2float(x[0])
-                    dict["Total HT PDF"] = ht_pdf
-                 #**************************************************************
+        if not affaire:
+            affaire = self._is_match_affaire(chantier, chantier_zip)
+        info["Affaire"] = affaire.name if affaire else "Affaire non trouvée"
 
+        #** Acheteur (contact du client, 2eme bloc "Contact" du document) *******
+        contacts_found = 0
+        for i, line in enumerate(lines):
+            if 'Contact' in line:
+                contacts_found += 1
+                if contacts_found == 2 and i + 1 < len(lines):
+                    info["Acheteur"] = lines[i + 1].strip()
+                    break
 
+        #** N°Facture / Date Facture *********************************************
+        num_facture = date_facture = False
+        for i, line in enumerate(lines):
+            x = re.search(r"Facture N°\s*(\S+)", line)
+            if x:
+                num_facture = x.group(1).strip()
+                for j in range(i, min(i + 3, len(lines))):
+                    d = re.search(r"Du\s+(\d{2}/\d{2}/\d{4})", lines[j])
+                    if d:
+                        date_facture = self._is_txt2date(d.group(1), '%d/%m/%Y')
+                        break
+                break
+        info["N°Facture"] = num_facture
+        info["Date Facture"] = date_facture
 
-                #** Montant total *********************************************
-                ht=0
-                for line in order_lines:
+        #** Lignes de commande (tableau "Articles") ******************************
+        dans_articles = False
+        pattern_ligne = re.compile(
+            r"^\s*(.+?)\s{2,}(\d+(?:[.,]\d+)?)\s+\S+\s+([\d.,]+)\s+[\d.,]+%\s+[\d.,]+\s+Taux standard\s*$"
+        )
+        for line in lines:
+            if line.strip() == 'Articles':
+                dans_articles = True
+                continue
+            if line.strip() == 'Remise/Frais':
+                break
+            if dans_articles:
+                m = pattern_ligne.match(line.rstrip('\n'))
+                if m:
+                    designation, quantite, prix_net = m.groups()
+                    order_lines.append([
+                        self._is_txt2float(quantite),
+                        designation.strip(),
+                        self._is_txt2float(prix_net),
+                    ])
 
-                    
-                    ht+=(line[0] * line[2])
-                ht=round(ht,2)
-                dict["Total HT calculé"] = ht
-                #**************************************************************
+        #** Total HT ****************************************************************
+        for line in lines:
+            x = re.search(r"Montant total HT\s+([\d.,]+)\s*$", line)
+            if x:
+                info["Total HT"] = self._is_txt2float(x.group(1))
+                break
 
-                #** Résultat du traitement ************************************
-                if test:
-                    for key in dict:
-                        x = "%s : %s"%(key.ljust(20), dict[key])
-                        res.append(x)
-                    obj.is_import_pdf_resultat = '\n'.join(res)
-                #**************************************************************
+        return {
+            'affaire': affaire,
+            'num_facture': num_facture,
+            'date_facture': date_facture,
+            'order_lines': order_lines,
+            'info': info,
+        }
 
-                #** Ajout des lignes de la commande ***************************
-                if test:
-                    obj.order_line.unlink()
-                    sequence = 0
-                    for line in order_lines:
-                        libelle = line[1]
-                        sequence+=10
-                        product = obj.get_product(libelle, type_pdf)
-                        if product:
-                            vals={
-                                "order_id"       : obj.id,
-                                "product_id"     : product.id,
-                                "sequence"       : sequence,
-                                "name"           : line[1],
-                                "product_qty"    : line[0],
-                                "price_unit"     : line[2],
-                                "product_uom"    : product.uom_id.id,
-                            }
-                            order_line = self.env['purchase.order.line'].create(vals)
-                    #**********************************************************
+    def _is_parse_pdf_pum(self, lines):
+        "Analyse un PDF de type PUM et retourne les donnees extraites"
+        info = {}
+        order_lines = []
 
+        #** Chantier (Réf/Cli) ************************************************
+        chantier = ''
+        for line in lines:
+            if re.findall("Réf/Cli", line):
+                v = line.split(' : ')
+                if len(v) == 2:
+                    chantier = v[1].strip()
+        info["Chantier"] = chantier
+
+        affaire = self._is_match_affaire(chantier)
+        info["Affaire"] = affaire.name if affaire else "Affaire non trouvée"
+
+        #** N°Facture / Date Facture *********************************************
+        num_facture = lines[0].strip() if lines else False
+        date_facture = False
+        for line in lines:
+            x = re.search("F A C T U R E(.*)", line)
+            if x:
+                date_facture = self._is_txt2date(x.group(1), '%d-%m-%Y')
+                break
+        info["N°Facture"] = num_facture
+        info["Date Facture"] = date_facture
+
+        #** Lignes avec quantites / prix / montants *******************************
+        for line in lines:
+            code_pum = line[0:19].strip()
+            designation = line[19:85].strip()
+            reste = line[86:].strip()
+            x1 = re.sub(r' +', ' ', reste)
+            # Fusionner les groupes de milliers (ex: 2 164,80 -> 2164,80)
+            x1_fused = re.sub(r'(?<![\d,])(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), x1)
+            # Proteger les montants decimaux avant de re-fusionner les milliers restants
+            montants = re.findall(r'\d+,\d{2}', x1_fused)
+            x1_temp = x1_fused
+            for idx, montant in enumerate(montants):
+                x1_temp = x1_temp.replace(montant, f'§§§{idx}', 1)
+            x1_temp = re.sub(r'(?<!\d,)(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), x1_temp)
+
+            def replace_token(match, montants=montants):
+                idx = int(match.group(1))
+                return montants[idx] if idx < len(montants) else match.group(0)
+
+            x2 = re.sub(r'§§§(\d+)', replace_token, x1_temp).split()
+
+            if len(x2) == 5:
+                quantite = self._is_txt2float(x2[0])
+                prix_net = self._is_txt2float(x2[3])
+                montant = self._is_txt2float(x2[4])
+                if round(quantite * prix_net, 2) == round(montant, 2) and montant > 0:
+                    description = "%s (%s)" % (designation, code_pum)
+                    order_lines.append([quantite, description, prix_net])
+
+        #** Frais complementaires (eco-contribution, transport, surcharges) ******
+        frais = [
+            ("Eco contribution", r"\s*Eco contribution :(.*)", True),
+            ("Transport", r"Transport : (.*)", False),
+            ("Surcharge énergie", r"Surcharge énergie\s*:\s*([0-9]+,[0-9]{2})", True),
+            ("Surcharge gasoil", r"Surcharge gasoil : (.*)", False),
+        ]
+        for libelle_frais, pattern, valeur_directe in frais:
+            for line in lines:
+                x = re.search(pattern, line)
+                if x:
+                    valeur = x.group(1) if valeur_directe else x.group(1).split(' ')[0]
+                    montant = self._is_txt2float(valeur)
+                    order_lines.append([1, libelle_frais, montant])
+                    info[libelle_frais] = montant
+                    break
+
+        #** Total HT du PDF ********************************************************
+        ht_pdf = 0
+        debut = False
+        for line in lines:
+            if re.findall("TOTAL HT EUR", line):
+                debut = True
+            if debut:
+                line_fused = re.sub(r'(?<![\d,])(\d{1,3})\s(\d{3},\d{2})', lambda m: m.group(1) + m.group(2), line)
+                x = line_fused.split()
+                if len(x) > 4:
+                    ht_pdf = self._is_txt2float(x[0])
+        info["Total HT PDF"] = ht_pdf
+
+        return {
+            'affaire': affaire,
+            'num_facture': num_facture,
+            'date_facture': date_facture,
+            'order_lines': order_lines,
+            'info': info,
+        }
+
+    def _is_apply_pdf_result(self, type_pdf, data):
+        "Met a jour la commande (affaire, facture, lignes) a partir des donnees extraites du PDF"
+        info = {"Type de PDF": type_pdf}
+        info.update(data['info'])
+
+        if data['affaire']:
+            self.is_affaire_id = data['affaire'].id
+
+        self.is_num_facture_fournisseur = data['num_facture']
+        self.is_date_facture_fournisseur = data['date_facture']
+
+        order_lines = data['order_lines']
+        info["Total HT calculé"] = round(sum(qte * prix for qte, libelle, prix in order_lines), 2)
+        self.is_import_pdf_resultat = '\n'.join(
+            "%s : %s" % (key.ljust(20), value) for key, value in info.items()
+        )
+
+        self.order_line.unlink()
+        sequence = 0
+        for qte, libelle, prix in order_lines:
+            sequence += 10
+            product = self.get_product(libelle, type_pdf)
+            if product:
+                self.env['purchase.order.line'].create({
+                    "order_id": self.id,
+                    "product_id": product.id,
+                    "sequence": sequence,
+                    "name": libelle,
+                    "product_qty": qte,
+                    "price_unit": prix,
+                    "product_uom": product.uom_id.id,
+                })
 
     def get_product(self, libelle,type_pdf=False):
         for obj in self:
