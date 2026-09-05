@@ -906,8 +906,9 @@ class purchase_order(models.Model):
 
     @staticmethod
     def _is_txt2float(txt):
+        "Convertit un nombre au format français en float (accepte l'espace comme separateur de milliers)"
         try:
-            return float(txt.strip().replace(',', '.'))
+            return float(txt.strip().replace(' ', '').replace('\xa0', '').replace(',', '.'))
         except (ValueError, AttributeError):
             return 0
 
@@ -1162,9 +1163,11 @@ class purchase_order(models.Model):
         info["Date Facture"] = date_facture
 
         #** Lignes de commande (tableau "Articles") ******************************
+        # Les montants peuvent contenir un espace comme separateur de milliers (ex: "1 008,00")
+        nombre = r'\d[\d ]*(?:,\d+)?'
         dans_articles = False
         pattern_ligne = re.compile(
-            r"^\s*(.+?)\s{2,}(\d+(?:[.,]\d+)?)\s+\S+\s+([\d.,]+)\s+[\d.,]+%\s+[\d.,]+\s+Taux standard\s*$"
+            rf"^\s*(.+?)\s{{2,}}({nombre})\s+\S+\s+({nombre})\s+[\d.,]+%\s+{nombre}\s+Taux standard\s*$"
         )
         for line in lines:
             if line.strip() == 'Articles':
@@ -1184,7 +1187,7 @@ class purchase_order(models.Model):
 
         #** Total HT ****************************************************************
         for line in lines:
-            x = re.search(r"Montant total HT\s+([\d.,]+)\s*$", line)
+            x = re.search(r"Montant total HT\s+(" + nombre + r")\s*$", line)
             if x:
                 info["Total HT"] = self._is_txt2float(x.group(1))
                 break
