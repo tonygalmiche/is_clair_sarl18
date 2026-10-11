@@ -52,5 +52,18 @@
             <field name="binding_type">report</field>
             <field name="paperformat_id" ref="base.paperformat_euro"/>
         </record>
+
+        <!--
+            Facture : renomme le rapport "PDF" du menu Telecharger en "PDF (régénéré)".
+            Depuis la correction Odoo du 28/10/2025 (commit 8d14cf891e, "[FIX] account:
+            generation of print-related entries in cog menu"), ce menu contient une
+            deuxieme entree "PDF" (get_extra_print_items) qui telecharge le PDF officiel
+            deja enregistre de la facture (celui envoye au client), alors que ce rapport
+            regenere le PDF a chaque clic. Meme libelle "PDF" pour les deux sans ce
+            renommage. Libelle francais (context lang) : celui vu par les utilisateurs.
+        -->
+        <record id="account.account_invoices_without_payment" model="ir.actions.report" context="{'lang': 'fr_FR'}">
+            <field name="name">PDF (régénéré)</field>
+        </record>
     </data>
 </odoo>
