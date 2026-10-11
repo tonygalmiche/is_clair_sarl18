@@ -168,27 +168,27 @@
 
 
 
-            <xpath expr="//field[@name='vat']" position="after">
+            <!-- Après le div de base_vat, qui contient le champ vat : après le champ, les champs seraient dans ce div, sans libellé -->
+            <xpath expr="//div[@name='vat_vies_container']" position="after">
                 <field name="is_statut_id"/>
                 <field name="is_profil_id"/>
                 <field name="is_origine_id"/>
             </xpath>
-            <group name="container_row_2" position="after">
-                <group>
-                    <field name="is_condition_tarifaire"/>
-                    <field name="is_banque_id"/>
-                </group>
+            <!-- Dans le groupe sale : un groupe sans titre après container_row_2 semblait faire partie du groupe de l10n_fr_einvoicing -->
+            <group name="sale" position="inside">
+                <field name="is_condition_tarifaire"/>
+                <field name="is_banque_id"/>
             </group>
-            <group name="misc" position="after">
-                <group>
-                    <field name="is_modele_commande_id"/>
-                    <button
-                        name="creer_modele_commande"
-                        type="object"
-                        string="Créer un modèle de commande"
-                        invisible="is_modele_commande_id!=False"
-                    />
-                </group>
+            <!-- Dans le groupe misc et non après : l10n_fr_einvoicing ajoute son groupe après misc, deux groupes au même endroit se chevauchent -->
+            <group name="misc" position="inside">
+                <field name="is_modele_commande_id"/>
+                <button
+                    name="creer_modele_commande"
+                    type="object"
+                    string="Créer un modèle de commande"
+                    invisible="is_modele_commande_id!=False"
+                    colspan="2"
+                />
             </group>
 
             <page name="internal_notes" position="after">

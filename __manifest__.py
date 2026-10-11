@@ -17,6 +17,7 @@ Module Odoo 18 pour CLAIR-SARL
         "product",
         "account",
         "l10n_fr",
+        "base_vat",
         "web",
         "web_chatter_position",
         "web_m2x_options",
