@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name"     : "Module Odoo 18 pour CLAIR-SARL",
-    "version"  : "0.4",
+    "version"  : "0.7",
     "author"   : "InfoSaône",
     "category" : "InfoSaône",
     "description": """
