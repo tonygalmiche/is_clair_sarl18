@@ -857,15 +857,18 @@ class purchase_order(models.Model):
 
     # Ordre de detection : (nom_type, motif recherche dans les lignes du PDF)
     # LOXAM2 doit etre teste avant LOXAM car ses factures contiennent aussi le mot "LOXAM"
+    # PUM2 doit etre teste avant PUM car ses factures contiennent aussi le motif "   PUM"
     _IS_PDF_TYPE_SIGNATURES = [
         ('LOXAM2', "Numéro d'ordre de vente"),
         ('LOXAM', 'LOXAM'),
+        ('PUM2', r"CODE PUM\s+DESIGNATION"),
         ('PUM', '   PUM'),
     ]
 
     _IS_PDF_TYPE_PARSERS = {
         'LOXAM2': '_is_parse_pdf_loxam2',
         'LOXAM': '_is_parse_pdf_loxam',
+        'PUM2': '_is_parse_pdf_pum2',
         'PUM': '_is_parse_pdf_pum',
     }
 
@@ -875,7 +878,7 @@ class purchase_order(models.Model):
                 lines = obj._is_pdf_to_lines(attachment)
                 type_pdf = obj._is_detect_type_pdf(lines)
                 if not type_pdf:
-                    obj.is_import_pdf_resultat = "Ce PDF n'est pas de LOXAM, LOXAM2 ou PUM => Importation impossible"
+                    obj.is_import_pdf_resultat = "Ce PDF n'est pas de LOXAM, LOXAM2, PUM ou PUM2 => Importation impossible"
                     continue
                 parser = getattr(obj, obj._IS_PDF_TYPE_PARSERS[type_pdf])
                 data = parser(lines)
@@ -1295,6 +1298,98 @@ class purchase_order(models.Model):
             'info': info,
         }
 
+    def _is_parse_pdf_pum2(self, lines):
+        "Analyse un PDF PUM (nouveau modele de facture) et retourne les donnees extraites"
+        info = {}
+        order_lines = []
+
+        # Les montants peuvent contenir un espace comme separateur de milliers (ex: "2 164,80")
+        nombre = r'\d+(?: \d{3})*(?:,\d+)?'
+
+        #** Chantier (Ref/Cli) *************************************************
+        chantier = ''
+        for line in lines:
+            x = re.search(r"R[ée]f/Cli\s*:\s*(\S.*?)(?:\s{2,}|$)", line)
+            if x:
+                chantier = x.group(1).strip()
+                break
+        info["Chantier"] = chantier
+
+        #** Affaire : code affaire (ex: 26.2571) dans Ref/Cli, sinon comparaison floue
+        affaire = False
+        code = re.findall(r"[0-9]{2}\.[0-9]{4}", chantier)
+        if code:
+            affaires = self.env['is.affaire'].search([('name', '=', code[0])])
+            if affaires:
+                affaire = affaires[0]
+        if not affaire:
+            affaire = self._is_match_affaire(chantier)
+        info["Affaire"] = affaire.name if affaire else "Affaire non trouvée"
+
+        #** N°Facture / Date Facture *********************************************
+        num_facture = date_facture = False
+        for line in lines:
+            x = re.search(r"NUMERO\s*:\s*(\S+)", line)
+            if x:
+                num_facture = x.group(1).strip()
+                break
+        for line in lines:
+            x = re.search(r"DATE\s*:\s*(\d+\s*-\s*\d+\s*-\s*\d{4})", line)
+            if x:
+                date_facture = self._is_txt2date(x.group(1), '%d-%m-%Y')
+                break
+        info["N°Facture"] = num_facture
+        info["Date Facture"] = date_facture
+
+        #** Lignes d'articles (code / designation / quantite / unite / prix / PU net / montant / TVA)
+        pattern_ligne = re.compile(
+            rf"^\s*(\S+)\s{{2,}}(\S.*?)\s{{2,}}({nombre})\s+\S+\s+{nombre}\s+({nombre})\s+({nombre})\s+[\d.,]+%\s+\S+\s*$"
+        )
+        for line in lines:
+            m = pattern_ligne.match(line)
+            if m:
+                code_pum, designation, quantite, prix_net, montant = m.groups()
+                description = "%s (%s)" % (designation.strip(), code_pum)
+                order_lines.append([self._is_txt2float(quantite), description, self._is_txt2float(prix_net)])
+
+        #** Frais complementaires (tableau "CHARGES DU DOCUMENT") ****************
+        dans_charges = False
+        for line in lines:
+            if re.search("CHARGES DU DOCUMENT", line):
+                dans_charges = True
+                continue
+            if re.search("TOTAL HT EUR", line):
+                break
+            if dans_charges:
+                x = re.search(rf"({nombre})\s+[\d.,]+%\s+\S+\s*$", line)
+                if x:
+                    libelle_frais = re.split(r'\s{2,}', line.strip())[0]
+                    montant = self._is_txt2float(x.group(1))
+                    order_lines.append([1, libelle_frais, montant])
+                    info[libelle_frais] = montant
+
+        #** Total HT du PDF (1er montant de la ligne qui suit "TOTAL HT EUR") *****
+        ht_pdf = 0
+        debut = False
+        for line in lines:
+            if re.search("TOTAL HT EUR", line):
+                debut = True
+                continue
+            if debut:
+                x = re.match(rf"\s*({nombre})\s{{2,}}", line)
+                if x:
+                    ht_pdf = self._is_txt2float(x.group(1))
+                    break
+        info["Total HT PDF"] = ht_pdf
+
+        return {
+            'affaire': affaire,
+            'num_facture': num_facture,
+            'date_facture': date_facture,
+            'order_lines': order_lines,
+            'info': info,
+        }
+
     def _is_apply_pdf_result(self, type_pdf, data):
         "Met a jour la commande (affaire, facture, lignes) a partir des donnees extraites du PDF"
         info = {"Type de PDF": type_pdf}
@@ -1350,10 +1445,11 @@ class purchase_order(models.Model):
                 'Remise'                            : 'REMISE',
                 'CONST. MODULAIRE'                  : 'BUNGALOW',
                 'WC AUTONOME'                       : 'WC',
-                'Eco-contribution'                  : 'ECOCON',
+                'Eco.contribution'                  : 'ECOCON',
                 'Transport'                         : 'TCHANTIER',
                 'Surcharge gasoil'                  : 'GNR',
                 'Surcharge énergie'                 : 'GNR',
+                'Grutage'                           : 'GRUTAGE',
             }
             product = False
             for key in dict:
@@ -1365,7 +1461,7 @@ class purchase_order(models.Model):
                     if len(products):
                         product = products[0]
             if not product:
-                if type_pdf=='PUM':
+                if type_pdf in ('PUM', 'PUM2'):
                     domain=[("default_code"  ,"=", 'PVC')]
                 else:
                     domain=[("name"  ,"=", 'divers')]
