@@ -686,7 +686,7 @@ class sale_order(models.Model):
             move=self.env['account.move'].create(vals)
             move._onchange_partner_id()
             #move._onchange_invoice_date()
-            move.action_post()
+            #move.action_post()
 
             #** Calcul des remises sur le TTC *********************************
             for line in move.is_remise_ids:
